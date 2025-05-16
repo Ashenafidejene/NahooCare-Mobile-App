@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 import '../service/local_storage_service.dart';
@@ -43,7 +43,8 @@ class ApiClient {
     };
 
     if (requiresAuth) {
-      final token = _localStorage.getToken();
+      final token = await _localStorage.getToken();
+      debugPrint("${token}");
       if (token == null) {
         throw ApiException(
           statusCode: 401,
@@ -65,55 +66,56 @@ class ApiClient {
   }) async {
     if (!_debugMode) return;
 
-    print('\n🔵 ===== API REQUEST START =====');
-    print('📤 Method: $method');
-    print('🌐 URL: $baseUrl$endpoint');
+    debugPrint('\n🔵 ===== API REQUEST START =====');
+    debugPrint('📤 Method: $method');
+    debugPrint('🌐 URL: $baseUrl$endpoint');
 
     if (queryParams != null) {
-      print('🔍 Query Parameters:');
-      queryParams.forEach((key, value) => print('   $key: $value'));
+      debugPrint('🔍 Query Parameters:');
+      queryParams.forEach((key, value) => debugPrint('   $key: $value'));
     }
 
     if (headers != null) {
-      print('📋 Headers:');
+      debugPrint('📋 Headers:');
       headers.forEach((key, value) {
-        print(
+        debugPrint(
           '   $key: ${key.toLowerCase() == 'authorization' ? 'Bearer *****' : value}',
         );
       });
     }
 
     if (body != null) {
-      print('📦 Request Body:');
-      print(jsonEncode(body));
+      debugPrint('📦 Request Body:');
+      debugPrint(jsonEncode(body));
     }
-    print('🔵 ===== API REQUEST END =====\n');
+    debugPrint('🔵 ===== API REQUEST END =====\n');
   }
 
   Future<void> _logResponse(http.Response response) async {
     if (!_debugMode) return;
 
-    print('\n🟢 ===== API RESPONSE START =====');
-    print('📥 Status Code: ${response.statusCode}');
-    print('📋 Response Headers:');
-    response.headers.forEach((key, value) => print('   $key: $value'));
+    debugPrint('\n🟢 ===== API RESPONSE START =====');
+    debugPrint('📥 Status Code: ${response.statusCode}');
+    debugPrint('📋 Response Headers:');
+    response.headers.forEach((key, value) => debugPrint('   $key: $value'));
 
-    print('📦 Response Body:');
+    debugPrint('📦 Response Body:');
     try {
       final formattedJson = JsonEncoder.withIndent(
         '  ',
       ).convert(jsonDecode(utf8.decode(response.bodyBytes)));
-      print(formattedJson);
+      debugPrint(formattedJson);
     } catch (e) {
-      print(response.body);
+      debugPrint(response.body);
     }
-    print('🟢 ===== API RESPONSE END =====\n');
+    debugPrint('🟢 ===== API RESPONSE END =====\n');
   }
 
-  Future<Map<String, dynamic>> post(
+  Future<dynamic> post(
     String endpoint,
     Map<String, dynamic> body, {
     bool requiresAuth = true,
+    bool expectListResponse = false, // Add this parameter
   }) async {
     try {
       final headers = await _getHeaders(requiresAuth: requiresAuth);
@@ -131,7 +133,18 @@ class ApiClient {
       );
 
       await _logResponse(response);
-      return _handleResponse(response);
+      final result = _handleResponse(response);
+
+      // Optional: Add runtime type checking if you want strict validation
+      if (expectListResponse && result is! List) {
+        throw ApiException(
+          statusCode: response.statusCode,
+          message: 'Expected List response but got ${result.runtimeType}',
+          response: result,
+        );
+      }
+
+      return result;
     } on ApiException {
       rethrow;
     } catch (e) {
@@ -167,7 +180,7 @@ class ApiClient {
       rethrow;
     } catch (e) {
       if (e is http.ClientException) {
-        print('❌ Raw network error: $e');
+        debugPrint('❌ Raw network error: $e');
       }
       throw ApiException(
         statusCode: 500,
@@ -227,7 +240,7 @@ class ApiClient {
       rethrow;
     } catch (e) {
       if (e is http.ClientException) {
-        print('❌ Raw network error: $e');
+        debugPrint('❌ Raw network error: $e');
       }
       throw ApiException(
         statusCode: 500,
@@ -241,7 +254,8 @@ class ApiClient {
       final responseBody = jsonDecode(utf8.decode(response.bodyBytes));
 
       if (response.statusCode >= 200 && response.statusCode < 300) {
-        if (responseBody is Map<String, dynamic>) {
+        if (responseBody is Map<String, dynamic> ||
+            responseBody is List<dynamic>) {
           return responseBody;
         }
         throw ApiException(
