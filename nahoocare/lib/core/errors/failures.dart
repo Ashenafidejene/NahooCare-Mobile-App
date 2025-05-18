@@ -131,3 +131,16 @@ class UnexpectedFailure extends Failure {
   @override
   String toString() => 'UnexpectedFailure: $message (error: $error)';
 }
+
+class UnauthorizedFailure extends Failure {
+  const UnauthorizedFailure(String message, {String? code})
+    : super(message, 401, code: code);
+}
+
+class InvalidInputFailure extends Failure {
+  const InvalidInputFailure(String message, {String? code})
+    : super(message, 400, code: code);
+
+  @override
+  List<Object?> get props => super.props;
+}

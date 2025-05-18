@@ -2,6 +2,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 abstract class LocalStorageService {
   Future<void> saveToken(String token);
+  Future<void> saveFullName(String name);
+  Future<String?> getFullName();
   Future<String?> getToken();
   Future<void> clearToken();
   Future<void> saveValue(String key, String value);
@@ -19,7 +21,14 @@ class LocalStorageServiceImpl implements LocalStorageService {
     await sharedPreferences.setString('auth_token', token);
   }
 
-  @override
+  Future<void> saveFullName(String name) async {
+    await sharedPreferences.setString('full_name', name);
+  }
+
+  Future<String?> getFullName() async {
+    return sharedPreferences.getString('full_name');
+  }
+
   Future<String?> getToken() async {
     return sharedPreferences.getString('auth_token');
   }

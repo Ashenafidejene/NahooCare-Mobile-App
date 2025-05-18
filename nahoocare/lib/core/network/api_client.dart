@@ -155,7 +155,7 @@ class ApiClient {
     }
   }
 
-  Future<Map<String, dynamic>> get(
+  Future<dynamic> get(
     String endpoint, {
     Map<String, String>? queryParams,
     bool requiresAuth = true,
@@ -249,20 +249,13 @@ class ApiClient {
     }
   }
 
-  Map<String, dynamic> _handleResponse(http.Response response) {
+  dynamic _handleResponse(http.Response response) {
     try {
       final responseBody = jsonDecode(utf8.decode(response.bodyBytes));
 
       if (response.statusCode >= 200 && response.statusCode < 300) {
-        if (responseBody is Map<String, dynamic> ||
-            responseBody is List<dynamic>) {
-          return responseBody;
-        }
-        throw ApiException(
-          statusCode: response.statusCode,
-          message: 'Invalid response format: expected Map<String, dynamic>',
-          response: responseBody,
-        );
+        // Accept both List and Map responses
+        return responseBody;
       }
 
       String errorMessage = 'An error occurred';
