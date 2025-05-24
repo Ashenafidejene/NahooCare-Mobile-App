@@ -1,15 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:nahoocare/features/accounts/presentation/pages/account_page.dart';
+import 'package:nahoocare/features/firstaid/presentation/pages/first_aid_list_page.dart';
+
 import 'package:nahoocare/features/healthcare_center/presentation/bloc/healthcare_center_bloc.dart';
+import 'package:nahoocare/features/history/presentation/blocs/search_history_bloc.dart';
 import 'package:nahoocare/features/landing/presentation/pages/landing.dart';
 
 import 'core/theme/theme_cubit.dart';
+import 'features/accounts/presentation/blocs/account_bloc.dart';
 import 'features/auth/presentation/blocs/auth_bloc.dart';
 import 'features/auth/presentation/pages/login_page.dart';
 import 'features/auth/presentation/pages/register_page.dart';
 import 'features/auth/presentation/pages/reset_password_page.dart';
-import 'features/healthcare_center/presentation/pages/healthcare_center_details_page.dart';
+
+import 'features/firstaid/presentation/blocs/first_aid_bloc.dart';
+import 'features/history/presentation/pages/search_history_page.dart';
 import 'features/hospitalSearch/presentation/blocs/healthcare_search_bloc.dart';
 import 'features/hospitalSearch/presentation/pages/healthcare_search_page.dart';
 import 'features/profile/presentation/bloc/health_profile_bloc.dart';
@@ -53,9 +60,26 @@ class MyApp extends StatelessWidget {
           create: (context) => di.sl<HealthcareSearchBloc>(),
           child: const HealthcareSearchPage(),
         ),
+        BlocProvider(
+          create: (context) => di.sl<FirstAidBloc>(),
+          child: const FirstAidListPage(),
+        ),
+        BlocProvider(
+          create: (context) {
+            final bloc = di.sl<AccountBloc>();
+            // Add slight delay to ensure BLoC is fully constructed
+            Future.delayed(Duration.zero, () => bloc.add(LoadAccountEvent()));
+            return bloc;
+          },
+          child: const AccountPage(),
+        ),
+        BlocProvider(
+          create: (context) => di.sl<SearchHistoryBloc>(),
+          child: const SearchHistoryPage(),
+        ),
       ],
       child: MaterialApp(
-        title: 'Clean Auth Demo',
+        title: 'NahooCare',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(
@@ -98,6 +122,8 @@ class MyApp extends StatelessWidget {
                   return const RegisterPage();
                 case '/reset-password':
                   return const ResetPasswordPage();
+                case '/test':
+                  return FirstAidListPage();
                 default:
                   return const Scaffold(
                     body: Center(child: Text('Page not found')),

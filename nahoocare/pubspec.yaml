@@ -25,15 +25,24 @@ dependencies:
   shared_preferences: ^2.5.3
   connectivity_plus: ^6.1.4
   dio: ^5.2.0
+  smooth_page_indicator: ^1.1.2
+  convex_bottom_bar: ^3.2.0
+  animated_bottom_navigation_bar: ^1.4.0
+  geolocator : ^14.0.0
+  fluttertoast: ^8.2.12
+  flutter_map : ^7.0.2
+  latlong2: ^0.9.0
+  flutter_map_marker_cluster: ^1.4.0
+  flutter_rating_bar : ^4.0.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0
- 
-
 
 flutter:
   uses-material-design: true
   assets: 
     - .env
+    - assets/images/
+    - assets/local_first_aid.json

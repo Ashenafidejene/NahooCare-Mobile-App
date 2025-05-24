@@ -12,7 +12,7 @@ class AppDrawer extends StatelessWidget {
           const DrawerHeader(
             decoration: BoxDecoration(color: Colors.teal),
             child: Text(
-              'Nhoocare Menu',
+              'Nahoocare Menu',
               style: TextStyle(color: Colors.white, fontSize: 24),
             ),
           ),
