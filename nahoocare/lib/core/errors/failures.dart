@@ -144,3 +144,8 @@ class InvalidInputFailure extends Failure {
   @override
   List<Object?> get props => super.props;
 }
+
+class UnknownFailure extends Failure {
+  const UnknownFailure({String? message, int statusCode = 500})
+    : super(message ?? 'Unknown error occurred', statusCode);
+}
