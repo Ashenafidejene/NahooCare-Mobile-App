@@ -2,106 +2,16 @@ import '../../../../core/errors/exceptions.dart';
 import '../../../../core/network/api_client.dart';
 import '../../../../core/service/local_storage_service.dart';
 import 'auth_remote_datasource.dart';
+import 'package:flutter/foundation.dart';
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
-  final ApiClient apiClient;
-  final LocalStorageService localStorageService;
-
   AuthRemoteDataSourceImpl({
     required this.apiClient,
     required this.localStorageService,
   });
 
-  @override
-  Future<Map<String, dynamic>> login(
-    String phoneNumber,
-    String password,
-  ) async {
-    try {
-      final response = await apiClient.post('/api/account/login', {
-        'phone_number': phoneNumber,
-        'password': password,
-      }, requiresAuth: false);
-      return response;
-    } on ApiException catch (e) {
-      throw ServerException(e.message, e.statusCode);
-    } catch (e) {
-      throw ServerException('Failed to login: ${e.toString()}', 500);
-    }
-  }
-
-  @override
-  Future<Map<String, dynamic>> register({
-    required String fullName,
-    required String phoneNumber,
-    required String password,
-    required String secretQuestion,
-    required String secretAnswer,
-  }) async {
-    print("Attempting to register...");
-    try {
-      final response = await apiClient.post('/api/account/register', {
-        'full_name': fullName,
-        'phone_number': phoneNumber,
-        'password': password,
-        'secret_question': secretQuestion,
-        'secret_answer': secretAnswer,
-      }, requiresAuth: false);
-
-      // Check response and return if successful
-      if (response.containsKey("message")) {
-        return response;
-      } else {
-        throw ServerException('Unexpected response from server', 400);
-      }
-    } on ApiException catch (e) {
-      throw ServerException(e.message, e.statusCode);
-    } catch (e) {
-      throw ServerException('Failed to register: ${e.toString()}', 500);
-    }
-  }
-
-  @override
-  Future<String> getSecretQuestion(String phoneNumber) async {
-    try {
-      final response = await apiClient.get(
-        '/api/account/getSecretQuestion/$phoneNumber',
-        requiresAuth: false,
-      );
-
-      // Ensure the response contains the secret question
-      print(response);
-      return response['question'];
-    } on ApiException catch (e) {
-      throw ServerException(e.message, e.statusCode);
-    } catch (e) {
-      throw ServerException(
-        'Failed to get secret question: ${e.toString()}',
-        500,
-      );
-    }
-  }
-
-  @override
-  Future<Map<String, dynamic>> resetPassword({
-    required String phoneNumber,
-    required String secretAnswer,
-    required String newPassword,
-  }) async {
-    final response = await apiClient.post('/api/account/reset-password', {
-      'phone_number': phoneNumber,
-      'secret_answer': secretAnswer,
-      'new_password': newPassword,
-    }, requiresAuth: false);
-    return response;
-    /*try {
-     
-    } on ApiException catch (e) {
-      throw ServerException(e.message, e.statusCode);
-    } catch (e) {
-      throw ServerException('Failed to reset password: ${e.toString()}', 500);
-    }*/
-  }
+  final ApiClient apiClient;
+  final LocalStorageService localStorageService;
 
   @override
   Future<void> cacheToken(String token) async {
@@ -128,5 +38,101 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     } catch (e) {
       throw CacheException('Failed to get cached token: ${e.toString()}');
     }
+  }
+
+  @override
+  Future<String> getSecretQuestion(String phoneNumber) async {
+    try {
+      final response = await apiClient.get(
+        '/api/account/getSecretQuestion/$phoneNumber',
+        requiresAuth: false,
+      );
+
+      // Ensure the response contains the secret question
+
+      return response['question'];
+    } on ApiException catch (e) {
+      throw ServerException(e.message, e.statusCode);
+    } catch (e) {
+      throw ServerException(
+        'Failed to get secret question: ${e.toString()}',
+        500,
+      );
+    }
+  }
+
+  @override
+  Future<Map<String, dynamic>> login(
+    String phoneNumber,
+    String password,
+  ) async {
+    try {
+      final response = await apiClient.post('/api/account/login', {
+        'phone_number': phoneNumber,
+        'password': password,
+      }, requiresAuth: false);
+      await localStorageService.saveFullName(response['full_name']);
+      await localStorageService.saveToken(response['access_token']);
+      final value = await localStorageService.getToken();
+      debugPrint("Login successful sharedPreferences , token: ${value}");
+      debugPrint("${value}");
+      return response;
+    } on ApiException catch (e) {
+      throw ServerException(e.message, e.statusCode);
+    } catch (e) {
+      throw ServerException('Failed to login: ${e.toString()}', 500);
+    }
+  }
+
+  @override
+  Future<Map<String, dynamic>> register({
+    required String fullName,
+    required String phoneNumber,
+    required String password,
+    required String secretQuestion,
+    required String secretAnswer,
+  }) async {
+    debugPrint("Attempting to register...");
+    try {
+      final response = await apiClient.post('/api/account/register', {
+        'full_name': fullName,
+        'phone_number': phoneNumber,
+        'password': password,
+        'secret_question': secretQuestion,
+        'secret_answer': secretAnswer,
+      }, requiresAuth: false);
+
+      // Check response and return if successful
+      if (response.containsKey("message")) {
+        return response;
+      } else {
+        throw ServerException('Unexpected response from server', 400);
+      }
+    } on ApiException catch (e) {
+      throw ServerException(e.message, e.statusCode);
+    } catch (e) {
+      throw ServerException('Failed to register: ${e.toString()}', 500);
+    }
+  }
+
+  @override
+  Future<Map<String, dynamic>> resetPassword({
+    required String phoneNumber,
+    required String secretAnswer,
+    required String newPassword,
+  }) async {
+    final response = await apiClient.post('/api/account/reset-password', {
+      'phone_number': phoneNumber,
+      'secret_answer': secretAnswer,
+      'new_password': newPassword,
+    }, requiresAuth: false);
+    return response;
+    /*try {
+     
+    } on ApiException catch (e) {
+      throw ServerException(e.message, e.statusCode);
+    } catch (e) {
+      throw ServerException('Failed to reset password: ${e.toString()}', 500);
+    }*/
   }
 }

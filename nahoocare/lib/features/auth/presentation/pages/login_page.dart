@@ -32,7 +32,15 @@ class _LoginPageState extends State<LoginPage> {
                 context,
               ).showSnackBar(SnackBar(content: Text(state.message)));
             } else if (state is LoginSuccess) {
-              // Navigate to home
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Registration successful! Please login.'),
+                  behavior: SnackBarBehavior.floating,
+                ),
+              );
+              Future.delayed(const Duration(seconds: 2), () {
+                Navigator.pushNamed(context, '/landing');
+              });
             }
           },
           builder: (context, state) {

@@ -1,13 +1,13 @@
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:nahoocare/features/history/presentation/pages/history.dart';
 
-import '../../../firstAid/presentation/pages/firstaid.dart';
+import '../../../accounts/presentation/pages/account_page.dart';
+import '../../../firstaid/presentation/pages/first_aid_list_page.dart';
+import '../../../history/presentation/pages/search_history_page.dart';
 import '../../../hospitalSearch/presentation/pages/healthcare_search_page.dart';
-import '../../../hospitalSearch/presentation/pages/search_pages.dart';
+
 import '../../../profile/presentation/pages/health_profile_page.dart';
-import '../../../profile/presentation/pages/profile_page.dart';
-import '../../../symptomSearch/presentation/pages/symptomSearch_page.dart';
+
 import '../../../symptomSearch/presentation/pages/symptom_input_page.dart';
 
 class LandingPage extends StatefulWidget {
@@ -31,7 +31,7 @@ class _LandingPageState extends State<LandingPage>
   final List<Widget> _pages = const [
     SymptomInputPage(),
     HealthcareSearchPage(),
-    Firstaid(),
+    FirstAidListPage(),
     HealthProfilePage(),
   ];
 
@@ -98,12 +98,22 @@ class _LandingPageState extends State<LandingPage>
             ListTile(
               leading: const Icon(Icons.account_circle),
               title: const Text('Account'),
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => AccountPage()),
+                );
+              },
             ),
             ListTile(
               leading: const Icon(Icons.history),
               title: const Text('History'),
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const SearchHistoryPage()),
+                );
+              },
             ),
             ListTile(
               leading: const Icon(Icons.logout),
