@@ -1,0 +1,46 @@
+[
+    {
+        "emergency_title": "CPR (Adult)",
+        "instructions": [
+            "Check responsiveness and breathing.",
+            "Call emergency services.",
+            "Place hands in the center of the chest.",
+            "Give 30 chest compressions followed by 2 rescue breaths.",
+            "Continue until help arrives or victim recovers."
+        ],
+        "category": "Cardiac Emergency",
+        "image": "assets/images/cpr_adult.png"
+    },
+    {
+        "emergency_title": "Choking (Adult)",
+        "instructions": [
+            "Ask if they can cough or speak.",
+            "If not, perform abdominal thrusts (Heimlich maneuver).",
+            "Repeat until object is expelled or help arrives."
+        ],
+        "category": "Breathing Emergency",
+        "image": "assets/images/choking_adult.png"
+    },
+    {
+        "emergency_title": "Burn (Minor)",
+        "instructions": [
+            "Cool the burn under running water for 10-20 minutes.",
+            "Remove tight items near the area.",
+            "Cover with a clean, non-stick bandage.",
+            "Do not pop blisters."
+        ],
+        "category": "Burns",
+        "image": "assets/images/minor_burn.png"
+    },
+    {
+        "emergency_title": "Nosebleed",
+        "instructions": [
+            "Sit upright and lean forward slightly.",
+            "Pinch the nose just below the bridge.",
+            "Hold for 10 minutes while breathing through mouth.",
+            "Avoid blowing nose after bleeding stops."
+        ],
+        "category": "Bleeding",
+        "image": "assets/images/nosebleed.png"
+    }
+]
