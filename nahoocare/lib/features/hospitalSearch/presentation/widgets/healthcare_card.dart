@@ -1,64 +1,99 @@
 import 'package:flutter/material.dart';
-import 'package:latlong2/latlong.dart';
+import '../../../healthcare_center/presentation/pages/healthcare_center_details_page.dart';
 import '../../domain/entities/healthcare_entity.dart';
 
 class HealthcareCard extends StatelessWidget {
-  final HealthcareEntity healthcare;
-  final LatLng? currentLocation; // Make nullable
+  final HealthcareEntity healthcareCenter;
 
-  const HealthcareCard({
-    Key? key,
-    required this.healthcare,
-    this.currentLocation,
-  }) : super(key: key);
+  const HealthcareCard({super.key, required this.healthcareCenter});
 
   @override
   Widget build(BuildContext context) {
-    double? distance;
-
-    if (currentLocation != null) {
-      distance = _calculateDistance(
-        currentLocation!.latitude,
-        currentLocation!.longitude,
-        healthcare.latitude,
-        healthcare.longitude,
-      );
-    }
-
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              healthcare.name,
-              style: Theme.of(context).textTheme.titleLarge,
+      elevation: 3,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder:
+                  (context) => HealthcareCenterDetailsPage(
+                    centerId: healthcareCenter.centerId,
+                  ),
             ),
-            const SizedBox(height: 8),
-            if (distance != null)
+          );
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
               Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(Icons.location_on, size: 16, color: Colors.grey),
-                  const SizedBox(width: 4),
-                  Text('${distance.toStringAsFixed(1)} km'),
+                  Expanded(
+                    child: Text(
+                      healthcareCenter.name,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  Icon(
+                    Icons.chevron_right,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
                 ],
               ),
-            // Add more details as needed
-          ],
+              const SizedBox(height: 8),
+              if (healthcareCenter.specialties.isNotEmpty)
+                Wrap(
+                  spacing: 6,
+                  runSpacing: -8,
+                  children:
+                      healthcareCenter.specialties
+                          .map(
+                            (specialty) => Chip(
+                              label: Text(specialty),
+                              backgroundColor: Theme.of(
+                                context,
+                              ).colorScheme.primary.withOpacity(0.1),
+                              labelStyle: TextStyle(
+                                color: Theme.of(context).colorScheme.primary,
+                                fontSize: 12,
+                              ),
+                              materialTapTargetSize:
+                                  MaterialTapTargetSize.shrinkWrap,
+                            ),
+                          )
+                          .toList(),
+                ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Icon(
+                    Icons.location_on,
+                    size: 16,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      '${healthcareCenter.latitude.toStringAsFixed(4)}, ${healthcareCenter.longitude.toStringAsFixed(4)}',
+                      style: Theme.of(
+                        context,
+                      ).textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
-  }
-
-  double _calculateDistance(
-    double lat1,
-    double lon1,
-    double lat2,
-    double lon2,
-  ) {
-    // Simple distance calculation (replace with Haversine formula for accuracy)
-    return ((lat1 - lat2).abs() + (lon1 - lon2).abs()) * 111; // Approximate km
   }
 }

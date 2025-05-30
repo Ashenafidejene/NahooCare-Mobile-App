@@ -1,66 +1,40 @@
-import 'package:equatable/equatable.dart';
+// healthcare_search_event.dart
+part of 'healthcare_search_bloc.dart';
 
-abstract class HealthcareSearchEvent extends Equatable {
-  const HealthcareSearchEvent();
+abstract class HealthcareEvent extends Equatable {
+  const HealthcareEvent();
 
   @override
   List<Object> get props => [];
 }
 
-class SearchByName extends HealthcareSearchEvent {
-  final String name;
+class LoadHealthcareCenters extends HealthcareEvent {}
 
-  const SearchByName(this.name);
+class SearchHealthcareCenters extends HealthcareEvent {
+  final String query;
+
+  const SearchHealthcareCenters(this.query);
 
   @override
-  List<Object> get props => [name];
+  List<Object> get props => [query];
 }
 
-class SearchBySpecialty extends HealthcareSearchEvent {
+class FilterHealthcareCenters extends HealthcareEvent {
   final List<String> specialties;
 
-  const SearchBySpecialty(this.specialties);
+  const FilterHealthcareCenters(this.specialties);
 
   @override
   List<Object> get props => [specialties];
 }
 
-class SearchByLocation extends HealthcareSearchEvent {
-  final double latitude;
-  final double longitude;
-  final int maxDistanceKm;
+class SortHealthcareCenters extends HealthcareEvent {
+  final bool sortByDistance;
 
-  const SearchByLocation({
-    required this.latitude,
-    required this.longitude,
-    this.maxDistanceKm = 10,
-  });
+  const SortHealthcareCenters({required this.sortByDistance});
 
   @override
-  List<Object> get props => [latitude, longitude, maxDistanceKm];
+  List<Object> get props => [sortByDistance];
 }
 
-class SearchWithAllFilters extends HealthcareSearchEvent {
-  final String? name;
-  final List<String>? specialties;
-  final double? latitude;
-  final double? longitude;
-  final int maxDistanceKm;
-
-  const SearchWithAllFilters({
-    this.name,
-    this.specialties,
-    this.latitude,
-    this.longitude,
-    this.maxDistanceKm = 10,
-  });
-
-  @override
-  List<Object> get props => [
-    if (name != null) name!,
-    if (specialties != null) specialties!,
-    if (latitude != null) latitude!,
-    if (longitude != null) longitude!,
-    maxDistanceKm,
-  ];
-}
+class ResetHealthcareFilters extends HealthcareEvent {}

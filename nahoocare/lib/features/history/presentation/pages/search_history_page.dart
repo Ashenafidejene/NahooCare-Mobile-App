@@ -13,13 +13,11 @@ class SearchHistoryPage extends StatelessWidget {
     context.read<SearchHistoryBloc>().add(LoadSearchHistory());
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Search History',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
+        title: const Text('Search History'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.delete_outline),
+            icon: const Icon(Icons.delete_outline, color: Colors.red),
+            tooltip: 'Clear All',
             onPressed: () => _showDeleteAllDialog(context),
           ),
         ],
@@ -48,7 +46,7 @@ class SearchHistoryPage extends StatelessWidget {
     showDialog(
       context: context,
       builder:
-          (context) => AlertDialog(
+          (_) => AlertDialog(
             title: const Text('Clear All History'),
             content: const Text(
               'Are you sure you want to delete all search history?',
@@ -58,17 +56,15 @@ class SearchHistoryPage extends StatelessWidget {
                 onPressed: () => Navigator.pop(context),
                 child: const Text('Cancel'),
               ),
-              TextButton(
+              FilledButton(
+                style: FilledButton.styleFrom(backgroundColor: Colors.red),
                 onPressed: () {
                   context.read<SearchHistoryBloc>().add(
                     DeleteAllSearchHistory(),
                   );
                   Navigator.pop(context);
                 },
-                child: const Text(
-                  'Delete',
-                  style: TextStyle(color: Colors.red),
-                ),
+                child: const Text('Delete'),
               ),
             ],
           ),

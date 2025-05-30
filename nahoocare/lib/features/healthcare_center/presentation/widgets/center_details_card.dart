@@ -10,108 +10,152 @@ class CenterDetailsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 3,
+      margin: const EdgeInsets.symmetric(horizontal: 4),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Name
             Text(
               center.name,
-              style: Theme.of(
-                context,
-              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+              style: textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
             ),
-            const SizedBox(height: 8),
+
+            const SizedBox(height: 10),
+
+            // Address
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Icon(Icons.location_on, size: 16),
-                const SizedBox(width: 4),
-                Text(
-                  center.address,
-                  style: Theme.of(context).textTheme.bodyMedium,
+                Icon(Icons.location_on, size: 18, color: colorScheme.primary),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(center.address, style: textTheme.bodyMedium),
                 ),
               ],
             ),
+
             const SizedBox(height: 12),
-            if (center.averageRating != null) ...[
+
+            // Rating
+            if (center.averageRating != null)
               Row(
                 children: [
                   RatingBarIndicator(
                     rating: center.averageRating!,
                     itemBuilder:
-                        (context, _) =>
-                            const Icon(Icons.star, color: Colors.amber),
+                        (_, __) => Icon(Icons.star, color: Colors.amber),
                     itemCount: 5,
-                    itemSize: 20.0,
-                    direction: Axis.horizontal,
+                    itemSize: 22,
                   ),
                   const SizedBox(width: 8),
                   Text(
                     center.averageRating!.toStringAsFixed(1),
-                    style: Theme.of(context).textTheme.bodyLarge,
+                    style: textTheme.bodyLarge?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ],
               ),
-              const SizedBox(height: 12),
-            ],
+
+            const Divider(height: 24),
+
+            // Specialties
             if (center.specialists.isNotEmpty) ...[
-              const Text(
-                'Specialties:',
-                style: TextStyle(fontWeight: FontWeight.bold),
+              Text(
+                'Specialties',
+                style: textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: 8),
               Wrap(
                 spacing: 8,
-                runSpacing: 4,
+                runSpacing: 8,
                 children:
                     center.specialists
                         .map(
-                          (specialty) => Chip(
-                            label: Text(specialty),
-                            materialTapTargetSize:
-                                MaterialTapTargetSize.shrinkWrap,
+                          (s) => Chip(
+                            label: Text(s),
+                            backgroundColor: colorScheme.primary.withOpacity(
+                              0.1,
+                            ),
                           ),
                         )
                         .toList(),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 16),
             ],
+
+            // Contact Info
             if (center.contactInfo != null &&
                 center.contactInfo!.isNotEmpty) ...[
-              const Text(
-                'Contact Information:',
-                style: TextStyle(fontWeight: FontWeight.bold),
+              Text(
+                'Contact Info',
+                style: textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: 8),
               ...center.contactInfo!.entries.map(
                 (entry) => Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 2.0),
+                  padding: const EdgeInsets.symmetric(vertical: 4.0),
                   child: Row(
                     children: [
+                      Icon(
+                        Icons.contact_phone,
+                        size: 18,
+                        color: colorScheme.primary,
+                      ),
+                      const SizedBox(width: 6),
                       Text(
                         '${entry.key}: ',
-                        style: const TextStyle(fontWeight: FontWeight.w500),
+                        style: textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
-                      Text(entry.value),
+                      Expanded(
+                        child: Text(entry.value, style: textTheme.bodyMedium),
+                      ),
                     ],
                   ),
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 16),
             ],
+
+            // Operating Hours
             if (center.availableTime.isNotEmpty) ...[
-              const Text(
-                'Operating Hours:',
-                style: TextStyle(fontWeight: FontWeight.bold),
+              Text(
+                'Operating Hours',
+                style: textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: 8),
               ...center.availableTime.map(
                 (time) => Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 2.0),
-                  child: Text(time),
+                  padding: const EdgeInsets.symmetric(vertical: 2),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.access_time,
+                        size: 18,
+                        color: colorScheme.primary,
+                      ),
+                      const SizedBox(width: 6),
+                      Expanded(child: Text(time, style: textTheme.bodyMedium)),
+                    ],
+                  ),
                 ),
               ),
             ],

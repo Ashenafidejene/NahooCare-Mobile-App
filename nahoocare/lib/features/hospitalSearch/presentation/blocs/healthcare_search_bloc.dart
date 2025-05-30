@@ -1,111 +1,164 @@
-import 'package:bloc/bloc.dart';
-import 'package:dartz/dartz.dart';
+import 'package:equatable/equatable.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:latlong2/latlong.dart';
 
 import '../../../../core/errors/failures.dart';
+
+import '../../../symptomSearch/data/datasources/location_data_source.dart';
 import '../../domain/entities/healthcare_entity.dart';
+import '../../domain/usecases/filter_healthcare.dart';
+import '../../domain/usecases/get_healthcare.dart';
+import '../../domain/usecases/get_specialties.dart';
+import '../../domain/usecases/sort_healthcare.dart';
 
-import '../../domain/entities/search_param.dart';
-import '../../domain/usecases/search_by_location.dart';
-import '../../domain/usecases/search_by_name.dart';
-import '../../domain/usecases/search_by_specialty.dart';
-import '../../domain/usecases/search_healthcare.dart';
-import 'healthcare_search_event.dart';
-import 'healthcare_search_state.dart';
+part 'healthcare_search_event.dart';
+part 'healthcare_search_state.dart';
 
-class HealthcareSearchBloc
-    extends Bloc<HealthcareSearchEvent, HealthcareSearchState> {
-  final SearchByNames searchByName;
-  final SearchBySpecialtys searchBySpecialty;
-  final SearchByLocations searchByLocation;
-  final SearchHealthcare searchHealthcare;
+class HealthcareBloc extends Bloc<HealthcareEvent, HealthcareState> {
+  final GetAllHealthcareCenters getAllHealthcareCenters;
+  final GetAllSpecialties getAllSpecialties;
+  final FilterHealthcareCenter filterHealthcareCenters;
+  final SortHealthcareCenter sortHealthcareCenters;
+  final LocationDataSource locationService;
 
-  HealthcareSearchBloc({
-    required this.searchByName,
-    required this.searchBySpecialty,
-    required this.searchByLocation,
-    required this.searchHealthcare,
-  }) : super(SearchInitial()) {
-    on<HealthcareSearchEvent>((event, emit) async {
-      if (event is SearchByName) {
-        await _handleSearchByName(event, emit);
-      } else if (event is SearchBySpecialty) {
-        await _handleSearchBySpecialty(event, emit);
-      } else if (event is SearchByLocation) {
-        await _handleSearchByLocation(event, emit);
-      } else if (event is SearchWithAllFilters) {
-        await _handleSearchWithAllFilters(event, emit);
-      }
-    });
+  HealthcareBloc({
+    required this.getAllHealthcareCenters,
+    required this.getAllSpecialties,
+    required this.filterHealthcareCenters,
+    required this.sortHealthcareCenters,
+    required this.locationService,
+  }) : super(const HealthcareState()) {
+    on<LoadHealthcareCenters>(_onLoadHealthcareCenters);
+    on<SearchHealthcareCenters>(_onSearchHealthcareCenters);
+    on<FilterHealthcareCenters>(_onFilterHealthcareCenters);
+    on<SortHealthcareCenters>(_onSortHealthcareCenters);
+    on<ResetHealthcareFilters>(_onResetFilters);
   }
 
-  Future<void> _handleSearchByName(
-    SearchByName event,
-    Emitter<HealthcareSearchState> emit,
+  Future<void> _onLoadHealthcareCenters(
+    LoadHealthcareCenters event,
+    Emitter<HealthcareState> emit,
   ) async {
-    emit(SearchLoading());
-    final result = await searchByName(event.name);
-    _handleResult(result, emit);
-  }
+    emit(state.copyWith(status: HealthcareStatus.loading));
 
-  Future<void> _handleSearchBySpecialty(
-    SearchBySpecialty event,
-    Emitter<HealthcareSearchState> emit,
-  ) async {
-    emit(SearchLoading());
-    final result = await searchBySpecialty(event.specialties);
-    _handleResult(result, emit);
-  }
+    try {
+      final centers = await getAllHealthcareCenters();
+      final specialties = await getAllSpecialties();
 
-  Future<void> _handleSearchByLocation(
-    SearchByLocation event,
-    Emitter<HealthcareSearchState> emit,
-  ) async {
-    emit(SearchLoading());
-    final result = await searchByLocation(
-      SearchByLocationParams(
-        latitude: event.latitude,
-        longitude: event.longitude,
-        maxDistanceKm: event.maxDistanceKm,
-      ),
-    );
-    _handleResult(result, emit);
-  }
-
-  Future<void> _handleSearchWithAllFilters(
-    SearchWithAllFilters event,
-    Emitter<HealthcareSearchState> emit,
-  ) async {
-    emit(SearchLoading());
-    final result = await searchHealthcare(
-      SearchHealthcareParams(
-        name: event.name,
-        specialties: event.specialties,
-        latitude: event.latitude,
-        longitude: event.longitude,
-        maxDistanceKm: event.maxDistanceKm,
-      ),
-    );
-    _handleResult(result, emit);
-  }
-
-  void _handleResult(
-    Either<Failure, List<HealthcareEntity>> result,
-    Emitter<HealthcareSearchState> emit,
-  ) {
-    result.fold(
-      (failure) => emit(SearchError(_mapFailureToMessage(failure))),
-      (results) => emit(SearchLoaded(results)),
-    );
-  }
-
-  String _mapFailureToMessage(Failure failure) {
-    switch (failure.runtimeType) {
-      case ServerFailure:
-        return 'Server error';
-      case NetworkFailure:
-        return 'Network error';
-      default:
-        return 'Unexpected error';
+      emit(
+        state.copyWith(
+          status: HealthcareStatus.success,
+          allCenters: centers,
+          filteredCenters: centers,
+          allSpecialties: specialties,
+        ),
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(
+          status: HealthcareStatus.failure,
+          errorMessage: e.toString(),
+        ),
+      );
     }
+  }
+
+  Future<void> _onSearchHealthcareCenters(
+    SearchHealthcareCenters event,
+    Emitter<HealthcareState> emit,
+  ) async {
+    final filtered = filterHealthcareCenters(
+      centers: state.allCenters,
+      searchQuery: event.query,
+      selectedSpecialties: state.selectedSpecialties,
+    );
+
+    emit(
+      state.copyWith(
+        filteredCenters: _applySort(filtered),
+        searchQuery: event.query,
+      ),
+    );
+  }
+
+  Future<void> _onFilterHealthcareCenters(
+    FilterHealthcareCenters event,
+    Emitter<HealthcareState> emit,
+  ) async {
+    final filtered = filterHealthcareCenters(
+      centers: state.allCenters,
+      searchQuery: state.searchQuery,
+      selectedSpecialties: event.specialties,
+    );
+
+    emit(
+      state.copyWith(
+        filteredCenters: _applySort(filtered),
+        selectedSpecialties: event.specialties,
+      ),
+    );
+  }
+
+  Future<void> _onSortHealthcareCenters(
+    SortHealthcareCenters event,
+    Emitter<HealthcareState> emit,
+  ) async {
+    if (!event.sortByDistance) {
+      // Reset to original order (filtered but not sorted)
+      final filtered = filterHealthcareCenters(
+        centers: state.allCenters,
+        searchQuery: state.searchQuery,
+        selectedSpecialties: state.selectedSpecialties,
+      );
+
+      emit(state.copyWith(filteredCenters: filtered, sortByDistance: false));
+      return;
+    }
+
+    emit(state.copyWith(status: HealthcareStatus.loading));
+
+    try {
+      final userLocation = await locationService.getCurrentLocation();
+      final sorted = sortHealthcareCenters(
+        centers: state.filteredCenters,
+        userLocation: userLocation,
+      );
+
+      emit(
+        state.copyWith(
+          status: HealthcareStatus.success,
+          filteredCenters: sorted,
+          sortByDistance: true,
+        ),
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(
+          status: HealthcareStatus.failure,
+          errorMessage: e.toString(),
+        ),
+      );
+    }
+  }
+
+  Future<void> _onResetFilters(
+    ResetHealthcareFilters event,
+    Emitter<HealthcareState> emit,
+  ) async {
+    emit(
+      state.copyWith(
+        filteredCenters: _applySort(state.allCenters),
+        selectedSpecialties: const [],
+        searchQuery: '',
+        sortByDistance: false,
+      ),
+    );
+  }
+
+  List<HealthcareEntity> _applySort(List<HealthcareEntity> centers) {
+    if (!state.sortByDistance) return centers;
+
+    // This is a simplified version - actual sorting would require location
+    return centers; // Real implementation would sort here
   }
 }

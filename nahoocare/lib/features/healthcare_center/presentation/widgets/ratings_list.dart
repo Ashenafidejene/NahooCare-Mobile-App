@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-
+import 'package:intl/intl.dart';
 import '../../domain/entities/rating.dart';
 
 class RatingsList extends StatelessWidget {
@@ -11,48 +11,76 @@ class RatingsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (ratings.isEmpty) {
-      return const Card(
-        child: Padding(
-          padding: EdgeInsets.all(16.0),
-          child: Text('No reviews yet. Be the first to review!'),
+      return Card(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        elevation: 4,
+        color: Theme.of(context).colorScheme.surfaceVariant,
+        child: const Padding(
+          padding: EdgeInsets.all(20.0),
+          child: Center(
+            child: Text(
+              'No reviews yet.\nBe the first to review!',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+              textAlign: TextAlign.center,
+            ),
+          ),
         ),
       );
     }
 
-    return ListView.builder(
+    return ListView.separated(
+      itemCount: ratings.length,
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      itemCount: ratings.length,
+      separatorBuilder: (_, __) => const SizedBox(height: 12),
       itemBuilder: (context, index) {
         final rating = ratings[index];
-        return Card(
-          margin: const EdgeInsets.only(bottom: 12),
-          elevation: 2,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-          child: Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Column(
+        final initials = _getInitials("someBody ");
+
+        return Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).cardColor,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: const [
+              BoxShadow(
+                color: Colors.black12,
+                blurRadius: 6,
+                offset: Offset(0, 2),
+              ),
+            ],
+          ),
+          child: ListTile(
+            leading: CircleAvatar(
+              backgroundColor: Colors.teal,
+              child: Text(
+                initials,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            title: Row(
+              children: [
+                RatingBarIndicator(
+                  rating: rating.ratingValue.toDouble(),
+                  itemBuilder:
+                      (context, _) =>
+                          const Icon(Icons.star, color: Colors.amber),
+                  itemCount: 5,
+                  itemSize: 18,
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  rating.ratingValue.toStringAsFixed(1),
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+              ],
+            ),
+            subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    RatingBarIndicator(
-                      rating: rating.ratingValue.toDouble(),
-                      itemBuilder:
-                          (context, _) =>
-                              const Icon(Icons.star, color: Colors.amber),
-                      itemCount: 5,
-                      itemSize: 20.0,
-                      direction: Axis.horizontal,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      rating.ratingValue.toString(),
-                      style: Theme.of(context).textTheme.bodyLarge,
-                    ),
-                  ],
-                ),
-                if (rating.comment.isNotEmpty) ...[
+                if (rating.comment.trim().isNotEmpty) ...[
                   const SizedBox(height: 8),
                   Text(
                     rating.comment,
@@ -74,12 +102,13 @@ class RatingsList extends StatelessWidget {
     );
   }
 
-  String _formatDate(DateTime date) {
-    return '${_twoDigits(date.day)}/${_twoDigits(date.month)}/${date.year}';
+  String _getInitials(String name) {
+    final parts = name.trim().split(" ");
+    if (parts.length == 1) return parts[0][0].toUpperCase();
+    return parts.take(2).map((e) => e[0].toUpperCase()).join();
   }
 
-  String _twoDigits(int n) {
-    if (n >= 10) return '$n';
-    return '0$n';
+  String _formatDate(DateTime date) {
+    return DateFormat.yMMMd().format(date);
   }
 }

@@ -35,9 +35,15 @@ class HealthcareCenterBloc
 
     final result = await getHealthcareCenterDetails.execute(event.centerId);
 
-    result.fold(
-      (failure) => emit(HealthcareCenterError(_mapFailureToMessage(failure))),
-      (center) => emit(HealthcareCenterLoaded(center: center)),
+    await result.fold(
+      (failure) async =>
+          emit(HealthcareCenterError(_mapFailureToMessage(failure))),
+      (center) async {
+        final ratingsResult = await getCenterRatings.execute(event.centerId);
+        final ratings = ratingsResult.getOrElse(() => []);
+
+        emit(HealthcareCenterLoaded(center: center, ratings: ratings));
+      },
     );
   }
 
@@ -45,23 +51,21 @@ class HealthcareCenterBloc
     LoadCenterRatings event,
     Emitter<HealthcareCenterState> emit,
   ) async {
-    emit(HealthcareCenterLoading());
-
+    // 👇 Do not emit loading, keep previous state
     final result = await getCenterRatings.execute(event.centerId);
 
     result.fold(
       (failure) {
-        // Special case for "no ratings found" message
         if (failure is NotFoundFailure &&
             failure.message.contains('No ratings found')) {
           if (state is HealthcareCenterLoaded) {
             final currentState = state as HealthcareCenterLoaded;
             emit(currentState.copyWith(ratings: []));
           } else {
+            // This shouldn't happen unless LoadRatings is called too early
             emit(
               HealthcareCenterLoaded(
-                center:
-                    HealthcareCenter.empty(), // You'll need to add empty constructor
+                center: HealthcareCenter.empty(),
                 ratings: [],
               ),
             );
@@ -75,7 +79,7 @@ class HealthcareCenterBloc
           final currentState = state as HealthcareCenterLoaded;
           emit(currentState.copyWith(ratings: ratings));
         } else {
-          emit(HealthcareCenterError('Center details not loaded'));
+          emit(HealthcareCenterError('Center details not available yet'));
         }
       },
     );

@@ -13,77 +13,144 @@ class HealthProfileDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildProfileSection('Blood Type', profile.bloodType),
-          _buildListSection('Allergies', profile.allergies),
-          _buildListSection('Chronic Conditions', profile.chronicConditions),
-          _buildListSection('Medical History', profile.medicalHistory),
-          const SizedBox(height: 24),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              ElevatedButton(
-                onPressed: () => _navigateToEditProfile(context),
-                child: const Text('Edit Profile'),
-              ),
-              ElevatedButton(
-                onPressed: () => _confirmDeleteProfile(context),
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                child: const Text('Delete Profile'),
-              ),
-            ],
-          ),
-        ],
+      padding: const EdgeInsets.all(20),
+      child: Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 12,
+              offset: const Offset(0, 6),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildProfileSection(context, Icons.water_drop, 'Blood Type', [
+              profile.bloodType,
+            ]),
+            const Divider(height: 32),
+            _buildProfileSection(
+              context,
+              Icons.warning_amber,
+              'Allergies',
+              profile.allergies,
+            ),
+            const Divider(height: 32),
+            _buildProfileSection(
+              context,
+              Icons.favorite,
+              'Chronic Conditions',
+              profile.chronicConditions,
+            ),
+            const Divider(height: 32),
+            _buildProfileSection(
+              context,
+              Icons.history,
+              'Medical History',
+              profile.medicalHistory,
+            ),
+            const SizedBox(height: 30),
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () => _navigateToEditProfile(context),
+                    icon: const Icon(Icons.edit, size: 20, color: Colors.white),
+                    label: const Text(
+                      'Edit Profile',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      backgroundColor: Colors.blueAccent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () => _confirmDeleteProfile(context),
+                    icon: const Icon(Icons.delete_outline, size: 20),
+                    label: const Text('Delete'),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      backgroundColor: Colors.redAccent,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildProfileSection(String title, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          Text(value, style: const TextStyle(fontSize: 16)),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildListSection(String title, List<String> items) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          if (items.isEmpty)
-            const Text('None', style: TextStyle(fontSize: 16))
-          else
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _buildProfileSection(
+    BuildContext context,
+    IconData icon,
+    String title,
+    List<String> items,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(icon, size: 28, color: Colors.blueAccent),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Text(
+                title,
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        if (items.isEmpty || (items.length == 1 && items.first.isEmpty))
+          Padding(
+            padding: const EdgeInsets.only(left: 44),
+            child: Text('None', style: Theme.of(context).textTheme.bodyMedium),
+          )
+        else
+          Padding(
+            padding: const EdgeInsets.only(left: 44),
+            child: Wrap(
+              spacing: 8,
+              runSpacing: 8,
               children:
                   items
                       .map(
-                        (item) => Text(
-                          '- $item',
-                          style: const TextStyle(fontSize: 16),
+                        (item) => Chip(
+                          label: Text(item),
+                          backgroundColor: Colors.blueAccent.withOpacity(0.1),
+                          labelStyle: const TextStyle(color: Colors.black87),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 4,
+                          ),
                         ),
                       )
                       .toList(),
             ),
-        ],
-      ),
+          ),
+      ],
     );
   }
 

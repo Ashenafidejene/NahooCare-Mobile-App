@@ -1,13 +1,8 @@
-import 'package:dartz/dartz.dart';
-import '../../../../core/errors/failures.dart';
+import 'package:latlong2/latlong.dart';
 import '../entities/healthcare_entity.dart';
 
-abstract class HealthcareRepositorys {
-  Future<Either<Failure, List<HealthcareEntity>>> searchHealthcare({
-    String? name,
-    List<String>? specialties,
-    double? latitude,
-    double? longitude,
-    int maxDistanceKm = 10,
-  });
+abstract class HealthcareRepositories {
+  Future<List<HealthcareEntity>> getAllHealthcareCenters();
+  Future<LatLng> getUserLocation();
+  Future<List<String>> getAllSpecialties();
 }

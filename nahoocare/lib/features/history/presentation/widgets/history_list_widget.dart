@@ -15,6 +15,7 @@ class HistoryListWidget extends StatelessWidget {
     return Column(
       children: [
         _buildHeader(context),
+        const Divider(thickness: 1),
         Expanded(
           child: ListView.separated(
             itemCount: history.length,
@@ -22,7 +23,10 @@ class HistoryListWidget extends StatelessWidget {
             itemBuilder:
                 (context, index) => HistoryItemWidget(
                   item: history[index],
-                  onDelete: () => _deleteItem(context, history[index].searchId),
+                  onDelete:
+                      () => context.read<SearchHistoryBloc>().add(
+                        DeleteSearchHistory(history[index].searchId),
+                      ),
                 ),
           ),
         ),
@@ -35,18 +39,17 @@ class HistoryListWidget extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 12),
       child: Row(
         children: [
+          Icon(Icons.history, color: Colors.blueAccent),
+          const SizedBox(width: 8),
           Text(
-            '${history.length} ${history.length == 1 ? 'Item' : 'Items'}',
-            style: Theme.of(
-              context,
-            ).textTheme.titleSmall?.copyWith(color: Colors.grey.shade600),
+            '${history.length} ${history.length == 1 ? 'item' : 'items'}',
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              color: Colors.grey[700],
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ],
       ),
     );
-  }
-
-  void _deleteItem(BuildContext context, String searchId) {
-    context.read<SearchHistoryBloc>().add(DeleteSearchHistory(searchId));
   }
 }

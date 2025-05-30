@@ -2,69 +2,53 @@ import 'package:dartz/dartz.dart';
 import '../../../../core/errors/exceptions.dart';
 import '../../../../core/errors/failures.dart';
 import '../../../../core/network/api_client.dart';
-import '../../domain/entities/healthcare_entity.dart';
 import '../models/healthcare_search_model.dart';
 
-abstract class HealthcareRemoteDataSources {
-  Future<Either<Failure, List<HealthcareEntity>>> searchHealthcare({
-    String? name,
-    List<String>? specialties,
-    double? latitude,
-    double? longitude,
-    int maxDistanceKm = 10,
-  });
+abstract class HealthcareCenterRemoteDataSources {
+  Future<List<HealthcareModel>> getAllHealthcareCenters();
 }
 
-class HealthcareRemoteDataSourcesImpl implements HealthcareRemoteDataSources {
+class HealthcareCenterRemoteDataSourcesImpl
+    implements HealthcareCenterRemoteDataSources {
   final ApiClient apiClient; // Your HTTP client (Dio, http, etc.)
 
-  HealthcareRemoteDataSourcesImpl({required this.apiClient});
+  HealthcareCenterRemoteDataSourcesImpl({required this.apiClient});
 
   @override
-  Future<Either<Failure, List<HealthcareEntity>>> searchHealthcare({
-    String? name,
-    List<String>? specialties,
-    double? latitude,
-    double? longitude,
-    int maxDistanceKm = 10,
-  }) async {
+  Future<List<HealthcareModel>> getAllHealthcareCenters() async {
     try {
-      // Create request model
-      final request = HealthcareSearchModel(
-        name: name ?? '',
-        specialties: specialties ?? [],
-        latitude: latitude ?? 0.0,
-        longitude: longitude ?? 0.0,
-        maxDistanceKm: maxDistanceKm,
-      );
-      print(request.toJson());
-      // Make API call (adapt to your actual API)
-      final response = await apiClient.post(
-        '/api/healthcaresearch/specification/',
-        request.toJson(),
+      final response = await apiClient.get(
+        '/api/healthcare/user/total_healthcare/',
         requiresAuth: true,
       );
-      print(response);
-      // Parse response
-      final List<HealthcareEntity> results =
-          (response as List)
-              .map(
-                (item) => HealthcareEntity(
-                  centerId: item['center_id'],
-                  name: item['name'],
-                  latitude: item['latitude'],
-                  longitude: item['longitude'],
-                ),
+
+      // Add type checking for the response
+      if (response is! List) {
+        throw const FormatException('Expected a list from the API');
+      }
+
+      // Explicitly cast each item to Map<String, dynamic>
+      final List<HealthcareModel> centers =
+          response
+              .where(
+                (item) => item is Map<String, dynamic>,
+              ) // Filter valid items
+              .map<HealthcareModel>(
+                (item) =>
+                    HealthcareModel.fromJson(item as Map<String, dynamic>),
               )
               .toList();
 
-      return Right(results);
-    } on ServerException {
-      return Left(ServerFailure('Server error', 500));
-    } on NetworkException {
-      return Left(NetworkFailure('Network error'));
+      print('Successfully parsed ${centers.length} healthcare centers');
+      return centers;
+    } on FormatException catch (e) {
+      print('Format error: ${e.message}');
+      throw ServerFailure('Invalid data format from server', 500);
+    } on ServerException catch (e) {
+      throw ServerFailure(e.message, e.statusCode);
     } catch (e) {
-      return Left(ServerFailure('Unexpected error: ${e.toString()}', 500));
+      print("Unexpected error: ${e.toString()}");
+      throw ServerFailure('An unexpected error occurred', 500);
     }
   }
 }

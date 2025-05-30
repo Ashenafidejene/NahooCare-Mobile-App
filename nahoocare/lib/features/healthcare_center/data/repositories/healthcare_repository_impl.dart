@@ -21,7 +21,19 @@ class HealthcareRepositoryImpl implements HealthcareRepository {
   Future<Either<Failure, List<Rating>>> getCenterRatings(
     String centerId,
   ) async {
-    return await remoteDataSource.getCenterRatings(centerId);
+    final value = await remoteDataSource.getCenterRatings(centerId);
+    return value.fold(
+      (failure) {
+        print("Error fetching ratings: ${failure.message}");
+        return Left(failure);
+      },
+      (ratings) {
+        if (ratings.isNotEmpty) {
+          print(ratings[0].comment);
+        }
+        return Right(ratings);
+      },
+    );
   }
 
   @override

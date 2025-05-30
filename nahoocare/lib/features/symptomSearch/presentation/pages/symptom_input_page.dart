@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:latlong2/latlong.dart';
 
 import '../../domain/entities/search_response.dart';
-
 import '../blocs/symptom_search_bloc.dart';
 import '../widgets/first_aid_card.dart';
 import 'map_screen.dart';
@@ -19,50 +18,50 @@ class _SymptomInputPageState extends State<SymptomInputPage> {
   final TextEditingController _symptomsController = TextEditingController();
   LatLng? _currentLocation;
   bool _isLocationLoading = false;
-  String? _locationError;
 
   @override
   void initState() {
     super.initState();
     _fetchUserLocation();
-    _symptomsController.addListener(_updateState);
+    _symptomsController.addListener(() {
+      setState(() {}); // Trigger rebuild on text change
+    });
   }
-
-  @override
-  void dispose() {
-    _symptomsController.removeListener(_updateState);
-    _symptomsController.dispose();
-    super.dispose();
-  }
-
-  void _updateState() => setState(() {});
 
   Future<void> _fetchUserLocation() async {
     setState(() {
       _isLocationLoading = true;
-      _locationError = null;
     });
 
     try {
       context.read<SymptomSearchBloc>().add(GetUserLocation());
-    } catch (e) {
+    } catch (_) {
       setState(() {
-        _locationError = 'Failed to get location: ${e.toString()}';
         _isLocationLoading = false;
       });
     }
   }
 
   void _performSearch() {
-    if (_currentLocation != null &&
-        _symptomsController.text.trim().isNotEmpty) {
+    final symptoms = _symptomsController.text.trim();
+
+    if (symptoms.isEmpty) return;
+
+    if (_currentLocation != null) {
       context.read<SymptomSearchBloc>().add(
         PerformSearch(
-          symptoms: _symptomsController.text.trim(),
+          symptoms: symptoms,
           latitude: _currentLocation!.latitude,
           longitude: _currentLocation!.longitude,
         ),
       );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Fetching your location. Please try again.'),
+        ),
+      );
+      _fetchUserLocation();
     }
   }
 
@@ -81,114 +80,152 @@ class _SymptomInputPageState extends State<SymptomInputPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Health Center Finder')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            // Symptoms Input Field
-            TextField(
-              controller: _symptomsController,
-              decoration: const InputDecoration(
-                labelText: 'Enter your symptoms (comma separated)',
-                border: OutlineInputBorder(),
-                hintText: 'e.g. Fever, Headache',
-              ),
-            ),
-            const SizedBox(height: 20),
-
-            // Location Status Section
-            _buildLocationStatus(),
-
-            // Search Button
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed:
-                  _currentLocation != null &&
-                          _symptomsController.text.trim().isNotEmpty
-                      ? _performSearch
-                      : null,
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size(double.infinity, 50),
-              ),
-              child: const Text('Find Health Centers'),
-            ),
-
-            // Results Section
-            const SizedBox(height: 20),
-            Expanded(
-              child: BlocConsumer<SymptomSearchBloc, SymptomSearchState>(
-                listener: (context, state) {
-                  if (state is LocationLoaded) {
-                    setState(() {
-                      _currentLocation = state.position;
-                      _isLocationLoading = false;
-                      _locationError = null;
-                    });
-                  } else if (state is LocationError) {
-                    setState(() {
-                      _locationError = state.message;
-                      _isLocationLoading = false;
-                    });
-                  }
-                },
-                builder: (context, state) {
-                  if (state is SearchLoading) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (state is SearchError) {
-                    return Center(
-                      child: Text(
-                        'Search error: ${state.message}',
-                        style: const TextStyle(color: Colors.red),
+      body: SafeArea(
+        child: BlocConsumer<SymptomSearchBloc, SymptomSearchState>(
+          listener: (context, state) {
+            if (state is LocationLoaded) {
+              setState(() {
+                _currentLocation = state.position;
+                _isLocationLoading = false;
+              });
+            } else if (state is LocationError) {
+              setState(() {
+                _isLocationLoading = false;
+              });
+            }
+          },
+          builder: (context, state) {
+            return SingleChildScrollView(
+              padding: const EdgeInsets.all(20),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: screenHeight - 100),
+                child: IntrinsicHeight(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 10),
+                      Text(
+                        '🩺 Symptom Checker',
+                        style: theme.textTheme.headlineSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blueAccent,
+                        ),
                       ),
-                    );
-                  } else if (state is SearchLoaded) {
-                    return Column(
-                      children: [
+                      const SizedBox(height: 6),
+                      Text(
+                        'Describe how you feel and we’ll guide you to care.',
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+
+                      // SYMPTOM INPUT
+                      TextField(
+                        controller: _symptomsController,
+                        maxLines: 2,
+                        decoration: InputDecoration(
+                          labelText: 'Your symptoms',
+                          hintText: 'e.g. headache, sore throat...',
+                          filled: true,
+                          fillColor: Colors.white,
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14),
+                            borderSide: BorderSide(color: Colors.grey.shade300),
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      // SEARCH BUTTON
+                      Builder(
+                        builder: (context) {
+                          return SizedBox(
+                            width: double.infinity,
+                            height: 48,
+                            child: ElevatedButton.icon(
+                              onPressed:
+                                  (_symptomsController.text.trim().isNotEmpty &&
+                                          _currentLocation != null)
+                                      ? _performSearch
+                                      : null,
+                              icon: const Icon(Icons.search),
+                              label: const Text('Search for Help'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.blueAccent,
+                                foregroundColor: Colors.white,
+                                textStyle: const TextStyle(fontSize: 16),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+
+                      const SizedBox(height: 24),
+
+                      if (state is SearchLoading)
+                        const Center(child: CircularProgressIndicator()),
+
+                      if (state is SearchError)
+                        Center(
+                          child: Text(
+                            '⚠️ ${state.message}',
+                            style: const TextStyle(color: Colors.red),
+                          ),
+                        ),
+
+                      if (state is SearchLoaded) ...[
                         if (state.response.firstAid != null)
-                          FirstAidCard(firstAid: state.response.firstAid!),
-                        const SizedBox(height: 16),
-                        ElevatedButton(
-                          onPressed: () => _navigateToMap(state.response),
-                          child: const Text('View on Map'),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8),
+                            child: FirstAidCard(
+                              firstAid: state.response.firstAid!,
+                            ),
+                          ),
+                        const SizedBox(height: 12),
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton.icon(
+                            icon: const Icon(Icons.map_outlined),
+                            label: const Text('View Centers on Map'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.green,
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(14),
+                              ),
+                            ),
+                            onPressed: () => _navigateToMap(state.response),
+                          ),
                         ),
                       ],
-                    );
-                  }
-                  return const SizedBox.shrink();
-                },
+                      const SizedBox(height: 20),
+                    ],
+                  ),
+                ),
               ),
-            ),
-          ],
+            );
+          },
         ),
       ),
     );
   }
 
-  Widget _buildLocationStatus() {
-    if (_isLocationLoading) {
-      return const Row(
-        children: [
-          CircularProgressIndicator(),
-          SizedBox(width: 10),
-          Text('Fetching location...'),
-        ],
-      );
-    } else if (_locationError != null) {
-      return Column(
-        children: [
-          Text(_locationError!, style: const TextStyle(color: Colors.red)),
-          TextButton(onPressed: _fetchUserLocation, child: const Text('Retry')),
-        ],
-      );
-    } else if (_currentLocation != null) {
-      return Text(
-        'Location: ${_currentLocation!.latitude.toStringAsFixed(4)}, '
-        '${_currentLocation!.longitude.toStringAsFixed(4)}',
-      );
-    } else {
-      return const Text('Location not available');
-    }
+  @override
+  void dispose() {
+    _symptomsController.dispose();
+    super.dispose();
   }
 }

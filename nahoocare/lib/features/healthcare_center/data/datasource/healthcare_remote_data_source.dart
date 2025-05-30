@@ -33,7 +33,7 @@ class HealthcareRemoteDataSourceImpl implements HealthcareRemoteDataSource {
         '/api/healthcare/get_healthcare/user/$centerId',
         requiresAuth: true,
       );
-      print("Raw response: ${response.toString()}");
+      //  print("Raw response: ${response.length}");
 
       // Add type checking
       if (response is! Map<String, dynamic>) {
@@ -41,7 +41,7 @@ class HealthcareRemoteDataSourceImpl implements HealthcareRemoteDataSource {
       }
 
       final center = HealthcareCenterModel.fromJson(response);
-      print("Mapped center: ${center.toString()}");
+      // print("Mapped center: ${center.toString()}");
       return Right(center);
     } on FormatException catch (e) {
       return Left(ServerFailure('Invalid data format: ${e.message}', 400));

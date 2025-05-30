@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nahoocare/features/healthcare_center/presentation/bloc/healthcare_center_bloc.dart';
-
 import '../widgets/center_details_card.dart';
 import '../widgets/rating_form.dart';
 import '../widgets/ratings_list.dart';
@@ -14,12 +13,16 @@ class HealthcareCenterDetailsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    context.read<HealthcareCenterBloc>()
-      ..add(LoadHealthcareCenterDetails(centerId))
-      ..add(LoadCenterRatings(centerId));
+    context.read<HealthcareCenterBloc>().add(
+      LoadHealthcareCenterDetails(centerId),
+    );
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Healthcare Center'), centerTitle: true),
+      appBar: AppBar(
+        title: const Text('Healthcare Center Details'),
+        centerTitle: true,
+        elevation: 0,
+      ),
       body: BlocConsumer<HealthcareCenterBloc, HealthcareCenterState>(
         listener: (context, state) {
           if (state is RatingSubmissionSuccess) {
@@ -48,33 +51,55 @@ class HealthcareCenterDetailsPage extends StatelessWidget {
               ),
             );
           } else if (state is HealthcareCenterLoaded) {
-            return SingleChildScrollView(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  CenterDetailsCard(center: state.center),
-                  const SizedBox(height: 24),
-                  const Text(
-                    'Rate this Center',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
+            return RefreshIndicator(
+              onRefresh: () async {
+                context.read<HealthcareCenterBloc>()
+                  ..add(LoadHealthcareCenterDetails(centerId))
+                  ..add(LoadCenterRatings(centerId));
+              },
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(16.0),
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    CenterDetailsCard(center: state.center),
 
-                  const SizedBox(height: 24),
-                  const Text(
-                    'Patient Reviews',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 8),
-                  if (state.ratings == null)
-                    const CircularProgressIndicator()
-                  else if (state.ratings!.isEmpty)
-                    const Text('No reviews yet. Be the first to review!')
-                  else
-                    RatingsList(ratings: state.ratings!),
-                  const SizedBox(height: 8),
-                  RatingForm(centerId: centerId),
-                ],
+                    const SizedBox(height: 24),
+                    Text(
+                      'Rate this Center',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Card(
+                      elevation: 3,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: RatingForm(centerId: centerId),
+                      ),
+                    ),
+
+                    const SizedBox(height: 28),
+                    Text(
+                      'Patient Reviews',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+
+                    if (state.ratings == null)
+                      const Center(child: CircularProgressIndicator())
+                    else
+                      RatingsList(ratings: state.ratings!),
+                    const SizedBox(height: 40),
+                  ],
+                ),
               ),
             );
           }

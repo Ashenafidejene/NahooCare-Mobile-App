@@ -16,13 +16,17 @@ class RemoteFirstAidDataSource {
         '/api/first-aid-guide/all',
         requiresAuth: false,
       );
-      print(response);
       final guides =
-          response.map((item) => RemoteFirstAidModel.fromJson(item)).toList();
+          (response as List<dynamic>)
+              .map(
+                (item) =>
+                    RemoteFirstAidModel.fromJson(item as Map<String, dynamic>),
+              )
+              .toList();
       print(guides[0].emergencyTitle);
       return Right(guides);
     } catch (e) {
-      print("error happenned");
+      print("error happenned ${e.toString()}");
       return Left(ServerFailure('Failed to fetch remote data', 500));
     }
   }

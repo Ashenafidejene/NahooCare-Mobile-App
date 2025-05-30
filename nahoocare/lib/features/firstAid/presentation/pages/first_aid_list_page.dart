@@ -12,15 +12,46 @@ class FirstAidListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Add this to trigger initial load
-
     context.read<FirstAidBloc>().add(LoadFirstAidGuides());
+
     return Scaffold(
-      appBar: AppBar(title: const Text('First Aid Guides')),
-      body: BlocBuilder<FirstAidBloc, FirstAidState>(
-        builder: (context, state) {
-          return _buildBodyContent(context, state);
-        },
+      body: SafeArea(
+        child: BlocBuilder<FirstAidBloc, FirstAidState>(
+          builder: (context, state) {
+            return Column(
+              children: [
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        '🩺 First Aid Guides',
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                if (state is FirstAidLoaded)
+                  SearchFilterBar(
+                    categories: _getUniqueCategories(state.allGuides),
+                    onSearch:
+                        (query) => context.read<FirstAidBloc>().add(
+                          SearchFirstAid(query),
+                        ),
+                    onFilter:
+                        (category) => context.read<FirstAidBloc>().add(
+                          FilterFirstAid(category),
+                        ),
+                  ),
+                Expanded(child: _buildBodyContent(context, state)),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
@@ -35,32 +66,16 @@ class FirstAidListPage extends StatelessWidget {
     }
 
     if (state is FirstAidLoaded) {
-      return Column(
-        children: [
-          SearchFilterBar(
-            categories: _getUniqueCategories(state.allGuides),
-            onSearch:
-                (query) =>
-                    context.read<FirstAidBloc>().add(SearchFirstAid(query)),
-            onFilter:
-                (category) =>
-                    context.read<FirstAidBloc>().add(FilterFirstAid(category)),
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: state.displayedGuides.length,
-              itemBuilder:
-                  (context, index) => FirstAidCard(
-                    guide: state.displayedGuides[index],
-                    onTap:
-                        () => _navigateToDetail(
-                          context,
-                          state.displayedGuides[index],
-                        ),
-                  ),
+      return ListView.builder(
+        padding: const EdgeInsets.only(bottom: 16),
+        itemCount: state.displayedGuides.length,
+        itemBuilder:
+            (context, index) => FirstAidCard(
+              guide: state.displayedGuides[index],
+              onTap:
+                  () =>
+                      _navigateToDetail(context, state.displayedGuides[index]),
             ),
-          ),
-        ],
       );
     }
 

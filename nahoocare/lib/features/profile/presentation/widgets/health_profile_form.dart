@@ -63,103 +63,111 @@ class _HealthProfileFormState extends State<HealthProfileForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        DropdownButtonFormField<String>(
-          value: widget.profile.bloodType,
-          decoration: const InputDecoration(
-            labelText: 'Blood Type',
-            border: OutlineInputBorder(),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          DropdownButtonFormField<String>(
+            value: widget.profile.bloodType,
+            decoration: _inputDecoration('Blood Type'),
+            items:
+                bloodTypes
+                    .map(
+                      (type) =>
+                          DropdownMenuItem(value: type, child: Text(type)),
+                    )
+                    .toList(),
+            onChanged: (value) {
+              if (value != null) {
+                _updateProfile(widget.profile.copyWith(bloodType: value));
+              }
+            },
           ),
-          items:
-              bloodTypes
-                  .map(
-                    (type) => DropdownMenuItem(value: type, child: Text(type)),
-                  )
-                  .toList(),
-          onChanged: (value) {
-            if (value != null) {
-              _updateProfile(widget.profile.copyWith(bloodType: value));
-            }
-          },
-        ),
-        const SizedBox(height: 16),
-        _buildListInput(
-          controller: _allergyController,
-          label: 'Allergies',
-          list: _allergies,
-          onAdd: () {
-            if (_allergyController.text.isNotEmpty) {
+          const SizedBox(height: 20),
+          _buildListInput(
+            controller: _allergyController,
+            label: 'Allergies',
+            list: _allergies,
+            onAdd: () {
+              if (_allergyController.text.isNotEmpty) {
+                _updateProfile(
+                  widget.profile.copyWith(
+                    allergies: [..._allergies, _allergyController.text],
+                  ),
+                );
+                _allergyController.clear();
+              }
+            },
+            onRemove: (index) {
+              final newAllergies = List<String>.from(_allergies)
+                ..removeAt(index);
+              _updateProfile(widget.profile.copyWith(allergies: newAllergies));
+            },
+          ),
+          const SizedBox(height: 20),
+          _buildListInput(
+            controller: _conditionController,
+            label: 'Chronic Conditions',
+            list: _chronicConditions,
+            onAdd: () {
+              if (_conditionController.text.isNotEmpty) {
+                _updateProfile(
+                  widget.profile.copyWith(
+                    chronicConditions: [
+                      ..._chronicConditions,
+                      _conditionController.text,
+                    ],
+                  ),
+                );
+                _conditionController.clear();
+              }
+            },
+            onRemove: (index) {
+              final newList = List<String>.from(_chronicConditions)
+                ..removeAt(index);
               _updateProfile(
-                widget.profile.copyWith(
-                  allergies: [..._allergies, _allergyController.text],
-                ),
+                widget.profile.copyWith(chronicConditions: newList),
               );
-              _allergyController.clear();
-            }
-          },
-          onRemove: (index) {
-            final newAllergies = List.from(_allergies);
-            newAllergies.removeAt(index);
-            _updateProfile(
-              widget.profile.copyWith(allergies: newAllergies.cast<String>()),
-            );
-          },
-        ),
-        const SizedBox(height: 16),
-        _buildListInput(
-          controller: _conditionController,
-          label: 'Chronic Conditions',
-          list: _chronicConditions,
-          onAdd: () {
-            if (_conditionController.text.isNotEmpty) {
-              _updateProfile(
-                widget.profile.copyWith(
-                  chronicConditions: [
-                    ..._chronicConditions,
-                    _conditionController.text,
-                  ],
-                ),
-              );
-              _conditionController.clear();
-            }
-          },
-          onRemove: (index) {
-            final newConditions = List.from(_chronicConditions);
-            newConditions.removeAt(index);
-            _updateProfile(
-              widget.profile.copyWith(
-                chronicConditions: newConditions.cast<String>(),
-              ),
-            );
-          },
-        ),
-        const SizedBox(height: 16),
-        _buildListInput(
-          controller: _historyController,
-          label: 'Medical History',
-          list: _medicalHistory,
-          onAdd: () {
-            if (_historyController.text.isNotEmpty) {
-              _updateProfile(
-                widget.profile.copyWith(
-                  medicalHistory: [..._medicalHistory, _historyController.text],
-                ),
-              );
-              _historyController.clear();
-            }
-          },
-          onRemove: (index) {
-            final newHistory = List.from(_medicalHistory);
-            newHistory.removeAt(index);
-            _updateProfile(
-              widget.profile.copyWith(
-                medicalHistory: newHistory.cast<String>(),
-              ),
-            );
-          },
-        ),
-      ],
+            },
+          ),
+          const SizedBox(height: 20),
+          _buildListInput(
+            controller: _historyController,
+            label: 'Medical History',
+            list: _medicalHistory,
+            onAdd: () {
+              if (_historyController.text.isNotEmpty) {
+                _updateProfile(
+                  widget.profile.copyWith(
+                    medicalHistory: [
+                      ..._medicalHistory,
+                      _historyController.text,
+                    ],
+                  ),
+                );
+                _historyController.clear();
+              }
+            },
+            onRemove: (index) {
+              final newList = List<String>.from(_medicalHistory)
+                ..removeAt(index);
+              _updateProfile(widget.profile.copyWith(medicalHistory: newList));
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  InputDecoration _inputDecoration(String label) {
+    return InputDecoration(
+      labelText: label,
+      hintText: 'Enter $label',
+      filled: true,
+      fillColor: Colors.grey.shade100,
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
     );
   }
 
@@ -175,7 +183,7 @@ class _HealthProfileFormState extends State<HealthProfileForm> {
       children: [
         Text(
           label,
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: 8),
         Row(
@@ -183,19 +191,21 @@ class _HealthProfileFormState extends State<HealthProfileForm> {
             Expanded(
               child: TextFormField(
                 controller: controller,
-                decoration: InputDecoration(
-                  hintText: 'Add $label',
-                  border: const OutlineInputBorder(),
-                  suffixIcon: IconButton(
-                    icon: const Icon(Icons.add),
-                    onPressed: onAdd,
-                  ),
-                ),
+                decoration: _inputDecoration('Add $label'),
               ),
+            ),
+            const SizedBox(width: 8),
+            ElevatedButton(
+              onPressed: onAdd,
+              style: ElevatedButton.styleFrom(
+                shape: const CircleBorder(),
+                padding: const EdgeInsets.all(10),
+              ),
+              child: const Icon(Icons.add, size: 20),
             ),
           ],
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 10),
         if (list.isNotEmpty)
           Wrap(
             spacing: 8,
@@ -203,7 +213,9 @@ class _HealthProfileFormState extends State<HealthProfileForm> {
             children: List.generate(list.length, (index) {
               return Chip(
                 label: Text(list[index]),
+                deleteIcon: const Icon(Icons.close),
                 onDeleted: () => onRemove(index),
+                backgroundColor: Colors.blue.shade50,
               );
             }),
           ),

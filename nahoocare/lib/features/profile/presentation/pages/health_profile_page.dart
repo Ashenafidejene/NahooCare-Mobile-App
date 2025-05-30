@@ -10,19 +10,7 @@ class HealthProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Health Profile'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: () {
-              context.read<HealthProfileBloc>().add(LoadHealthProfileEvent());
-            },
-          ),
-        ],
-      ),
-      body: HealthProfileView(),
-    );
+    context.read<HealthProfileBloc>().add(LoadHealthProfileEvent());
+    return Scaffold(body: HealthProfileView());
   }
 }

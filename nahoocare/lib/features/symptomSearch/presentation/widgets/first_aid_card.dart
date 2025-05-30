@@ -8,27 +8,72 @@ class FirstAidCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Card(
-      elevation: 4,
+      elevation: 3,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      margin: const EdgeInsets.symmetric(vertical: 8),
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(firstAid.title, style: Theme.of(context).textTheme.titleLarge),
-            const SizedBox(height: 8),
-            Text(firstAid.description),
-            const SizedBox(height: 16),
+            // Title
+            Row(
+              children: [
+                const Icon(Icons.health_and_safety, color: Colors.redAccent),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    firstAid.title,
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 12),
+
+            // Description
+            Text(
+              firstAid.description,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: Colors.grey[700],
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            // Conditions section
             Text(
               'Potential Conditions:',
-              style: Theme.of(context).textTheme.titleMedium,
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+                color: Colors.blueGrey[800],
+              ),
             ),
+            const SizedBox(height: 8),
+
+            // Condition chips
             Wrap(
               spacing: 8,
+              runSpacing: 8,
               children:
-                  firstAid.potentialConditions
-                      .map((condition) => Chip(label: Text(condition)))
-                      .toList(),
+                  firstAid.potentialConditions.map((condition) {
+                    return Chip(
+                      label: Text(condition),
+                      backgroundColor: Colors.blue[50],
+                      labelStyle: const TextStyle(color: Colors.blueAccent),
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    );
+                  }).toList(),
             ),
           ],
         ),
