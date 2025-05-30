@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../core/widgets/custom_button.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
 
+import '../../../../core/widgets/custom_button.dart';
 import '../blocs/auth_bloc.dart';
-import '../widgets/auth_form.dart';
 import '../widgets/password_field.dart';
-import '../widgets/phone_number_field.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -16,13 +15,25 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
-  final _phoneController = TextEditingController();
+  String? _completePhoneNumber;
   final _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Login'), centerTitle: true),
+      appBar: AppBar(
+        title: const Text('Login'),
+        centerTitle: true,
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pushNamed(context, '/landing'),
+            child: const Text(
+              'Skip',
+              style: TextStyle(color: Color.fromARGB(255, 20, 19, 19)),
+            ),
+          ),
+        ],
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: BlocConsumer<AuthBloc, AuthState>(
@@ -34,51 +45,113 @@ class _LoginPageState extends State<LoginPage> {
             } else if (state is LoginSuccess) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
-                  content: Text('Registration successful! Please login.'),
+                  content: Text('Login successful!'),
                   behavior: SnackBarBehavior.floating,
                 ),
               );
-              Future.delayed(const Duration(seconds: 2), () {
+              Future.delayed(const Duration(seconds: 1), () {
                 Navigator.pushNamed(context, '/landing');
               });
             }
           },
           builder: (context, state) {
-            return AuthForm(
-              formKey: _formKey,
-              submitButton: CustomButton(
-                text: 'Login',
-                isLoading: state is AuthLoading,
-                onPressed: () {
-                  if (_formKey.currentState?.validate() ?? false) {
-                    context.read<AuthBloc>().add(
-                      LoginEvent(
-                        phoneNumber: _phoneController.text,
-                        password: _passwordController.text,
-                      ),
-                    );
-                  }
-                },
-              ),
-              footer: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text("Don't have an account?"),
-                  TextButton(
-                    onPressed: () => Navigator.pushNamed(context, '/register'),
-                    child: const Text('Sign Up'),
-                  ),
-                ],
-              ),
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                PhoneNumberField(controller: _phoneController),
-                PasswordField(controller: _passwordController),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton(
-                    onPressed:
-                        () => Navigator.pushNamed(context, '/reset-password'),
-                    child: const Text('Forgot Password?'),
+                const SizedBox(height: 30),
+                Center(
+                  child: Image.asset('assets/images/logo (2).png', height: 250),
+                ),
+                const SizedBox(height: 16),
+                const Center(
+                  child: Text(
+                    'Welcome to Nahoocare',
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                const SizedBox(height: 32),
+                Card(
+                  elevation: 4,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        children: [
+                          IntlPhoneField(
+                            decoration: const InputDecoration(
+                              labelText: 'Phone Number',
+                              border: OutlineInputBorder(),
+                            ),
+                            initialCountryCode: 'ET', // You can change this
+                            onChanged: (phone) {
+                              _completePhoneNumber = phone.completeNumber;
+                            },
+                            onSaved: (phone) {
+                              _completePhoneNumber = phone?.completeNumber;
+                            },
+                          ),
+                          const SizedBox(height: 16),
+                          PasswordField(controller: _passwordController),
+                          const SizedBox(height: 16),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: TextButton(
+                              onPressed:
+                                  () => Navigator.pushNamed(
+                                    context,
+                                    '/reset-password',
+                                  ),
+                              child: const Text('Forgot Password?'),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          CustomButton(
+                            text: 'Login',
+                            isLoading: state is AuthLoading,
+                            onPressed: () {
+                              if (_formKey.currentState?.validate() ?? false) {
+                                _formKey.currentState?.save();
+                                if (_completePhoneNumber != null) {
+                                  context.read<AuthBloc>().add(
+                                    LoginEvent(
+                                      phoneNumber: _completePhoneNumber!,
+                                      password: _passwordController.text,
+                                    ),
+                                  );
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                        'Please enter a phone number.',
+                                      ),
+                                    ),
+                                  );
+                                }
+                              }
+                            },
+                          ),
+                          const SizedBox(height: 12),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Text("Don't have an account?"),
+                              TextButton(
+                                onPressed:
+                                    () => Navigator.pushNamed(
+                                      context,
+                                      '/register',
+                                    ),
+                                child: const Text('Sign Up'),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
               ],
@@ -91,7 +164,6 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   void dispose() {
-    _phoneController.dispose();
     _passwordController.dispose();
     super.dispose();
   }

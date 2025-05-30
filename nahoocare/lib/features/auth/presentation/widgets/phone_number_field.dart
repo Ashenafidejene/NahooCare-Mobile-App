@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-
-import '../../../../core/utils/input_validator.dart';
-import '../../../../core/widgets/custom_textfield.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
 
 class PhoneNumberField extends StatelessWidget {
   final TextEditingController controller;
@@ -11,12 +8,19 @@ class PhoneNumberField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomTextField(
+    return IntlPhoneField(
       controller: controller,
-      labelText: 'Phone Number',
-      keyboardType: TextInputType.phone,
-      validator: InputValidation.validatePhoneNumber,
-      suffixIcon: const Icon(Icons.phone),
+      decoration: const InputDecoration(
+        labelText: 'Phone Number',
+        border: OutlineInputBorder(),
+      ),
+      initialCountryCode: 'ET', // Change to your preferred default country
+      onChanged: (phone) {
+        print('Phone number changed: ${phone.completeNumber}');
+      },
+      onCountryChanged: (country) {
+        print('Country changed to: ${country.name}');
+      },
     );
   }
 }

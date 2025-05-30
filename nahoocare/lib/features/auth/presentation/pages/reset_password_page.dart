@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../core/widgets/custom_button.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
 
+import '../../../../core/widgets/custom_button.dart';
 import '../../../../core/widgets/custom_textfield.dart';
 import '../blocs/auth_bloc.dart';
-import '../widgets/auth_form.dart';
 import '../widgets/password_field.dart';
-import '../widgets/phone_number_field.dart';
 
 class ResetPasswordPage extends StatefulWidget {
   const ResetPasswordPage({super.key});
@@ -17,11 +16,10 @@ class ResetPasswordPage extends StatefulWidget {
 
 class _ResetPasswordPageState extends State<ResetPasswordPage> {
   final _formKey = GlobalKey<FormState>();
-  final _phoneController = TextEditingController();
   final _secretAnswerController = TextEditingController();
   final _newPasswordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-
+  String? _completePhoneNumber;
   String? _secretQuestion;
 
   @override
@@ -50,81 +48,165 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
             }
           },
           builder: (context, state) {
-            return AuthForm(
-              formKey: _formKey,
-              submitButton: Column(
-                children: [
-                  if (_secretQuestion == null)
-                    CustomButton(
-                      text: 'Get Secret Question',
-                      onPressed: () {
-                        if (_phoneController.text.isNotEmpty) {
-                          context.read<AuthBloc>().add(
-                            GetSecretQuestionEvent(
-                              phoneNumber: _phoneController.text,
-                            ),
-                          );
-                        }
-                      },
-                    ),
-                  if (_secretQuestion != null) ...[
-                    const SizedBox(height: 16),
-                    CustomButton(
-                      text: 'Reset Password',
-                      isLoading: state is AuthLoading,
-                      onPressed: () {
-                        if (_formKey.currentState?.validate() ?? false) {
-                          context.read<AuthBloc>().add(
-                            ResetPasswordEvent(
-                              phoneNumber: _phoneController.text,
-                              secretAnswer: _secretAnswerController.text,
-                              newPassword: _newPasswordController.text,
-                            ),
-                          );
-                        }
-                      },
-                    ),
-                  ],
-                ],
-              ),
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                PhoneNumberField(controller: _phoneController),
-                if (_secretQuestion != null) ...[
-                  const SizedBox(height: 8),
-                  Text(
-                    'Secret Question:',
-                    style: Theme.of(context).textTheme.labelLarge,
+                const SizedBox(height: 20),
+                const Center(
+                  child: Icon(
+                    Icons.lock_reset,
+                    size: 72,
+                    color: Colors.deepPurple,
                   ),
-                  Text(
-                    _secretQuestion!,
-                    style: Theme.of(context).textTheme.bodyLarge,
-                  ),
-                  const SizedBox(height: 16),
-                  CustomTextField(
-                    controller: _secretAnswerController,
-                    labelText: 'Secret Answer',
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your secret answer';
-                      }
-                      return null;
-                    },
-                  ),
-                ],
-                PasswordField(
-                  controller: _newPasswordController,
-                  labelText: 'New Password',
-                  showStrengthIndicator: true,
                 ),
-                PasswordField(
-                  controller: _confirmPasswordController,
-                  labelText: 'Confirm New Password',
-                  validator: (value) {
-                    if (value != _newPasswordController.text) {
-                      return 'Passwords do not match';
-                    }
-                    return null;
-                  },
+                const SizedBox(height: 16),
+                const Center(
+                  child: Text(
+                    'Reset Your Password',
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Card(
+                  elevation: 4,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        children: [
+                          IntlPhoneField(
+                            decoration: const InputDecoration(
+                              labelText: 'Phone Number',
+                              border: OutlineInputBorder(),
+                            ),
+                            initialCountryCode: 'ET',
+                            onChanged: (phone) {
+                              _completePhoneNumber = phone.completeNumber;
+                            },
+                            onSaved: (phone) {
+                              _completePhoneNumber = phone?.completeNumber;
+                            },
+                          ),
+                          const SizedBox(height: 16),
+                          if (_secretQuestion == null)
+                            CustomButton(
+                              text: 'Get Secret Question',
+                              onPressed: () {
+                                if (_completePhoneNumber != null &&
+                                    _completePhoneNumber!.isNotEmpty) {
+                                  context.read<AuthBloc>().add(
+                                    GetSecretQuestionEvent(
+                                      phoneNumber: _completePhoneNumber!,
+                                    ),
+                                  );
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                        'Please enter a valid phone number',
+                                      ),
+                                    ),
+                                  );
+                                }
+                              },
+                            ),
+                          if (_secretQuestion != null) ...[
+                            const SizedBox(height: 12),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Secret Question:',
+                                  style: Theme.of(context).textTheme.labelLarge
+                                      ?.copyWith(fontWeight: FontWeight.w600),
+                                ),
+                                const SizedBox(height: 4),
+                                Container(
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey[100],
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Text(
+                                    _secretQuestion!,
+                                    style: Theme.of(context).textTheme.bodyLarge
+                                        ?.copyWith(fontSize: 16),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 16),
+                            CustomTextField(
+                              controller: _secretAnswerController,
+                              labelText: 'Secret Answer',
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter your secret answer';
+                                }
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: 16),
+                            PasswordField(
+                              controller: _newPasswordController,
+                              labelText: 'New Password',
+                              showStrengthIndicator: true,
+                            ),
+                            const SizedBox(height: 16),
+                            PasswordField(
+                              controller: _confirmPasswordController,
+                              labelText: 'Confirm New Password',
+                              validator: (value) {
+                                if (value != _newPasswordController.text) {
+                                  return 'Passwords do not match';
+                                }
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: 20),
+                            CustomButton(
+                              text: 'Reset Password',
+                              isLoading: state is AuthLoading,
+                              onPressed: () {
+                                if (_formKey.currentState?.validate() ??
+                                    false) {
+                                  _formKey.currentState?.save();
+
+                                  if (_completePhoneNumber == null) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                          'Please enter your phone number',
+                                        ),
+                                      ),
+                                    );
+                                    return;
+                                  }
+
+                                  context.read<AuthBloc>().add(
+                                    ResetPasswordEvent(
+                                      phoneNumber: _completePhoneNumber!,
+                                      secretAnswer:
+                                          _secretAnswerController.text,
+                                      newPassword: _newPasswordController.text,
+                                    ),
+                                  );
+                                }
+                              },
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
               ],
             );
@@ -136,7 +218,6 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
 
   @override
   void dispose() {
-    _phoneController.dispose();
     _secretAnswerController.dispose();
     _newPasswordController.dispose();
     _confirmPasswordController.dispose();

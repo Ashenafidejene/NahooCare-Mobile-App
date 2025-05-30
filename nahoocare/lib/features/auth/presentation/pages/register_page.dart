@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:nahoocare/features/auth/presentation/blocs/auth_bloc.dart';
-import '../../../../core/widgets/custom_button.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
 
+import '../../../../core/widgets/custom_button.dart';
 import '../../../../core/widgets/custom_textfield.dart';
-import '../widgets/auth_form.dart';
+import '../blocs/auth_bloc.dart';
 import '../widgets/password_field.dart';
-import '../widgets/phone_number_field.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -18,11 +17,12 @@ class RegisterPage extends StatefulWidget {
 class _RegisterPageState extends State<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
-  final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   final _secretQuestionController = TextEditingController();
   final _secretAnswerController = TextEditingController();
+  String? _completePhoneNumber;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,96 +48,165 @@ class _RegisterPageState extends State<RegisterPage> {
             }
           },
           builder: (context, state) {
-            return AuthForm(
-              formKey: _formKey,
-              submitButton: CustomButton(
-                text: 'Register',
-                isLoading: state is AuthLoading,
-                onPressed: () {
-                  final isValid = _formKey.currentState?.validate() ?? false;
-                  final password = _passwordController.text;
-                  final confirmPassword = _confirmPasswordController.text;
-
-                  if (!isValid) return;
-
-                  if (password != confirmPassword) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Passwords do not match'),
-                        behavior: SnackBarBehavior.floating,
-                      ),
-                    );
-                    return;
-                  }
-                  context.read<AuthBloc>().add(
-                    RegisterEvent(
-                      fullName: _nameController.text,
-                      phoneNumber: _phoneController.text,
-                      password: password,
-                      secretQuestion: _secretQuestionController.text,
-                      secretAnswer: _secretAnswerController.text,
-                    ),
-                  );
-                },
-              ),
-              footer: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text('Already have an account?'),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: const Text('Login'),
-                  ),
-                ],
-              ),
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                CustomTextField(
-                  controller: _nameController,
-                  labelText: 'Full Name',
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your full name';
-                    }
-                    return null;
-                  },
+                const SizedBox(height: 16),
+                const Center(
+                  child: Icon(
+                    Icons.app_registration,
+                    size: 72,
+                    color: Colors.deepPurple,
+                  ),
                 ),
-                PhoneNumberField(controller: _phoneController),
-                PasswordField(
-                  controller: _passwordController,
-                  showStrengthIndicator: true,
+                const SizedBox(height: 12),
+                const Center(
+                  child: Text(
+                    'Create your account',
+                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                  ),
                 ),
-                PasswordField(
-                  controller: _confirmPasswordController,
-                  labelText: 'Confirm Password',
-                  validator: (value) {
-                    if (value != _passwordController.text) {
-                      return 'Passwords do not match';
-                    }
-                    return null;
-                  },
-                ),
-                CustomTextField(
-                  controller: _secretQuestionController,
-                  labelText: 'Secret Question',
-                  maxLines: 2,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a secret question';
-                    }
-                    return null;
-                  },
-                ),
-                CustomTextField(
-                  controller: _secretAnswerController,
-                  labelText: 'Secret Answer',
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a secret answer';
-                    }
-                    return null;
-                  },
+                const SizedBox(height: 24),
+                Card(
+                  elevation: 4,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        children: [
+                          CustomTextField(
+                            controller: _nameController,
+                            labelText: 'Full Name',
+                            validator: (value) {
+                              if (value == null || value.trim().isEmpty) {
+                                return 'Please enter your full name';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 16),
+                          IntlPhoneField(
+                            decoration: const InputDecoration(
+                              labelText: 'Phone Number',
+                              border: OutlineInputBorder(),
+                            ),
+                            initialCountryCode: 'ET', // Default to Ethiopia
+                            onChanged: (phone) {
+                              _completePhoneNumber = phone.completeNumber;
+                            },
+                            onSaved: (phone) {
+                              _completePhoneNumber = phone?.completeNumber;
+                            },
+                          ),
+                          const SizedBox(height: 16),
+                          PasswordField(
+                            controller: _passwordController,
+                            showStrengthIndicator: true,
+                          ),
+                          const SizedBox(height: 16),
+                          PasswordField(
+                            controller: _confirmPasswordController,
+                            labelText: 'Confirm Password',
+                            validator: (value) {
+                              if (value != _passwordController.text) {
+                                return 'Passwords do not match';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 16),
+                          CustomTextField(
+                            controller: _secretQuestionController,
+                            labelText: 'Secret Question',
+                            maxLines: 2,
+                            validator: (value) {
+                              if (value == null || value.trim().isEmpty) {
+                                return 'Please enter a secret question';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 16),
+                          CustomTextField(
+                            controller: _secretAnswerController,
+                            labelText: 'Secret Answer',
+                            validator: (value) {
+                              if (value == null || value.trim().isEmpty) {
+                                return 'Please enter a secret answer';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 24),
+                          CustomButton(
+                            text: 'Register',
+                            isLoading: state is AuthLoading,
+                            onPressed: () {
+                              final isValid =
+                                  _formKey.currentState?.validate() ?? false;
+
+                              if (!isValid) return;
+
+                              _formKey.currentState?.save();
+
+                              final password = _passwordController.text;
+                              final confirmPassword =
+                                  _confirmPasswordController.text;
+
+                              if (password != confirmPassword) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Passwords do not match'),
+                                    behavior: SnackBarBehavior.floating,
+                                  ),
+                                );
+                                return;
+                              }
+
+                              if (_completePhoneNumber == null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                      'Please enter a phone number',
+                                    ),
+                                  ),
+                                );
+                                return;
+                              }
+
+                              context.read<AuthBloc>().add(
+                                RegisterEvent(
+                                  fullName: _nameController.text,
+                                  phoneNumber: _completePhoneNumber!,
+                                  password: password,
+                                  secretQuestion:
+                                      _secretQuestionController.text,
+                                  secretAnswer: _secretAnswerController.text,
+                                ),
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 16),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Text('Already have an account?'),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: const Text('Login'),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
               ],
             );
@@ -150,7 +219,6 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   void dispose() {
     _nameController.dispose();
-    _phoneController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
     _secretQuestionController.dispose();
