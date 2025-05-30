@@ -1,8 +1,7 @@
 name: nahoocare
 description: "A new Flutter project."
 
-publish_to: 'none' 
-
+publish_to: 'none'
 
 version: 1.0.0+1
 
@@ -13,32 +12,32 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.8
-  flutter_bloc: ^8.1.1
-  get_it: ^7.2.0
-  google_fonts: ^6.1.0
+  flutter_bloc: ^8.1.4
+  get_it: ^7.6.7
+  google_fonts: ^6.2.1
   equatable: ^2.0.5
   dartz: ^0.10.1
   intl: ^0.18.1
-  http: ^1.1.0
+  http: ^1.2.1
   flutter_dotenv: ^5.1.0
   permission_handler: ^12.0.0+1
-  shared_preferences: ^2.5.3
+  shared_preferences: ^2.2.2
   connectivity_plus: ^6.1.4
-  dio: ^5.2.0
+  dio: ^5.4.3+1
   smooth_page_indicator: ^1.1.2
   convex_bottom_bar: ^3.2.0
   animated_bottom_navigation_bar: ^1.4.0
-  geolocator : ^14.0.0
-  fluttertoast: ^8.2.12
-  flutter_map : ^7.0.2
+  geolocator: ^10.1.0
+  fluttertoast: ^8.2.4
+  flutter_map: ^8.1.1
   latlong2: ^0.9.0
-  flutter_map_marker_cluster: ^1.4.0
-  flutter_rating_bar : ^4.0.0
-
+  flutter_rating_bar: ^4.0.0
+  intl_phone_field: ^3.2.0
+  flutter_map_marker_popup: ^8.0.1
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^5.0.0
+  flutter_lints: ^3.0.1
 
 flutter:
   uses-material-design: true
@@ -46,3 +45,4 @@ flutter:
     - .env
     - assets/images/
     - assets/local_first_aid.json
+    - assets/lottie/

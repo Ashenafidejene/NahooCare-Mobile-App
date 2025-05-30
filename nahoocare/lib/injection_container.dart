@@ -2,6 +2,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
+
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'core/network/api_client.dart';
@@ -49,10 +50,11 @@ import 'features/history/presentation/blocs/search_history_bloc.dart';
 import 'features/hospitalSearch/data/datasources/healthcare_remote_data_source.dart';
 import 'features/hospitalSearch/data/repository/healthcare_repository_impl.dart';
 import 'features/hospitalSearch/domain/repository/healthcare_repository.dart';
-import 'features/hospitalSearch/domain/usecases/search_by_location.dart';
-import 'features/hospitalSearch/domain/usecases/search_by_name.dart';
-import 'features/hospitalSearch/domain/usecases/search_by_specialty.dart';
-import 'features/hospitalSearch/domain/usecases/search_healthcare.dart';
+
+import 'features/hospitalSearch/domain/usecases/filter_healthcare.dart';
+import 'features/hospitalSearch/domain/usecases/get_healthcare.dart';
+import 'features/hospitalSearch/domain/usecases/get_specialties.dart';
+import 'features/hospitalSearch/domain/usecases/sort_healthcare.dart';
 import 'features/hospitalSearch/presentation/blocs/healthcare_search_bloc.dart';
 import 'features/profile/data/datasource/health_profile_remote_data_source.dart';
 import 'features/profile/data/repositories/health_profile_repository_impl.dart';
@@ -105,8 +107,8 @@ Future<void> init() async {
   sl.registerLazySingleton<RemoteSearchHistoryDataSource>(
     () => RemoteSearchHistoryDataSourceImpl(apiClient: sl<ApiClient>()),
   );
-  sl.registerLazySingleton<HealthcareRemoteDataSources>(
-    () => HealthcareRemoteDataSourcesImpl(apiClient: sl<ApiClient>()),
+  sl.registerLazySingleton<HealthcareCenterRemoteDataSources>(
+    () => HealthcareCenterRemoteDataSourcesImpl(apiClient: sl<ApiClient>()),
   );
   sl.registerSingleton<AuthRemoteDataSource>(
     AuthRemoteDataSourceImpl(
@@ -155,8 +157,11 @@ Future<void> init() async {
   sl.registerLazySingleton<HealthProfileRemoteDataSource>(
     () => HealthProfileRemoteDataSourceImpl(apiClient: sl()),
   );
-  sl.registerLazySingleton<HealthcareRepositorys>(
-    () => HealthcareRepositoryImpls(remoteDataSource: sl()),
+  sl.registerLazySingleton<HealthcareRepositories>(
+    () => HealthcareRepositoriesImpl(
+      remoteDataSource: sl<HealthcareCenterRemoteDataSources>(),
+      locationService: sl<LocationDataSource>(),
+    ),
   );
   sl.registerLazySingleton<FirstAidRepository>(
     () => FirstAidRepositoryImpl(
@@ -185,10 +190,10 @@ Future<void> init() async {
   sl.registerLazySingleton(() => UpdateAccountUseCase(sl<AccountRepository>()));
   sl.registerLazySingleton(() => DeleteAccountUseCase(sl<AccountRepository>()));
   sl.registerLazySingleton(() => GetFirstAidGuides(sl<FirstAidRepository>()));
-  sl.registerLazySingleton(() => SearchByNames(sl()));
-  sl.registerLazySingleton(() => SearchBySpecialtys(sl()));
-  sl.registerLazySingleton(() => SearchByLocations(sl()));
-  sl.registerLazySingleton(() => SearchHealthcare(sl()));
+  sl.registerLazySingleton(() => GetAllHealthcareCenters(sl()));
+  sl.registerLazySingleton(() => GetAllSpecialties(sl()));
+  sl.registerLazySingleton(() => FilterHealthcareCenter());
+  sl.registerLazySingleton(() => SortHealthcareCenter());
   sl.registerLazySingleton(() => GetHealthcareCenterDetails(sl()));
   sl.registerLazySingleton(() => GetCenterRatings(sl()));
   sl.registerLazySingleton(() => SubmitRating(sl()));
@@ -242,11 +247,12 @@ Future<void> init() async {
     ),
   );
   sl.registerFactory(
-    () => HealthcareSearchBloc(
-      searchByName: sl(),
-      searchBySpecialty: sl(),
-      searchByLocation: sl(),
-      searchHealthcare: sl(),
+    () => HealthcareBloc(
+      getAllHealthcareCenters: sl<GetAllHealthcareCenters>(),
+      getAllSpecialties: sl<GetAllSpecialties>(),
+      filterHealthcareCenters: sl<FilterHealthcareCenter>(),
+      sortHealthcareCenters: sl<SortHealthcareCenter>(),
+      locationService: sl<LocationDataSource>(),
     ),
   );
   sl.registerFactory(

@@ -57,8 +57,8 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => di.sl<HealthcareCenterBloc>()),
         BlocProvider(create: (_) => ThemeCubit()),
         BlocProvider(
-          create: (context) => di.sl<HealthcareSearchBloc>(),
-          child: const HealthcareSearchPage(),
+          create: (context) => di.sl<HealthcareBloc>(),
+          child: const HealthcareCentersPage(),
         ),
         BlocProvider(
           create: (context) => di.sl<FirstAidBloc>(),
