@@ -47,7 +47,7 @@ class _HomeState extends State<Home> {
                 description: 'Instant help even without the internet.',
               ),
               OnboardingPage(
-                imagePath: 'assets/images/Health-profile.png',
+                imagePath: 'assets/images/health-profile.png',
                 title: 'Health - Profile',
                 description: 'Store health profile  history.',
               ),
