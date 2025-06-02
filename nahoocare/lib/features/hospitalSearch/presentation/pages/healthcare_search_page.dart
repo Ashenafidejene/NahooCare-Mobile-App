@@ -11,10 +11,11 @@ class HealthcareCentersPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     context.read<HealthcareBloc>().add(LoadHealthcareCenters());
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(0),
+      appBar: const PreferredSize(
+        preferredSize: Size.fromHeight(0),
         child: SizedBox.shrink(),
       ),
       body: BlocConsumer<HealthcareBloc, HealthcareState>(
@@ -37,7 +38,26 @@ class HealthcareCentersPage extends StatelessWidget {
             child: Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                  padding: const EdgeInsets.fromLTRB(
+                    16,
+                    16,
+                    16,
+                    8,
+                  ), // top and bottom padding
+                  child: Align(
+                    alignment: Alignment.centerLeft, // aligns text to the left
+                    child: Text(
+                      'HealthCare Center Search',
+                      style: theme.textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blueAccent,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
                   child: Row(
                     children: [
                       Expanded(
@@ -50,7 +70,6 @@ class HealthcareCentersPage extends StatelessWidget {
                           },
                         ),
                       ),
-                      const SizedBox(width: 8),
                       IconButton(
                         icon: Icon(
                           Icons.sort,
@@ -76,6 +95,7 @@ class HealthcareCentersPage extends StatelessWidget {
                           color: Theme.of(context).colorScheme.primary,
                           onPressed:
                               () => _showFilterBottomSheet(context, state),
+                          tooltip: 'Filter options',
                         ),
                       ),
                     ],
