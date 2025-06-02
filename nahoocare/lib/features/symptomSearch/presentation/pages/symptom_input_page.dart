@@ -5,6 +5,7 @@ import 'package:latlong2/latlong.dart';
 import '../../domain/entities/search_response.dart';
 import '../blocs/symptom_search_bloc.dart';
 import '../widgets/first_aid_card.dart';
+import '../widgets/list_healthcare_center.dart';
 import 'map_screen.dart';
 
 class SymptomInputPage extends StatefulWidget {
@@ -24,7 +25,7 @@ class _SymptomInputPageState extends State<SymptomInputPage> {
     super.initState();
     _fetchUserLocation();
     _symptomsController.addListener(() {
-      setState(() {}); // Trigger rebuild on text change
+      setState(() {}); // Refresh on text input
     });
   }
 
@@ -81,7 +82,6 @@ class _SymptomInputPageState extends State<SymptomInputPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
       body: SafeArea(
@@ -99,57 +99,54 @@ class _SymptomInputPageState extends State<SymptomInputPage> {
             }
           },
           builder: (context, state) {
-            return SingleChildScrollView(
-              padding: const EdgeInsets.all(20),
-              child: ConstrainedBox(
-                constraints: BoxConstraints(minHeight: screenHeight - 100),
-                child: IntrinsicHeight(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 10),
-                      Text(
-                        '🩺 Symptom Checker',
-                        style: theme.textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blueAccent,
-                        ),
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        'Describe how you feel and we’ll guide you to care.',
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: Colors.grey[600],
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-
-                      // SYMPTOM INPUT
-                      TextField(
-                        controller: _symptomsController,
-                        maxLines: 2,
-                        decoration: InputDecoration(
-                          labelText: 'Your symptoms',
-                          hintText: 'e.g. headache, sore throat...',
-                          filled: true,
-                          fillColor: Colors.white,
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
+            return LayoutBuilder(
+              builder: (context, constraints) {
+                return CustomScrollView(
+                  slivers: [
+                    SliverPadding(
+                      padding: const EdgeInsets.all(20),
+                      sliver: SliverList(
+                        delegate: SliverChildListDelegate.fixed([
+                          const SizedBox(height: 10),
+                          Text(
+                            '🩺 Symptom Checker',
+                            style: theme.textTheme.headlineSmall?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.blueAccent,
+                            ),
                           ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(14),
-                            borderSide: BorderSide(color: Colors.grey.shade300),
+                          const SizedBox(height: 6),
+                          Text(
+                            'Describe how you feel and we’ll guide you to care.',
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: Colors.grey[600],
+                            ),
                           ),
-                        ),
-                      ),
+                          const SizedBox(height: 24),
 
-                      const SizedBox(height: 20),
+                          TextField(
+                            controller: _symptomsController,
+                            maxLines: 2,
+                            decoration: InputDecoration(
+                              labelText: 'Your symptoms',
+                              hintText: 'e.g. headache, sore throat...',
+                              filled: true,
+                              fillColor: Colors.white,
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 12,
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(14),
+                                borderSide: BorderSide(
+                                  color: Colors.grey.shade300,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 20),
 
-                      // SEARCH BUTTON
-                      Builder(
-                        builder: (context) {
-                          return SizedBox(
+                          SizedBox(
                             width: double.infinity,
                             height: 48,
                             child: ElevatedButton.icon(
@@ -169,53 +166,60 @@ class _SymptomInputPageState extends State<SymptomInputPage> {
                                 ),
                               ),
                             ),
-                          );
-                        },
-                      ),
-
-                      const SizedBox(height: 24),
-
-                      if (state is SearchLoading)
-                        const Center(child: CircularProgressIndicator()),
-
-                      if (state is SearchError)
-                        Center(
-                          child: Text(
-                            '⚠️ ${state.message}',
-                            style: const TextStyle(color: Colors.red),
                           ),
-                        ),
+                          const SizedBox(height: 24),
 
-                      if (state is SearchLoaded) ...[
-                        if (state.response.firstAid != null)
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 8),
-                            child: FirstAidCard(
-                              firstAid: state.response.firstAid!,
-                            ),
-                          ),
-                        const SizedBox(height: 12),
-                        SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton.icon(
-                            icon: const Icon(Icons.map_outlined),
-                            label: const Text('View Centers on Map'),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.green,
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(14),
+                          if (state is SearchLoading)
+                            const Center(child: CircularProgressIndicator()),
+
+                          if (state is SearchError)
+                            Center(
+                              child: Text(
+                                '⚠️ ${state.message}',
+                                style: const TextStyle(color: Colors.red),
                               ),
                             ),
-                            onPressed: () => _navigateToMap(state.response),
-                          ),
-                        ),
-                      ],
-                      const SizedBox(height: 20),
-                    ],
-                  ),
-                ),
-              ),
+
+                          if (state is SearchLoaded) ...[
+                            if (state.response.firstAid != null)
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 8,
+                                ),
+                                child: FirstAidCard(
+                                  firstAid: state.response.firstAid!,
+                                ),
+                              ),
+                            const SizedBox(height: 12),
+                            HealthCenterList(
+                              centers: state.response.centers,
+                              userLocation: state.response.userLocation,
+                            ),
+                            const SizedBox(height: 12),
+                            SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton.icon(
+                                icon: const Icon(Icons.map_outlined),
+                                label: const Text('View Centers on Map'),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.blueAccent,
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(14),
+                                  ),
+                                ),
+                                onPressed: () => _navigateToMap(state.response),
+                              ),
+                            ),
+                          ],
+
+                          const SizedBox(height: 20),
+                        ]),
+                      ),
+                    ),
+                  ],
+                );
+              },
             );
           },
         ),

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart' show debugPrint;
 
 import '../../../../core/network/api_client.dart';
 
-
 abstract class SymptomSearchRemoteDataSource {
   Future<List<dynamic>> searchNearbyCenters({
     required String symptoms,
@@ -17,6 +16,8 @@ class SymptomSearchRemoteDataSourceImpl
   final ApiClient apiClient;
   SymptomSearchRemoteDataSourceImpl({required this.apiClient});
 
+  Object? get laitude => null;
+
   @override
   Future<List<dynamic>> searchNearbyCenters({
     required String symptoms,
@@ -24,6 +25,9 @@ class SymptomSearchRemoteDataSourceImpl
     required double longitude,
     double maxDistanceKm = 10,
   }) async {
+    print(symptoms);
+    print(latitude);
+    print(longitude);
     final response = await apiClient.post('/api/endpoint/search', {
       'symptom': symptoms,
       'latitude': latitude,
