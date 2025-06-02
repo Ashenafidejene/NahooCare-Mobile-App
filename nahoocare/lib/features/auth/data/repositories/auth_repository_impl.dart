@@ -52,7 +52,6 @@ class AuthRepositoryImpl implements AuthRepository {
     if (!await networkInfo.isConnected) {
       return Left(NetworkFailure('No internet connection'));
     }
-
     try {
       final response = await remoteDataSource.register(
         fullName: registerEntity.fullName,
@@ -60,6 +59,9 @@ class AuthRepositoryImpl implements AuthRepository {
         password: registerEntity.password,
         secretQuestion: registerEntity.secretQuestion,
         secretAnswer: registerEntity.secretAnswer,
+        photoUrl: registerEntity.photoUrl, // Add this
+        gender: registerEntity.gender,
+        dataOfBirth: registerEntity.dataOfBirth, // Add this
       );
       return Right(response['message']);
     } on ServerException catch (e) {
