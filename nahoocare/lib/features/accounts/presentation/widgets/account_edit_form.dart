@@ -1,23 +1,36 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
-
+import 'package:image_picker/image_picker.dart';
 import '../../domain/entities/account_entity.dart';
 
 class AccountEditForm extends StatefulWidget {
   final AccountEntity initialAccount;
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
   String? fullName;
   String? phoneNumber;
   String? secretQuestion;
   String? secretAnswer;
+  String? gender;
+  String? dateOfBirth;
   String? password;
 
   AccountEditForm({super.key, required this.initialAccount});
+
+  get updatedAccount => null;
+
+  get selectedImage => null;
 
   @override
   State<AccountEditForm> createState() => _AccountEditFormState();
 }
 
 class _AccountEditFormState extends State<AccountEditForm> {
+  File? _imageFile;
+
+  final List<String> _genders = ['Male', 'Female'];
+  DateTime? _selectedDate;
+
   @override
   void initState() {
     super.initState();
@@ -25,6 +38,35 @@ class _AccountEditFormState extends State<AccountEditForm> {
     widget.phoneNumber = widget.initialAccount.phoneNumber;
     widget.secretQuestion = widget.initialAccount.secretQuestion;
     widget.secretAnswer = widget.initialAccount.secretAnswer;
+    widget.gender = widget.initialAccount.gender;
+    widget.dateOfBirth = widget.initialAccount.dateOfBirth;
+  }
+
+  Future<void> _pickImage() async {
+    final pickedFile = await ImagePicker().pickImage(
+      source: ImageSource.gallery,
+    );
+    if (pickedFile != null) {
+      setState(() {
+        _imageFile = File(pickedFile.path);
+      });
+    }
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final now = DateTime.now();
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime(now.year - 18),
+      firstDate: DateTime(1900),
+      lastDate: DateTime(now.year - 13),
+    );
+    if (picked != null) {
+      setState(() {
+        _selectedDate = picked;
+        widget.dateOfBirth = picked.toIso8601String();
+      });
+    }
   }
 
   @override
@@ -32,60 +74,164 @@ class _AccountEditFormState extends State<AccountEditForm> {
     return Form(
       key: widget.formKey,
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          TextFormField(
+          const SizedBox(height: 24),
+          GestureDetector(
+            onTap: _pickImage,
+            child: CircleAvatar(
+              radius: 50,
+              backgroundColor: Colors.grey[200],
+              backgroundImage:
+                  _imageFile != null
+                      ? FileImage(_imageFile!)
+                      : widget.initialAccount.photoUrl.isNotEmpty
+                      ? NetworkImage(widget.initialAccount.photoUrl)
+                      : const AssetImage(
+                            'assets/images/profile-placeholder.png',
+                          )
+                          as ImageProvider,
+              child:
+                  _imageFile == null && widget.initialAccount.photoUrl.isEmpty
+                      ? const Icon(
+                        Icons.camera_alt,
+                        color: Colors.grey,
+                        size: 32,
+                      )
+                      : null,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            'Tap to change photo',
+            style: TextStyle(color: Colors.grey[600]),
+          ),
+          const SizedBox(height: 32),
+
+          _buildTextField(
+            label: 'Full Name',
             initialValue: widget.initialAccount.fullName,
-            decoration: const InputDecoration(labelText: 'Full Name'),
-            validator:
-                (value) =>
-                    value?.isEmpty ?? true ? 'Please enter your name' : null,
-            onSaved: (value) => widget.fullName = value,
+            onSaved: (val) => widget.fullName = val,
+            validatorMsg: 'Please enter your name',
           ),
-          SizedBox(height: 16),
-          TextFormField(
+          const SizedBox(height: 16),
+
+          _buildTextField(
+            label: 'Phone Number',
             initialValue: widget.initialAccount.phoneNumber,
-            decoration: const InputDecoration(labelText: 'Phone Number'),
             keyboardType: TextInputType.phone,
-            validator:
-                (value) =>
-                    value?.isEmpty ?? true ? 'Please enter phone number' : null,
-            onSaved: (value) => widget.phoneNumber = value,
+            onSaved: (val) => widget.phoneNumber = val,
+            validatorMsg: 'Please enter phone number',
           ),
-          SizedBox(height: 16),
-          TextFormField(
+          const SizedBox(height: 16),
+
+          DropdownButtonFormField<String>(
+            value: widget.gender,
+            items:
+                _genders
+                    .map(
+                      (gender) =>
+                          DropdownMenuItem(value: gender, child: Text(gender)),
+                    )
+                    .toList(),
+            onChanged: (value) => setState(() => widget.gender = value),
+            onSaved: (value) => widget.gender = value,
+            decoration: InputDecoration(
+              labelText: 'Gender',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 14,
+              ),
+            ),
+            validator:
+                (value) => value == null ? 'Please select your gender' : null,
+          ),
+          const SizedBox(height: 16),
+
+          GestureDetector(
+            onTap: () => _selectDate(context),
+            child: AbsorbPointer(
+              child: TextFormField(
+                decoration: InputDecoration(
+                  labelText: 'Date of Birth',
+                  hintText: 'Select your date of birth',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 14,
+                  ),
+                ),
+                controller: TextEditingController(
+                  text:
+                      _selectedDate == null
+                          ? ''
+                          : '${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}',
+                ),
+                validator:
+                    (value) =>
+                        value == null || value.isEmpty
+                            ? 'Please select your date of birth'
+                            : null,
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          _buildTextField(
+            label: 'Security Question',
             initialValue: widget.initialAccount.secretQuestion,
-            decoration: const InputDecoration(labelText: 'Security Question'),
-            validator:
-                (value) =>
-                    value?.isEmpty ?? true
-                        ? 'Please enter security question'
-                        : null,
-            onSaved: (value) => widget.secretQuestion = value,
+            onSaved: (val) => widget.secretQuestion = val,
+            validatorMsg: 'Please enter security question',
           ),
-          SizedBox(height: 16),
-          TextFormField(
+          const SizedBox(height: 16),
+
+          _buildTextField(
+            label: 'Security Answer',
             initialValue: widget.initialAccount.secretAnswer,
-            decoration: const InputDecoration(labelText: 'Security Answer'),
-            validator:
-                (value) =>
-                    value?.isEmpty ?? true
-                        ? 'Please enter security answer'
-                        : null,
-            onSaved: (value) => widget.secretAnswer = value,
+            onSaved: (val) => widget.secretAnswer = val,
+            validatorMsg: 'Please enter security answer',
           ),
-          SizedBox(height: 16),
-          TextFormField(
-            decoration: const InputDecoration(labelText: 'Current Password'),
+          const SizedBox(height: 16),
+
+          _buildTextField(
+            label: 'Current Password',
             obscureText: true,
-            validator:
-                (value) =>
-                    value?.isEmpty ?? true
-                        ? 'Please enter your password'
-                        : null,
-            onSaved: (value) => widget.password = value,
+            onSaved: (val) => widget.password = val,
+            validatorMsg: 'Please enter your password',
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildTextField({
+    required String label,
+    String? initialValue,
+    bool obscureText = false,
+    TextInputType keyboardType = TextInputType.text,
+    required void Function(String?) onSaved,
+    required String validatorMsg,
+  }) {
+    return TextFormField(
+      initialValue: initialValue,
+      obscureText: obscureText,
+      keyboardType: keyboardType,
+      decoration: InputDecoration(
+        labelText: label,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 14,
+        ),
+      ),
+      validator:
+          (value) => (value == null || value.isEmpty) ? validatorMsg : null,
+      onSaved: onSaved,
     );
   }
 }
