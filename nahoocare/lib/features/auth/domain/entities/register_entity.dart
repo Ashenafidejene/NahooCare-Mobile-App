@@ -4,13 +4,19 @@ class RegisterEntity {
   final String password;
   final String secretQuestion;
   final String secretAnswer;
+  final String photoUrl; // Add this
+  final String gender;
+  final String dataOfBirth; // Add this
 
-  const RegisterEntity({
+  RegisterEntity({
     required this.fullName,
     required this.phoneNumber,
     required this.password,
     required this.secretQuestion,
     required this.secretAnswer,
+    required this.photoUrl, // Add this
+    required this.gender,
+    required this.dataOfBirth, // Add this
   });
 
   @override
@@ -22,7 +28,10 @@ class RegisterEntity {
         other.phoneNumber == phoneNumber &&
         other.password == password &&
         other.secretQuestion == secretQuestion &&
-        other.secretAnswer == secretAnswer;
+        other.secretAnswer == secretAnswer &&
+        other.photoUrl == photoUrl &&
+        other.gender == gender &&
+        other.dataOfBirth == dataOfBirth;
   }
 
   @override
