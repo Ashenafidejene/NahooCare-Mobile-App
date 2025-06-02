@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class PasswordField extends StatefulWidget {
   final TextEditingController controller;
-  final String labelText;
+  final String? labelText;
   final String? Function(String?)? validator;
   final bool showStrengthIndicator;
   final ValueChanged<String>? onChanged;
@@ -10,7 +11,7 @@ class PasswordField extends StatefulWidget {
   const PasswordField({
     super.key,
     required this.controller,
-    this.labelText = 'Password',
+    this.labelText,
     this.validator,
     this.showStrengthIndicator = false,
     this.onChanged,
@@ -33,7 +34,7 @@ class _PasswordFieldState extends State<PasswordField> {
           controller: widget.controller,
           obscureText: _obscureText,
           decoration: InputDecoration(
-            labelText: widget.labelText,
+            labelText: widget.labelText ?? 'password_field.label'.tr(),
             border: const OutlineInputBorder(
               borderRadius: BorderRadius.all(Radius.circular(8)),
             ),
@@ -48,6 +49,7 @@ class _PasswordFieldState extends State<PasswordField> {
               },
             ),
           ),
+
           validator: widget.validator ?? _defaultValidator,
           onChanged: (value) {
             setState(() {
@@ -84,10 +86,10 @@ class _PasswordFieldState extends State<PasswordField> {
 
   String? _defaultValidator(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Password is required';
+      return 'password_field.required'.tr();
     }
     if (value.length < 8) {
-      return 'Password must be at least 8 characters';
+      return 'password_field.min_length'.tr();
     }
     return null;
   }
@@ -108,8 +110,8 @@ class _PasswordFieldState extends State<PasswordField> {
   }
 
   String _getStrengthText() {
-    if (_passwordStrength < 0.4) return 'Weak';
-    if (_passwordStrength < 0.7) return 'Medium';
-    return 'Strong';
+    if (_passwordStrength < 0.4) return 'password_field.weak'.tr();
+    if (_passwordStrength < 0.7) return 'password_field.medium'.tr();
+    return 'password_field.strong'.tr();
   }
 }

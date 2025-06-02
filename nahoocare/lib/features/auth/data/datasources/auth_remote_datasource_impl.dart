@@ -76,8 +76,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       await localStorageService.saveToken(response['access_token']);
       await localStorageService.profileSave(response['image_url']);
       final value = await localStorageService.getToken();
-      debugPrint("Login successful sharedPreferences , token: ${value}");
-      debugPrint("${value}");
+      debugPrint("Login successful sharedPreferences , token: $value");
+      debugPrint("$value");
       return response;
     } on ApiException catch (e) {
       throw ServerException(e.message, e.statusCode);

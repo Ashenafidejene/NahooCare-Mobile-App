@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:nahoocare/core/widgets/language_switcher.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
-
 import '../../../../core/widgets/custom_button.dart';
 import '../blocs/auth_bloc.dart';
 import '../widgets/password_field.dart';
@@ -22,14 +23,18 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Login'),
+        title: Text('login'.tr()),
         centerTitle: true,
         actions: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: LanguageSwitcher(),
+          ),
           TextButton(
             onPressed: () => Navigator.pushNamed(context, '/landing'),
-            child: const Text(
-              'Skip',
-              style: TextStyle(color: Color.fromARGB(255, 20, 19, 19)),
+            child: Text(
+              'skip'.tr(),
+              style: const TextStyle(color: Colors.black),
             ),
           ),
         ],
@@ -44,8 +49,8 @@ class _LoginPageState extends State<LoginPage> {
               ).showSnackBar(SnackBar(content: Text(state.message)));
             } else if (state is LoginSuccess) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Login successful!'),
+                SnackBar(
+                  content: Text('login_success'.tr()),
                   behavior: SnackBarBehavior.floating,
                 ),
               );
@@ -63,10 +68,13 @@ class _LoginPageState extends State<LoginPage> {
                   child: Image.asset('assets/images/logo (2).png', height: 250),
                 ),
                 const SizedBox(height: 16),
-                const Center(
+                Center(
                   child: Text(
-                    'Welcome to Nahoocare',
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    'welcome'.tr(),
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 32),
@@ -82,11 +90,11 @@ class _LoginPageState extends State<LoginPage> {
                       child: Column(
                         children: [
                           IntlPhoneField(
-                            decoration: const InputDecoration(
-                              labelText: 'Phone Number',
-                              border: OutlineInputBorder(),
+                            decoration: InputDecoration(
+                              labelText: 'phone_number'.tr(),
+                              border: const OutlineInputBorder(),
                             ),
-                            initialCountryCode: 'ET', // You can change this
+                            initialCountryCode: 'ET',
                             onChanged: (phone) {
                               _completePhoneNumber = phone.completeNumber;
                             },
@@ -95,7 +103,10 @@ class _LoginPageState extends State<LoginPage> {
                             },
                           ),
                           const SizedBox(height: 16),
-                          PasswordField(controller: _passwordController),
+                          PasswordField(
+                            controller: _passwordController,
+                            labelText: 'password'.tr(),
+                          ),
                           const SizedBox(height: 16),
                           Align(
                             alignment: Alignment.centerRight,
@@ -105,12 +116,12 @@ class _LoginPageState extends State<LoginPage> {
                                     context,
                                     '/reset-password',
                                   ),
-                              child: const Text('Forgot Password?'),
+                              child: Text('forgot_password'.tr()),
                             ),
                           ),
                           const SizedBox(height: 16),
                           CustomButton(
-                            text: 'Login',
+                            text: 'login'.tr(),
                             isLoading: state is AuthLoading,
                             onPressed: () {
                               if (_formKey.currentState?.validate() ?? false) {
@@ -124,10 +135,8 @@ class _LoginPageState extends State<LoginPage> {
                                   );
                                 } else {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text(
-                                        'Please enter a phone number.',
-                                      ),
+                                    SnackBar(
+                                      content: Text('please_enter_phone'.tr()),
                                     ),
                                   );
                                 }
@@ -138,14 +147,14 @@ class _LoginPageState extends State<LoginPage> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Text("Don't have an account?"),
+                              Text("dont_have_account".tr()),
                               TextButton(
                                 onPressed:
                                     () => Navigator.pushNamed(
                                       context,
                                       '/register',
                                     ),
-                                child: const Text('Sign Up'),
+                                child: Text('sign_up'.tr()),
                               ),
                             ],
                           ),

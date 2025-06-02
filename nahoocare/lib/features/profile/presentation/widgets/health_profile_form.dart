@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import '../../domain/entities/health_profile.dart';
 
@@ -70,7 +71,7 @@ class _HealthProfileFormState extends State<HealthProfileForm> {
         children: [
           DropdownButtonFormField<String>(
             value: widget.profile.bloodType,
-            decoration: _inputDecoration('Blood Type'),
+            decoration: _inputDecoration('health_profile.blood_type'.tr()),
             items:
                 bloodTypes
                     .map(
@@ -87,7 +88,7 @@ class _HealthProfileFormState extends State<HealthProfileForm> {
           const SizedBox(height: 20),
           _buildListInput(
             controller: _allergyController,
-            label: 'Allergies',
+            labelKey: 'health_profile.allergies',
             list: _allergies,
             onAdd: () {
               if (_allergyController.text.isNotEmpty) {
@@ -100,15 +101,14 @@ class _HealthProfileFormState extends State<HealthProfileForm> {
               }
             },
             onRemove: (index) {
-              final newAllergies = List<String>.from(_allergies)
-                ..removeAt(index);
-              _updateProfile(widget.profile.copyWith(allergies: newAllergies));
+              final newList = List<String>.from(_allergies)..removeAt(index);
+              _updateProfile(widget.profile.copyWith(allergies: newList));
             },
           ),
           const SizedBox(height: 20),
           _buildListInput(
             controller: _conditionController,
-            label: 'Chronic Conditions',
+            labelKey: 'health_profile.chronic_conditions',
             list: _chronicConditions,
             onAdd: () {
               if (_conditionController.text.isNotEmpty) {
@@ -134,7 +134,7 @@ class _HealthProfileFormState extends State<HealthProfileForm> {
           const SizedBox(height: 20),
           _buildListInput(
             controller: _historyController,
-            label: 'Medical History',
+            labelKey: 'health_profile.medical_history',
             list: _medicalHistory,
             onAdd: () {
               if (_historyController.text.isNotEmpty) {
@@ -163,7 +163,7 @@ class _HealthProfileFormState extends State<HealthProfileForm> {
   InputDecoration _inputDecoration(String label) {
     return InputDecoration(
       labelText: label,
-      hintText: 'Enter $label',
+      hintText: '${'health_profile.add'.tr()} $label',
       filled: true,
       fillColor: Colors.grey.shade100,
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
@@ -173,11 +173,12 @@ class _HealthProfileFormState extends State<HealthProfileForm> {
 
   Widget _buildListInput({
     required TextEditingController controller,
-    required String label,
+    required String labelKey,
     required List<String> list,
     required VoidCallback onAdd,
     required Function(int) onRemove,
   }) {
+    final label = labelKey.tr();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -191,7 +192,7 @@ class _HealthProfileFormState extends State<HealthProfileForm> {
             Expanded(
               child: TextFormField(
                 controller: controller,
-                decoration: _inputDecoration('Add $label'),
+                decoration: _inputDecoration(label),
               ),
             ),
             const SizedBox(width: 8),

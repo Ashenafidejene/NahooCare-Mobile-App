@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import '../blocs/account_bloc.dart';
 import '../widgets/account_info_card.dart';
@@ -16,7 +17,7 @@ class AccountPage extends StatelessWidget {
     });
     return Scaffold(
       appBar: AppBar(
-        title: const Text('My Account'),
+        title: Text('account.my_account'.tr()),
         actions: [
           IconButton(
             icon: const Icon(Icons.edit),
@@ -55,7 +56,7 @@ class AccountPage extends StatelessWidget {
               ),
             );
           }
-          return const Center(child: Text('No account data available'));
+          return Center(child: Text('account.no_data'.tr()));
         },
       ),
     );
@@ -64,7 +65,10 @@ class AccountPage extends StatelessWidget {
   Widget _buildDeleteButton(BuildContext context) {
     return ElevatedButton.icon(
       icon: const Icon(Icons.delete, color: Colors.red),
-      label: const Text('Delete Account', style: TextStyle(color: Colors.red)),
+      label: Text(
+        'account.delete'.tr(),
+        style: const TextStyle(color: Colors.red),
+      ),
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.red.withOpacity(0.1),
       ),

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
-
-import '../../../../core/widgets/custom_button.dart';
-import '../../../../core/widgets/custom_textfield.dart';
-import '../blocs/auth_bloc.dart';
-import '../widgets/password_field.dart';
+import 'package:nahoocare/core/widgets/custom_button.dart';
+import 'package:nahoocare/core/widgets/custom_textfield.dart';
+import 'package:nahoocare/features/auth/presentation/blocs/auth_bloc.dart';
+import 'package:nahoocare/features/auth/presentation/widgets/password_field.dart';
+import 'package:nahoocare/core/widgets/language_switcher.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class ResetPasswordPage extends StatefulWidget {
   const ResetPasswordPage({super.key});
@@ -19,13 +20,18 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
   final _secretAnswerController = TextEditingController();
   final _newPasswordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+
   String? _completePhoneNumber;
   String? _secretQuestion;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Reset Password'), centerTitle: true),
+      appBar: AppBar(
+        title: Text('Reset Password'.tr()),
+        centerTitle: true,
+        actions: const [LanguageSwitcher()],
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: BlocConsumer<AuthBloc, AuthState>(
@@ -33,7 +39,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
             if (state is AuthError) {
               ScaffoldMessenger.of(
                 context,
-              ).showSnackBar(SnackBar(content: Text(state.message)));
+              ).showSnackBar(SnackBar(content: Text(state.message.tr())));
             } else if (state is SecretQuestionLoaded) {
               setState(() {
                 _secretQuestion = state.question;
@@ -41,51 +47,51 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
             } else if (state is PasswordResetSuccess) {
               ScaffoldMessenger.of(
                 context,
-              ).showSnackBar(SnackBar(content: Text(state.message)));
+              ).showSnackBar(SnackBar(content: Text(state.message.tr())));
               Future.delayed(const Duration(seconds: 2), () {
                 Navigator.pushNamed(context, '/login');
               });
             }
           },
           builder: (context, state) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const SizedBox(height: 20),
-                const Center(
-                  child: Icon(
-                    Icons.lock_reset,
-                    size: 72,
-                    color: Colors.deepPurple,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                const Center(
-                  child: Text(
-                    'Reset Your Password',
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 0.5,
+            return Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const SizedBox(height: 20),
+                  const Center(
+                    child: Icon(
+                      Icons.lock_reset,
+                      size: 72,
+                      color: Colors.deepPurple,
                     ),
                   ),
-                ),
-                const SizedBox(height: 24),
-                Card(
-                  elevation: 4,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
+                  const SizedBox(height: 16),
+                  Center(
+                    child: Text(
+                      'Reset Your Password'.tr(),
+                      style: const TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Form(
-                      key: _formKey,
+                  const SizedBox(height: 24),
+                  Card(
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(20),
                       child: Column(
                         children: [
                           IntlPhoneField(
-                            decoration: const InputDecoration(
-                              labelText: 'Phone Number',
-                              border: OutlineInputBorder(),
+                            decoration: InputDecoration(
+                              labelText: 'Phone Number'.tr(),
+                              border: const OutlineInputBorder(),
                             ),
                             initialCountryCode: 'ET',
                             onChanged: (phone) {
@@ -98,10 +104,9 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                           const SizedBox(height: 16),
                           if (_secretQuestion == null)
                             CustomButton(
-                              text: 'Get Secret Question',
+                              text: 'Get Secret Question'.tr(),
                               onPressed: () {
-                                if (_completePhoneNumber != null &&
-                                    _completePhoneNumber!.isNotEmpty) {
+                                if (_completePhoneNumber?.isNotEmpty ?? false) {
                                   context.read<AuthBloc>().add(
                                     GetSecretQuestionEvent(
                                       phoneNumber: _completePhoneNumber!,
@@ -109,9 +114,10 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                                   );
                                 } else {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
+                                    SnackBar(
                                       content: Text(
-                                        'Please enter a valid phone number',
+                                        'Please enter a valid phone number'
+                                            .tr(),
                                       ),
                                     ),
                                   );
@@ -124,7 +130,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Secret Question:',
+                                  'Secret Question:'.tr(),
                                   style: Theme.of(context).textTheme.labelLarge
                                       ?.copyWith(fontWeight: FontWeight.w600),
                                 ),
@@ -136,7 +142,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   child: Text(
-                                    _secretQuestion!,
+                                    _secretQuestion!.tr(),
                                     style: Theme.of(context).textTheme.bodyLarge
                                         ?.copyWith(fontSize: 16),
                                   ),
@@ -146,10 +152,10 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                             const SizedBox(height: 16),
                             CustomTextField(
                               controller: _secretAnswerController,
-                              labelText: 'Secret Answer',
+                              labelText: 'Secret Answer'.tr(),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return 'Please enter your secret answer';
+                                  return 'Please enter your secret answer'.tr();
                                 }
                                 return null;
                               },
@@ -157,23 +163,23 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                             const SizedBox(height: 16),
                             PasswordField(
                               controller: _newPasswordController,
-                              labelText: 'New Password',
+                              labelText: 'New Password'.tr(),
                               showStrengthIndicator: true,
                             ),
                             const SizedBox(height: 16),
                             PasswordField(
                               controller: _confirmPasswordController,
-                              labelText: 'Confirm New Password',
+                              labelText: 'Confirm New Password'.tr(),
                               validator: (value) {
                                 if (value != _newPasswordController.text) {
-                                  return 'Passwords do not match';
+                                  return 'Passwords do not match'.tr();
                                 }
                                 return null;
                               },
                             ),
                             const SizedBox(height: 20),
                             CustomButton(
-                              text: 'Reset Password',
+                              text: 'Reset Password'.tr(),
                               isLoading: state is AuthLoading,
                               onPressed: () {
                                 if (_formKey.currentState?.validate() ??
@@ -182,9 +188,9 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
 
                                   if (_completePhoneNumber == null) {
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
+                                      SnackBar(
                                         content: Text(
-                                          'Please enter your phone number',
+                                          'Please enter your phone number'.tr(),
                                         ),
                                       ),
                                     );
@@ -207,8 +213,8 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             );
           },
         ),

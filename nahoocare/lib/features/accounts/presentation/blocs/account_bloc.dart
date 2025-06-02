@@ -40,7 +40,7 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
     Emitter<AccountState> emit,
   ) async {
     emit(AccountLoading());
-    final result = await getAccountUseCase(NoParams());
+    final result = await getAccountUseCase(const NoParams());
     result.fold(
       (failure) => emit(AccountError(failure.message)),
       (account) => emit(AccountLoaded(account)),
@@ -82,7 +82,7 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
     Emitter<AccountState> emit,
   ) async {
     emit(AccountLoading());
-    final result = await deleteAccountUseCase(NoParams());
+    final result = await deleteAccountUseCase(const NoParams());
     result.fold(
       (failure) => emit(AccountError(failure.message)),
       (_) => emit(AccountDeleted()),

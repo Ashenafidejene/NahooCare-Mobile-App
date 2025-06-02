@@ -1,6 +1,5 @@
-import 'package:http/http.dart';
 import 'package:nahoocare/core/errors/failures.dart';
-
+import 'package:easy_localization/easy_localization.dart';
 import '../../../../core/network/api_client.dart';
 import '../models/account_model.dart';
 
@@ -47,7 +46,7 @@ class AccountRemoteDataSourceImpl implements AccountRemoteDataSource {
     } on ApiException catch (e) {
       // Handle API exception
       print("Error deleting account: ${e.message}");
-      throw ServerFailure("server error", e.statusCode);
+      throw ServerFailure('errors.server'.tr(), e.statusCode);
     }
   }
 }

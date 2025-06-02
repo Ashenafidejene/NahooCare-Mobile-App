@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../domain/entities/first_aid_entity.dart';
 import '../widgets/first_aid_image.dart';
 
@@ -16,6 +17,7 @@ class FirstAidDetailPage extends StatelessWidget {
         title: Text(guide.emergencyTitle),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
+          tooltip: 'back'.tr(), // Localized tooltip
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -56,6 +58,7 @@ class FirstAidDetailPage extends StatelessWidget {
                   Icon(
                     Icons.health_and_safety,
                     color: theme.colorScheme.primary,
+                    semanticLabel: 'first_aid_icon'.tr(), // Accessible label
                   ),
                 ],
               ),

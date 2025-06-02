@@ -3,11 +3,10 @@ import '../../../../core/errors/exceptions.dart';
 import '../../../../core/errors/failures.dart';
 import '../../../../core/network/network_info.dart';
 import '../../domain/entities/auth_entity.dart';
-import '../../domain/entities/login_entity.dart';
 import '../../domain/entities/register_entity.dart';
 import '../../domain/entities/reset_password_entity.dart';
 import '../../domain/repositories/auth_repository.dart';
-
+import 'package:easy_localization/easy_localization.dart';
 import '../datasources/auth_remote_datasource.dart';
 import '../models/auth_model.dart';
 
@@ -26,7 +25,7 @@ class AuthRepositoryImpl implements AuthRepository {
     String password,
   ) async {
     if (!await networkInfo.isConnected) {
-      return Left(NetworkFailure('No internet connection'));
+      return Left(NetworkFailure('network.no_connection'.tr()));
     }
 
     try {
@@ -39,7 +38,7 @@ class AuthRepositoryImpl implements AuthRepository {
     } on AuthenticationException catch (e) {
       return Left(AuthenticationFailure(e.message, code: e.code));
     } on CacheException {
-      return Left(CacheFailure('Failed to cache token'));
+      return Left(CacheFailure('cache.cache_failed'.tr()));
     } catch (e) {
       return Left(UnexpectedFailure(e));
     }
@@ -50,7 +49,7 @@ class AuthRepositoryImpl implements AuthRepository {
     RegisterEntity registerEntity,
   ) async {
     if (!await networkInfo.isConnected) {
-      return Left(NetworkFailure('No internet connection'));
+      return Left(NetworkFailure('network.no_connection'.tr()));
     }
     try {
       final response = await remoteDataSource.register(
@@ -76,7 +75,7 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<Either<Failure, String>> getSecretQuestion(String phoneNumber) async {
     if (!await networkInfo.isConnected) {
-      return Left(NetworkFailure('No internet connection'));
+      return Left(NetworkFailure('network.no_connection'.tr()));
     }
 
     try {
@@ -96,7 +95,7 @@ class AuthRepositoryImpl implements AuthRepository {
     ResetPasswordEntity resetPasswordEntity,
   ) async {
     if (!await networkInfo.isConnected) {
-      return Left(NetworkFailure('No internet connection'));
+      return Left(NetworkFailure('network.no_connection'.tr()));
     }
 
     try {
@@ -121,7 +120,7 @@ class AuthRepositoryImpl implements AuthRepository {
       final token = await remoteDataSource.getCachedToken();
       return Right(token != null);
     } on CacheException {
-      return Left(CacheFailure('Failed to get cached token'));
+      return Left(CacheFailure('cache.get_failed'.tr()));
     } catch (e) {
       return Left(UnexpectedFailure(e));
     }
@@ -133,7 +132,7 @@ class AuthRepositoryImpl implements AuthRepository {
       await remoteDataSource.cacheToken(token);
       return const Right(null);
     } on CacheException {
-      return Left(CacheFailure('Failed to cache token'));
+      return Left(CacheFailure('cache.cache_failed'.tr()));
     } catch (e) {
       return Left(UnexpectedFailure(e));
     }
@@ -145,7 +144,7 @@ class AuthRepositoryImpl implements AuthRepository {
       final token = await remoteDataSource.getCachedToken();
       return Right(token);
     } on CacheException {
-      return Left(CacheFailure('Failed to get cached token'));
+      return Left(CacheFailure('cache.get_failed'.tr()));
     } catch (e) {
       return Left(UnexpectedFailure(e));
     }
@@ -157,7 +156,7 @@ class AuthRepositoryImpl implements AuthRepository {
       await remoteDataSource.clearToken();
       return const Right(null);
     } on CacheException {
-      return Left(CacheFailure('Failed to clear token'));
+      return Left(CacheFailure('cache.clear_failed'.tr()));
     } catch (e) {
       return Left(UnexpectedFailure(e));
     }

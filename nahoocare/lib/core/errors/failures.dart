@@ -17,8 +17,7 @@ abstract class Failure extends Equatable {
 
 /// Server-related failures
 class ServerFailure extends Failure {
-  const ServerFailure(String message, int statusCode, {String? code})
-    : super(message, statusCode, code: code);
+  const ServerFailure(super.message, super.statusCode, {super.code});
 }
 
 /// Network-related failures
@@ -140,9 +139,6 @@ class UnauthorizedFailure extends Failure {
 class InvalidInputFailure extends Failure {
   const InvalidInputFailure(String message, {String? code})
     : super(message, 400, code: code);
-
-  @override
-  List<Object?> get props => super.props;
 }
 
 class UnknownFailure extends Failure {

@@ -15,8 +15,7 @@ abstract class AppException implements Exception {
 
 /// Server-related exceptions
 class ServerException extends AppException {
-  ServerException(String message, int statusCode, {String? code})
-    : super(message, statusCode, code: code);
+  ServerException(super.message, super.statusCode, {super.code});
 }
 
 /// Network-related exceptions

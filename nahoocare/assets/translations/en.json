@@ -1,0 +1,156 @@
+{
+  "welcome_title": "Welcome to Nahoocare!",
+  "welcome_description": "Your offline emergency health companion.",
+  "symptom_title": "Symptom Analysis",
+  "symptom_description": "Understand conditions based on symptoms.",
+  "healthcare_title": "Healthcare Centers",
+  "healthcare_description": "Get nearby hospital recommendations.",
+  "firstaid_title": "Offline First Aid",
+  "firstaid_description": "Instant help even without the internet.",
+  "profile_title": "Health - Profile",
+  "profile_description": "Store health profile history.",
+ 
+  "login": "Login",
+  "skip": "Skip",
+  "welcome": "Welcome to Nahoocare!",
+  "phone_number": "Phone Number",
+  "password": "password ",
+  "forgot_password": "Forgot Password?",
+  "please_enter_phone": "Please enter a phone number ",
+  "please_enter_password": "Please enter a pasword ",
+  "dont_have_account": "Don't have an account?",
+  "sign_up": "Sign Up",
+  "login_success": "Login successful!",
+
+
+  "Reset Password": "Reset Password",
+  "Reset Your Password": "Reset Your Password",
+  "Phone Number": "Phone Number",
+  "Get Secret Question": "Get Secret Question",
+  "Please enter a valid phone number": "Please enter a valid phone number",
+  "Secret Question:": "Secret Question",
+  "Secret Answer": "Secret Answer",
+  "Please enter your secret answer": "Please enter your secret answer",
+  "New Password": "New Password",
+  "Confirm New Password": "Confirm New Password",
+  "Favorite Football Team":"Favorite Football Team",
+  "Passwords do not match": "Passwords do not match",
+  "Please enter your phone number": "Please enter your phone number",
+  "reset_success": "Reset successful!",
+
+  
+  "register": "Register",
+  "create_account": "Create your account",
+  "full_name": "Full Name",
+  "confirm_password": "Confirm Password",
+  "secret_question": "Secret Question",
+  "secret_answer": "Secret Answer",
+  "already_have_account": "Already have an account?",
+  "registration_successful": "Registration successful! Please login.",
+  "passwords_no_match": "Passwords do not match",
+  "enter_phone_number": "Please enter a phone number",
+  "enter_full_name": "Please enter your full name",
+  "enter_secret_question": "Please enter a secret question",
+  "enter_secret_answer": "Please enter a secret answer",
+  "Don't have an account":"Don't have an account ?",
+
+  
+  "greeting_morning": "Good Morning",
+  "greeting_afternoon": "Good Afternoon",
+  "greeting_evening": "Good Evening",
+  "drawer_user": "Nahoocare User",
+  "drawer_account": "Account",
+  "drawer_history": "History",
+  "drawer_logout": "Logout",
+  "logout_confirm_title": "Confirm Logout",
+  "logout_confirm_message": "Are you sure you want to logout?",
+  "cancel": "Cancel",
+  "logout": "Logout",
+
+  
+  "symptomCheckerTitle": "🩺 Symptom Checker",
+  "symptomCheckerSubtitle": "Describe how you feel and we’ll guide you to care.",
+  "symptomsLabel": "Your symptoms",
+  "symptomsHint": "e.g. headache, sore throat...",
+  "searchButton": "Search for Help",
+  "viewCentersOnMap": "View Centers on Map",
+  "fetchingLocationMessage": "Fetching your location. Please try again.",
+
+  "sort_by_distance": "Sort by distance",
+  "no_centers_found": "No centers found matching your criteria",
+  "reset": "Reset",
+
+
+  "health_profile": {
+    "blood_type": "Blood Type",
+    "allergies": "Allergies",
+    "chronic_conditions": "Chronic Conditions",
+    "medical_history": "Medical History",
+    "add": "Add"
+  },
+    
+  "password_field": {
+    "label": "Password",
+    "required": "Password is required",
+    "min_length": "Password must be at least 8 characters",
+    "weak": "Weak",
+    "medium": "Medium",
+    "strong": "Strong"
+  },
+
+  "errors": {
+    "server": "Server error",
+    "fetch_account": "Failed to fetch account data.",
+    "update_account": "Failed to update account information.",
+    "delete_account": "Failed to delete account."
+  },
+
+  "network": {
+    "no_connection": "No internet connection"
+  },
+  "cache": {
+    "cache_failed": "Failed to cache token",
+    "get_failed": "Failed to get cached token",
+    "clear_failed": "Failed to clear token"
+  },
+
+  "account": {
+    "edit_title": "Edit Account",
+    "my_account": "My Account",
+    "delete_account": "Delete Account",
+    "no_data": "No account data available",
+    "full_name": "Full Name",
+    "phone_number": "Phone Number",
+    "security_question": "Security Question",
+    "delete_title": "Delete Account",
+    "delete_message": "Are you sure you want to delete your account? This action cannot be undone.",
+    "cancel": "Cancel",
+    "delete": "Delete"
+  },
+  
+  
+
+  "password_strength_weak": "Weak",
+  "password_strength_medium": "Medium",
+  "password_strength_strong": "Strong",
+
+  "back": "Back",
+  "first_aid_icon": "First Aid"
+
+
+  
+
+  
+
+  }
+
+
+
+  
+
+
+
+
+
+
+

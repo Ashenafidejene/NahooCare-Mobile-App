@@ -53,7 +53,7 @@ class ApiClient {
 
     if (requiresAuth) {
       final token = await _localStorage.getToken();
-      debugPrint("${token}");
+      debugPrint("$token");
       if (token == null) {
         throw ApiException(
           statusCode: 401,
@@ -110,7 +110,7 @@ class ApiClient {
 
     debugPrint('📦 Response Body:');
     try {
-      final formattedJson = JsonEncoder.withIndent(
+      final formattedJson = const JsonEncoder.withIndent(
         '  ',
       ).convert(jsonDecode(utf8.decode(response.bodyBytes)));
       debugPrint(formattedJson);
@@ -278,7 +278,7 @@ class ApiClient {
         message: errorMessage,
         response: responseBody,
       );
-    } on FormatException catch (e) {
+    } on FormatException {
       throw ApiException(
         statusCode: response.statusCode,
         message: 'Invalid response format',
