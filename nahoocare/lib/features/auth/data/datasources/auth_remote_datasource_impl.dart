@@ -74,6 +74,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       }, requiresAuth: false);
       await localStorageService.saveFullName(response['full_name']);
       await localStorageService.saveToken(response['access_token']);
+      await localStorageService.profileSave(response['image_url']);
       final value = await localStorageService.getToken();
       debugPrint("Login successful sharedPreferences , token: ${value}");
       debugPrint("${value}");
@@ -92,8 +93,11 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required String password,
     required String secretQuestion,
     required String secretAnswer,
+    required String photoUrl,
+    required String dataOfBirth,
+    required String gender,
   }) async {
-    debugPrint("Attempting to register...");
+    debugPrint("Attempting to register user: $phoneNumber");
     try {
       final response = await apiClient.post('/api/account/register', {
         'full_name': fullName,
@@ -101,14 +105,22 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         'password': password,
         'secret_question': secretQuestion,
         'secret_answer': secretAnswer,
+        'photo_url': photoUrl,
+        'date_of_birth': dataOfBirth,
+        'gender': gender,
       }, requiresAuth: false);
 
-      // Check response and return if successful
-      if (response.containsKey("message")) {
-        return response;
-      } else {
-        throw ServerException('Unexpected response from server', 400);
-      }
+      // Validate response contains required fields
+      // if (response['user_id'] == null || response['access_token'] == null) {
+      //   throw ServerException('Invalid registration response format', 500);
+      // }
+
+      // await localStorageService.saveToken(response['access_token'] as String);
+      // await localStorageService.saveFullName(fullName);
+
+      // debugPrint("Registration successful for user: ${response['user_id']}");
+      final x = await this.login(phoneNumber, password);
+      return response;
     } on ApiException catch (e) {
       throw ServerException(e.message, e.statusCode);
     } catch (e) {
@@ -128,12 +140,5 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       'new_password': newPassword,
     }, requiresAuth: false);
     return response;
-    /*try {
-     
-    } on ApiException catch (e) {
-      throw ServerException(e.message, e.statusCode);
-    } catch (e) {
-      throw ServerException('Failed to reset password: ${e.toString()}', 500);
-    }*/
   }
 }

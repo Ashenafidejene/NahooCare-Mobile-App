@@ -6,6 +6,9 @@ abstract class AuthRemoteDataSource {
     required String password,
     required String secretQuestion,
     required String secretAnswer,
+    required String photoUrl, // Add this
+    required String dataOfBirth,
+    required String gender, // Add this
   });
   Future<String> getSecretQuestion(String phoneNumber);
   Future<Map<String, dynamic>> resetPassword({
