@@ -49,7 +49,7 @@ class _LoginPageState extends State<LoginPage> {
                   behavior: SnackBarBehavior.floating,
                 ),
               );
-              Future.delayed(const Duration(seconds: 1), () {
+              Future.delayed(const Duration(seconds: 3), () {
                 Navigator.pushNamed(context, '/landing');
               });
             }

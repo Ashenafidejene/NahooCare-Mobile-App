@@ -4,8 +4,10 @@ import 'package:intl_phone_field/intl_phone_field.dart';
 
 import '../../../../core/widgets/custom_button.dart';
 import '../../../../core/widgets/custom_textfield.dart';
-import '../blocs/auth_bloc.dart';
+
+import '../blocs/register_blocs/registration_flow_bloc.dart';
 import '../widgets/password_field.dart';
+import 'ProfilePhotoScreen.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -29,22 +31,23 @@ class _RegisterPageState extends State<RegisterPage> {
       appBar: AppBar(title: const Text('Register'), centerTitle: true),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
-        child: BlocConsumer<AuthBloc, AuthState>(
+        child: BlocConsumer<RegistrationFlowBloc, RegistrationFlowState>(
           listener: (context, state) {
-            if (state is AuthError) {
+            if (state is RegistrationError) {
               ScaffoldMessenger.of(
                 context,
               ).showSnackBar(SnackBar(content: Text(state.message)));
-            } else if (state is RegisterSuccess) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Registration successful! Please login.'),
-                  behavior: SnackBarBehavior.floating,
+            } else if (state is ProfilePhotoRequired) {
+              // Navigate to profile photo screen after basic info is submitted
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder:
+                      (context) => ProfilePhotoScreen(
+                        phoneNumber: _completePhoneNumber!,
+                      ),
                 ),
               );
-              Future.delayed(const Duration(seconds: 2), () {
-                Navigator.pushNamed(context, '/login');
-              });
             }
           },
           builder: (context, state) {
@@ -94,12 +97,16 @@ class _RegisterPageState extends State<RegisterPage> {
                               labelText: 'Phone Number',
                               border: OutlineInputBorder(),
                             ),
-                            initialCountryCode: 'ET', // Default to Ethiopia
+                            initialCountryCode: 'ET',
                             onChanged: (phone) {
                               _completePhoneNumber = phone.completeNumber;
                             },
-                            onSaved: (phone) {
-                              _completePhoneNumber = phone?.completeNumber;
+                            validator: (phone) {
+                              if (phone == null ||
+                                  phone.completeNumber.isEmpty) {
+                                return 'Please enter a phone number';
+                              }
+                              return null;
                             },
                           ),
                           const SizedBox(height: 16),
@@ -143,29 +150,15 @@ class _RegisterPageState extends State<RegisterPage> {
                           ),
                           const SizedBox(height: 24),
                           CustomButton(
-                            text: 'Register',
-                            isLoading: state is AuthLoading,
+                            text: 'Continue',
+                            isLoading: state is RegistrationLoading,
                             onPressed: () {
-                              final isValid =
-                                  _formKey.currentState?.validate() ?? false;
-
-                              if (!isValid) return;
-
-                              _formKey.currentState?.save();
-
-                              final password = _passwordController.text;
-                              final confirmPassword =
-                                  _confirmPasswordController.text;
-
-                              if (password != confirmPassword) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Passwords do not match'),
-                                    behavior: SnackBarBehavior.floating,
-                                  ),
-                                );
+                              if (!(_formKey.currentState?.validate() ??
+                                  false)) {
                                 return;
                               }
+
+                              _formKey.currentState?.save();
 
                               if (_completePhoneNumber == null) {
                                 ScaffoldMessenger.of(context).showSnackBar(
@@ -178,11 +171,11 @@ class _RegisterPageState extends State<RegisterPage> {
                                 return;
                               }
 
-                              context.read<AuthBloc>().add(
-                                RegisterEvent(
+                              context.read<RegistrationFlowBloc>().add(
+                                SubmitBasicInfoEvent(
                                   fullName: _nameController.text,
                                   phoneNumber: _completePhoneNumber!,
-                                  password: password,
+                                  password: _passwordController.text,
                                   secretQuestion:
                                       _secretQuestionController.text,
                                   secretAnswer: _secretAnswerController.text,
@@ -196,9 +189,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             children: [
                               const Text('Already have an account?'),
                               TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
+                                onPressed: () => Navigator.pop(context),
                                 child: const Text('Login'),
                               ),
                             ],
