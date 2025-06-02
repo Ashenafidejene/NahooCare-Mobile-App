@@ -13,23 +13,23 @@ class FirstAidListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     context.read<FirstAidBloc>().add(LoadFirstAidGuides());
-
+    final theme = Theme.of(context);
     return Scaffold(
       body: SafeArea(
         child: BlocBuilder<FirstAidBloc, FirstAidState>(
           builder: (context, state) {
             return Column(
               children: [
-                const Padding(
+                Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
                         '🩺 First Aid Guides',
-                        style: TextStyle(
-                          fontSize: 22,
+                        style: theme.textTheme.headlineSmall?.copyWith(
                           fontWeight: FontWeight.bold,
+                          color: Colors.blueAccent,
                         ),
                       ),
                     ],

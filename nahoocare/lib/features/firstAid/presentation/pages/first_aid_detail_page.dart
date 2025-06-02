@@ -25,12 +25,15 @@ class FirstAidDetailPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(16),
-                child: FirstAidImage(
-                  imageUrl: guide.image,
-                  height: 220,
-                  width: double.infinity,
+              AspectRatio(
+                aspectRatio: 16 / 9,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: FirstAidImage(
+                    imageUrl: guide.image,
+                    width: double.infinity,
+                    height: null, // Let AspectRatio handle height
+                  ),
                 ),
               ),
               const SizedBox(height: 20),

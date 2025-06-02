@@ -19,25 +19,36 @@ class SearchFilterBar extends StatefulWidget {
 class _SearchFilterBarState extends State<SearchFilterBar> {
   bool showFilters = false;
   String _selectedCategory = 'All';
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          Row(
+    final theme = Theme.of(context);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+          child: Row(
             children: [
               Expanded(
                 child: TextField(
+                  controller: _searchController,
                   decoration: InputDecoration(
                     hintText: 'Search first aid guides...',
-                    prefixIcon: const Icon(Icons.search),
+                    prefixIcon: Icon(
+                      Icons.search,
+                      color: theme.iconTheme.color,
+                    ),
                     filled: true,
-                    fillColor: Theme.of(context).colorScheme.surfaceVariant,
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+                    fillColor: theme.colorScheme.surfaceVariant,
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 0,
+                    ),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30),
+                      borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide.none,
                     ),
                   ),
@@ -45,23 +56,19 @@ class _SearchFilterBarState extends State<SearchFilterBar> {
                 ),
               ),
               const SizedBox(width: 12),
-              Material(
-                color: Theme.of(context).colorScheme.primary,
-                borderRadius: BorderRadius.circular(30),
-                child: InkWell(
-                  onTap: () => setState(() => showFilters = !showFilters),
-                  borderRadius: BorderRadius.circular(30),
-                  child: const Padding(
-                    padding: EdgeInsets.all(10),
-                    child: Icon(Icons.filter_alt, color: Colors.white),
-                  ),
-                ),
+              IconButton(
+                icon: Icon(Icons.filter_alt, color: theme.colorScheme.primary),
+                onPressed: () => setState(() => showFilters = !showFilters),
+                tooltip: 'Filter options',
               ),
             ],
           ),
-          if (showFilters) ...[
-            const SizedBox(height: 12),
-            Align(
+        ),
+        if (showFilters) ...[
+          const SizedBox(height: 12),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Align(
               alignment: Alignment.centerLeft,
               child: Wrap(
                 spacing: 10,
@@ -76,27 +83,21 @@ class _SearchFilterBarState extends State<SearchFilterBar> {
                           setState(() => _selectedCategory = category);
                           widget.onFilter(category);
                         },
-                        selectedColor:
-                            Theme.of(context).colorScheme.primaryContainer,
-                        backgroundColor:
-                            Theme.of(context).colorScheme.surfaceVariant,
+                        selectedColor: theme.colorScheme.primaryContainer,
+                        backgroundColor: theme.colorScheme.surfaceVariant,
                         labelStyle: TextStyle(
                           color:
                               isSelected
-                                  ? Theme.of(
-                                    context,
-                                  ).colorScheme.onPrimaryContainer
-                                  : Theme.of(
-                                    context,
-                                  ).colorScheme.onSurfaceVariant,
+                                  ? theme.colorScheme.onPrimaryContainer
+                                  : theme.colorScheme.onSurfaceVariant,
                         ),
                       );
                     }).toList(),
               ),
             ),
-          ],
+          ),
         ],
-      ),
+      ],
     );
   }
 }

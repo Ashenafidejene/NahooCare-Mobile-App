@@ -43,16 +43,8 @@ class FirstAidCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 6),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.primary.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
+                    Chip(
+                      label: Text(
                         guide.category,
                         style: TextStyle(
                           color: theme.colorScheme.primary,
@@ -60,11 +52,19 @@ class FirstAidCard extends StatelessWidget {
                           fontWeight: FontWeight.w500,
                         ),
                       ),
+                      backgroundColor: theme.colorScheme.primary.withOpacity(
+                        0.1,
+                      ),
+                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
                     ),
                   ],
                 ),
               ),
-              const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+              Icon(
+                Icons.chevron_right,
+                color: Theme.of(context).colorScheme.primary,
+              ),
             ],
           ),
         ),
