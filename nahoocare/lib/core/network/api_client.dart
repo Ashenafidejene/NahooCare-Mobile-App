@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'package:http/io_client.dart';
 
 import '../service/local_storage_service.dart';
 
@@ -24,17 +26,24 @@ class ApiException implements Exception {
 
 class ApiClient {
   final String baseUrl;
-  final http.Client _client;
+  late final http.Client _client;
   final LocalStorageService _localStorage;
   final bool _debugMode;
-
   ApiClient({
     required this.baseUrl,
     required LocalStorageService localStorage,
     bool debugMode = false,
-  }) : _client = http.Client(),
-       _localStorage = localStorage,
-       _debugMode = debugMode;
+  }) : _localStorage = localStorage,
+       _debugMode = debugMode {
+    if (_debugMode) {
+      // Disable certificate checks in development mode
+      final ioClient =
+          HttpClient()..badCertificateCallback = (cert, host, port) => true;
+      _client = IOClient(ioClient);
+    } else {
+      _client = http.Client();
+    }
+  }
 
   Future<Map<String, String>> _getHeaders({bool requiresAuth = true}) async {
     final headers = {
