@@ -12,88 +12,110 @@ class HealthProfileDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
-      child: Container(
-        padding: const EdgeInsets.all(24),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(24),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black12,
-              blurRadius: 12,
-              offset: const Offset(0, 6),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header title like healthcareSearch
+          Text(
+            'Health Profile',
+            style: theme.textTheme.headlineSmall?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: Colors.blueAccent,
             ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildProfileSection(context, Icons.water_drop, 'Blood Type', [
-              profile.bloodType,
-            ]),
-            const Divider(height: 32),
-            _buildProfileSection(
-              context,
-              Icons.warning_amber,
-              'Allergies',
-              profile.allergies,
-            ),
-            const Divider(height: 32),
-            _buildProfileSection(
-              context,
-              Icons.favorite,
-              'Chronic Conditions',
-              profile.chronicConditions,
-            ),
-            const Divider(height: 32),
-            _buildProfileSection(
-              context,
-              Icons.history,
-              'Medical History',
-              profile.medicalHistory,
-            ),
-            const SizedBox(height: 30),
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: () => _navigateToEditProfile(context),
-                    icon: const Icon(Icons.edit, size: 20, color: Colors.white),
-                    label: const Text(
-                      'Edit Profile',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      backgroundColor: Colors.blueAccent,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: () => _confirmDeleteProfile(context),
-                    icon: const Icon(Icons.delete_outline, size: 20),
-                    label: const Text('Delete'),
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      backgroundColor: Colors.redAccent,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                    ),
-                  ),
+          ),
+          const SizedBox(height: 16),
+
+          // Main profile card
+          Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(24),
+              boxShadow: const [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 6, // ↓ Reduced from 12 to 6
+                  offset: Offset(0, 3),
                 ),
               ],
             ),
-          ],
-        ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildProfileSection(context, Icons.water_drop, 'Blood Type', [
+                  profile.bloodType,
+                ]),
+                const Divider(height: 32),
+                _buildProfileSection(
+                  context,
+                  Icons.warning_amber,
+                  'Allergies',
+                  profile.allergies,
+                ),
+                const Divider(height: 32),
+                _buildProfileSection(
+                  context,
+                  Icons.favorite,
+                  'Chronic Conditions',
+                  profile.chronicConditions,
+                ),
+                const Divider(height: 32),
+                _buildProfileSection(
+                  context,
+                  Icons.history,
+                  'Medical History',
+                  profile.medicalHistory,
+                ),
+                const SizedBox(height: 30),
+                Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        onPressed: () => _navigateToEditProfile(context),
+                        icon: const Icon(
+                          Icons.edit,
+                          size: 20,
+                          color: Colors.white,
+                        ),
+                        label: const Text(
+                          'Edit Profile',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          backgroundColor: Colors.blueAccent,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        onPressed: () => _confirmDeleteProfile(context),
+                        icon: const Icon(Icons.delete_outline, size: 20),
+                        label: const Text('Delete'),
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          backgroundColor: Colors.redAccent,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

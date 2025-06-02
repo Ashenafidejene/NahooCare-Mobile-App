@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../../domain/entities/health_profile.dart';
 import '../bloc/health_profile_bloc.dart';
 
@@ -46,101 +45,102 @@ class _CreateHealthProfileFormState extends State<CreateHealthProfileForm> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(20),
       child: Form(
         key: _formKey,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            Text(
               'Create Health Profile',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 24),
+
             DropdownButtonFormField<String>(
-              decoration: const InputDecoration(
-                labelText: 'Blood Type',
-                border: OutlineInputBorder(),
-              ),
+              decoration: _inputDecoration('Blood Type'),
               items:
-                  bloodTypes
-                      .map(
-                        (type) =>
-                            DropdownMenuItem(value: type, child: Text(type)),
-                      )
-                      .toList(),
-              onChanged: (value) {
-                _bloodTypeController.text = value!;
-              },
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please select your blood type';
-                }
-                return null;
-              },
+                  bloodTypes.map((type) {
+                    return DropdownMenuItem(value: type, child: Text(type));
+                  }).toList(),
+              onChanged: (value) => _bloodTypeController.text = value ?? '',
+              validator:
+                  (value) =>
+                      (value == null || value.isEmpty)
+                          ? 'Please select your blood type'
+                          : null,
             ),
-            const SizedBox(height: 16),
+
+            const SizedBox(height: 24),
             _buildListInput(
+              context,
               controller: _allergyController,
               label: 'Allergies',
               list: _allergies,
               onAdd: () {
                 if (_allergyController.text.isNotEmpty) {
                   setState(() {
-                    _allergies.add(_allergyController.text);
+                    _allergies.add(_allergyController.text.trim());
                     _allergyController.clear();
                   });
                 }
               },
-              onRemove: (index) {
-                setState(() {
-                  _allergies.removeAt(index);
-                });
-              },
+              onRemove: (index) => setState(() => _allergies.removeAt(index)),
             ),
-            const SizedBox(height: 16),
+
+            const SizedBox(height: 24),
             _buildListInput(
+              context,
               controller: _conditionController,
               label: 'Chronic Conditions',
               list: _chronicConditions,
               onAdd: () {
                 if (_conditionController.text.isNotEmpty) {
                   setState(() {
-                    _chronicConditions.add(_conditionController.text);
+                    _chronicConditions.add(_conditionController.text.trim());
                     _conditionController.clear();
                   });
                 }
               },
-              onRemove: (index) {
-                setState(() {
-                  _chronicConditions.removeAt(index);
-                });
-              },
+              onRemove:
+                  (index) => setState(() => _chronicConditions.removeAt(index)),
             ),
-            const SizedBox(height: 16),
+
+            const SizedBox(height: 24),
             _buildListInput(
+              context,
               controller: _historyController,
               label: 'Medical History',
               list: _medicalHistory,
               onAdd: () {
                 if (_historyController.text.isNotEmpty) {
                   setState(() {
-                    _medicalHistory.add(_historyController.text);
+                    _medicalHistory.add(_historyController.text.trim());
                     _historyController.clear();
                   });
                 }
               },
-              onRemove: (index) {
-                setState(() {
-                  _medicalHistory.removeAt(index);
-                });
-              },
+              onRemove:
+                  (index) => setState(() => _medicalHistory.removeAt(index)),
             ),
-            const SizedBox(height: 24),
+
+            const SizedBox(height: 32),
             Center(
-              child: ElevatedButton(
-                onPressed: _submitForm,
-                child: const Text('Create Profile'),
+              child: SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: _submitForm,
+                  icon: const Icon(Icons.check_circle_outline),
+                  label: const Text('Create Profile'),
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
               ),
             ),
           ],
@@ -149,7 +149,8 @@ class _CreateHealthProfileFormState extends State<CreateHealthProfileForm> {
     );
   }
 
-  Widget _buildListInput({
+  Widget _buildListInput(
+    BuildContext context, {
     required TextEditingController controller,
     required String label,
     required List<String> list,
@@ -161,7 +162,9 @@ class _CreateHealthProfileFormState extends State<CreateHealthProfileForm> {
       children: [
         Text(
           label,
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          style: Theme.of(
+            context,
+          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
         Row(
@@ -169,31 +172,47 @@ class _CreateHealthProfileFormState extends State<CreateHealthProfileForm> {
             Expanded(
               child: TextFormField(
                 controller: controller,
-                decoration: InputDecoration(
-                  hintText: 'Add $label',
-                  border: const OutlineInputBorder(),
-                  suffixIcon: IconButton(
-                    icon: const Icon(Icons.add),
-                    onPressed: onAdd,
-                  ),
-                ),
+                decoration: _inputDecoration('Add $label'),
+              ),
+            ),
+            const SizedBox(width: 8),
+            ElevatedButton(
+              onPressed: onAdd,
+              child: const Icon(Icons.add),
+              style: ElevatedButton.styleFrom(
+                shape: const CircleBorder(),
+                padding: const EdgeInsets.all(12),
               ),
             ),
           ],
         ),
-        const SizedBox(height: 8),
-        if (list.isNotEmpty)
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: List.generate(list.length, (index) {
-              return Chip(
-                label: Text(list[index]),
-                onDeleted: () => onRemove(index),
-              );
-            }),
-          ),
+        const SizedBox(height: 12),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: List.generate(list.length, (index) {
+            return Chip(
+              label: Text(list[index]),
+              deleteIcon: const Icon(Icons.close),
+              onDeleted: () => onRemove(index),
+              backgroundColor: Theme.of(
+                context,
+              ).colorScheme.secondary.withOpacity(0.2),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+            );
+          }),
+        ),
       ],
+    );
+  }
+
+  InputDecoration _inputDecoration(String label) {
+    return InputDecoration(
+      labelText: label,
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
     );
   }
 
@@ -207,6 +226,9 @@ class _CreateHealthProfileFormState extends State<CreateHealthProfileForm> {
         medicalHistory: _medicalHistory,
       );
       context.read<HealthProfileBloc>().add(CreateHealthProfileEvent(profile));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Health profile created")));
     }
   }
 }
