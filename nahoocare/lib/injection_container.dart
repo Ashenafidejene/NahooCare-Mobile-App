@@ -1,7 +1,9 @@
+import 'package:cloudinary_sdk/cloudinary_sdk.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -18,6 +20,7 @@ import 'features/accounts/domain/usecases/update_account_usecase.dart';
 import 'features/accounts/presentation/blocs/account_bloc.dart';
 import 'features/auth/data/datasources/auth_remote_datasource.dart';
 import 'features/auth/data/datasources/auth_remote_datasource_impl.dart';
+import 'features/auth/data/datasources/cloudinary_datasources.dart';
 import 'features/auth/data/repositories/auth_repository_impl.dart';
 import 'features/auth/domain/repositories/auth_repository.dart';
 import 'features/auth/domain/usecases/get_secret_question_usecase.dart';
@@ -27,6 +30,7 @@ import 'features/auth/domain/usecases/logout_usecase.dart';
 import 'features/auth/domain/usecases/register_usecase.dart';
 import 'features/auth/domain/usecases/reset_password_usecase.dart';
 import 'features/auth/presentation/blocs/auth_bloc.dart';
+import 'features/auth/presentation/blocs/register_blocs/registration_flow_bloc.dart';
 import 'features/firstaid/data/datasources/local_first_aid_datasource.dart';
 import 'features/firstaid/data/datasources/remote_first_aid_datasource.dart';
 import 'features/firstaid/data/repository/first_aid_repository_impl.dart';
@@ -80,6 +84,14 @@ Future<void> init() async {
 
   // External packages
   sl.registerSingleton<Connectivity>(Connectivity());
+  sl.registerLazySingleton(() => ImagePicker());
+  sl.registerLazySingleton<Cloudinary>(
+    () => Cloudinary.full(
+      cloudName: dotenv.env['CLOUDINARY_CLOUD_NAME'] ?? 'your_cloud_name',
+      apiKey: dotenv.env['CLOUDINARY_API_KEY'] ?? 'your_api_key',
+      apiSecret: dotenv.env['CLOUDINARY_API_SECRET'] ?? 'your_api_secret',
+    ),
+  );
 
   // Shared Preferences
   final sharedPreferences = await SharedPreferences.getInstance();
@@ -89,7 +101,15 @@ Future<void> init() async {
   sl.registerSingleton<LocalStorageService>(
     LocalStorageServiceImpl(sl<SharedPreferences>()),
   );
-
+  sl.registerLazySingleton<CloudinaryDataSource>(
+    () => CloudinaryDataSourceImpl(
+      cloudName: dotenv.env['CLOUDINARY_CLOUD_NAME'] ?? 'your_cloud_name',
+      apiKey: dotenv.env['CLOUDINARY_API_KEY'] ?? 'your_api_key',
+      apiSecret: dotenv.env['CLOUDINARY_API_SECRET'] ?? 'your_api_secret',
+      uploadPreset:
+          dotenv.env['CLOUDINARY_UPLOAD_PRESET'] ?? 'your_upload_preset',
+    ),
+  );
   sl.registerSingleton<NetworkInfo>(NetworkInfoImpl(sl<Connectivity>()));
 
   // NEW: Register http.Client instead of Dio
@@ -263,6 +283,7 @@ Future<void> init() async {
       getAccountUseCase: sl<GetAccountUseCase>(),
       updateAccountUseCase: sl<UpdateAccountUseCase>(),
       deleteAccountUseCase: sl<DeleteAccountUseCase>(),
+      cloudinaryDataSource: sl<CloudinaryDataSource>(),
     ),
   );
   sl.registerFactory(
@@ -270,6 +291,12 @@ Future<void> init() async {
       getHistory: sl<GetHistoryUseCase>(),
       deleteAllHistory: sl<DeleteAllHistoryUseCase>(),
       deleteHistory: sl<DeleteSingleHistoryUseCase>(),
+    ),
+  );
+  sl.registerFactory(
+    () => RegistrationFlowBloc(
+      registerUseCase: sl<RegisterUseCase>(),
+      cloudinaryDataSource: sl<CloudinaryDataSource>(),
     ),
   );
 }

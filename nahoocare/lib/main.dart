@@ -11,6 +11,7 @@ import 'package:nahoocare/features/landing/presentation/pages/landing.dart';
 import 'core/theme/theme_cubit.dart';
 import 'features/accounts/presentation/blocs/account_bloc.dart';
 import 'features/auth/presentation/blocs/auth_bloc.dart';
+import 'features/auth/presentation/blocs/register_blocs/registration_flow_bloc.dart';
 import 'features/auth/presentation/pages/login_page.dart';
 import 'features/auth/presentation/pages/register_page.dart';
 import 'features/auth/presentation/pages/reset_password_page.dart';
@@ -76,6 +77,10 @@ class MyApp extends StatelessWidget {
         BlocProvider(
           create: (context) => di.sl<SearchHistoryBloc>(),
           child: const SearchHistoryPage(),
+        ),
+        BlocProvider(
+          create: (context) => di.sl<RegistrationFlowBloc>(),
+          child: RegisterPage(),
         ),
       ],
       child: MaterialApp(
