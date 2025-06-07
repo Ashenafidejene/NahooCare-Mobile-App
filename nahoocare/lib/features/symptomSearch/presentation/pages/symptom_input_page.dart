@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart'; // Add this import
 
 import '../../domain/entities/search_response.dart';
 import '../blocs/symptom_search_bloc.dart';
@@ -117,7 +118,7 @@ class _SymptomInputPageState extends State<SymptomInputPage> {
                           ),
                           const SizedBox(height: 6),
                           Text(
-                            'Describe how you feel and we’ll guide you to care.',
+                            'Describe how you feel and we\'ll guide you to care.',
                             style: theme.textTheme.bodyMedium?.copyWith(
                               color: Colors.grey[600],
                             ),
@@ -155,8 +156,17 @@ class _SymptomInputPageState extends State<SymptomInputPage> {
                                           _currentLocation != null)
                                       ? _performSearch
                                       : null,
-                              icon: const Icon(Icons.search),
-                              label: const Text('Search for Help'),
+                              icon:
+                                  _isLocationLoading
+                                      ? LoadingAnimationWidget.stretchedDots(
+                                        color: Colors.white,
+                                        size: 20,
+                                      )
+                                      : const Icon(Icons.search),
+                              label:
+                                  _isLocationLoading
+                                      ? const Text('Getting Location...')
+                                      : const Text('Search for Help'),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.blueAccent,
                                 foregroundColor: Colors.white,
@@ -164,13 +174,20 @@ class _SymptomInputPageState extends State<SymptomInputPage> {
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(16),
                                 ),
+                                disabledBackgroundColor: Colors.blueAccent
+                                    .withOpacity(0.5),
                               ),
                             ),
                           ),
                           const SizedBox(height: 24),
 
                           if (state is SearchLoading)
-                            const Center(child: CircularProgressIndicator()),
+                            Center(
+                              child: LoadingAnimationWidget.halfTriangleDot(
+                                color: Colors.blueAccent,
+                                size: 50,
+                              ),
+                            ),
 
                           if (state is SearchError)
                             Center(
