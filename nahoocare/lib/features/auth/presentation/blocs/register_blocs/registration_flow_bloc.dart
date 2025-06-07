@@ -3,9 +3,7 @@ import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:meta/meta.dart';
 
-import '../../../../../core/errors/exceptions.dart';
 import '../../../data/datasources/cloudinary_datasources.dart';
 import '../../../domain/entities/register_entity.dart';
 import '../../../domain/usecases/register_usecase.dart';
