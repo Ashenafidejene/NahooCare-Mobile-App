@@ -17,7 +17,7 @@ dependencies:
   google_fonts: ^6.2.1
   equatable: ^2.0.5
   dartz: ^0.10.1
-  intl: ^0.18.1
+  intl: ^0.19.0
   http: ^1.2.1
   flutter_dotenv: ^5.1.0
   permission_handler: ^12.0.0+1
@@ -37,6 +37,9 @@ dependencies:
   cloudinary_sdk : ^5.0.0
   image_picker: ^1.1.2
   flutter_launcher_icons: ^0.14.1
+  easy_localization: ^3.0.7
+  loading_animation_widget: ^1.2.0+4
+  shimmer: ^3.0.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -51,3 +54,4 @@ flutter:
     - .env
     - assets/images/
     - assets/local_first_aid.json
+    - assets/translations/
