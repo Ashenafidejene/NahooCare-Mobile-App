@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shimmer/shimmer.dart'; // Add this import
 
 import '../blocs/healthcare_search_bloc.dart';
 import '../widgets/healthcare_card.dart';
@@ -28,7 +29,7 @@ class HealthcareCentersPage extends StatelessWidget {
         },
         builder: (context, state) {
           if (state.isInitial || state.isLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return _buildShimmerLoading(context);
           }
 
           return RefreshIndicator(
@@ -38,14 +39,9 @@ class HealthcareCentersPage extends StatelessWidget {
             child: Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(
-                    16,
-                    16,
-                    16,
-                    8,
-                  ), // top and bottom padding
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
                   child: Align(
-                    alignment: Alignment.centerLeft, // aligns text to the left
+                    alignment: Alignment.centerLeft,
                     child: Text(
                       'HealthCare Center Search',
                       style: theme.textTheme.headlineSmall?.copyWith(
@@ -141,6 +137,78 @@ class HealthcareCentersPage extends StatelessWidget {
           }
           return const SizedBox();
         },
+      ),
+    );
+  }
+
+  Widget _buildShimmerLoading(BuildContext context) {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey[300]!,
+      highlightColor: Colors.grey[100]!,
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Container(width: 200, height: 24, color: Colors.white),
+            ),
+          ),
+          const SizedBox(height: 10),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    height: 48,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              padding: const EdgeInsets.only(bottom: 16),
+              itemCount: 5, // Number of shimmer items to show
+              itemBuilder: (context, index) {
+                return Container(
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  height: 120,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
