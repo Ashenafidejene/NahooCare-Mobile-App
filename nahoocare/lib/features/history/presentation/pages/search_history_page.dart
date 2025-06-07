@@ -13,6 +13,14 @@ class SearchHistoryPage extends StatelessWidget {
     context.read<SearchHistoryBloc>().add(LoadSearchHistory());
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(
+            Icons.chevron_left,
+            size: 30,
+            color: Colors.blueAccent,
+          ), // Larger back icon
+          onPressed: () => Navigator.maybePop(context), // Safer pop
+        ),
         title: const Text('Search History'),
         actions: [
           IconButton(
