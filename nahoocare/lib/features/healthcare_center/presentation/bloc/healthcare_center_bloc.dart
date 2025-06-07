@@ -79,7 +79,7 @@ class HealthcareCenterBloc
           final currentState = state as HealthcareCenterLoaded;
           emit(currentState.copyWith(ratings: ratings));
         } else {
-          emit(HealthcareCenterError('Center details not available yet'));
+          emit(const HealthcareCenterError('it is loading...'));
         }
       },
     );
