@@ -16,9 +16,12 @@ class FirstAidDetailPage extends StatelessWidget {
       appBar: AppBar(
         title: Text(guide.emergencyTitle),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          tooltip: 'back'.tr(), // Localized tooltip
-          onPressed: () => Navigator.pop(context),
+          icon: const Icon(
+            Icons.chevron_left,
+            size: 30,
+            color: Colors.blueAccent,
+          ), // Larger back icon
+          onPressed: () => Navigator.maybePop(context), // Safer pop
         ),
       ),
       body: SingleChildScrollView(
