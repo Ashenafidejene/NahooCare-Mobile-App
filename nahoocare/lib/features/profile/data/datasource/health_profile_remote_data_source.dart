@@ -2,7 +2,6 @@ import 'package:dartz/dartz.dart';
 
 import '../../../../core/errors/failures.dart';
 import '../../../../core/network/api_client.dart';
-import '../../domain/entities/health_profile.dart';
 
 import '../models/health_profile_model.dart';
 
