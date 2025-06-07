@@ -250,7 +250,7 @@ class _LandingPageState extends State<LandingPage>
                   },
                 ),
                 ListTile(
-                  title: const Text('Arabic'),
+                  title: const Text('Amharic'),
                   leading: const Icon(Icons.language),
                   onTap: () {
                     // Handle language change
