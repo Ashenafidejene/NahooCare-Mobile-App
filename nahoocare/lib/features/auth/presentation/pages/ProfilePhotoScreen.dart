@@ -54,7 +54,18 @@ class _ProfilePhotoScreenState extends State<ProfilePhotoScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Complete Profile'), centerTitle: true),
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(
+            Icons.chevron_left,
+            size: 30,
+            color: Colors.blueAccent,
+          ), // Larger back icon
+          onPressed: () => Navigator.maybePop(context), // Safer pop
+        ),
+        title: const Text('Complete Profile'),
+        centerTitle: true,
+      ),
       body: BlocConsumer<RegistrationFlowBloc, RegistrationFlowState>(
         listener: (context, state) {
           if (state is RegistrationError) {

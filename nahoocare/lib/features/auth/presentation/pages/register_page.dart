@@ -29,7 +29,18 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Register'), centerTitle: true),
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(
+            Icons.chevron_left,
+            size: 30,
+            color: Colors.blueAccent,
+          ), // Larger back icon
+          onPressed: () => Navigator.maybePop(context), // Safer pop
+        ),
+        title: const Text('Register'),
+        centerTitle: true,
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: BlocConsumer<RegistrationFlowBloc, RegistrationFlowState>(

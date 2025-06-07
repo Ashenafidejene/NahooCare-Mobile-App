@@ -29,6 +29,14 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(
+            Icons.chevron_left,
+            size: 30,
+            color: Colors.blueAccent,
+          ), // Larger back icon
+          onPressed: () => Navigator.maybePop(context), // Safer pop
+        ),
         title: Text('Reset Password'.tr()),
         centerTitle: true,
         actions: const [LanguageSwitcher()],
