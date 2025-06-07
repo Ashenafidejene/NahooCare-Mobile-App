@@ -362,9 +362,30 @@ class _LandingPageState extends State<LandingPage>
       floatingActionButton: ScaleTransition(
         scale: _animation,
         child: FloatingActionButton(
+          elevation: 8,
           backgroundColor: Colors.blueAccent,
-          child: Icon(iconList[_selectedIndex], color: Colors.white),
-          onPressed: () {},
+          child: Container(
+            width: 56,
+            height: 56,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: LinearGradient(
+                colors: [Colors.blue[700]!, Colors.lightBlueAccent],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
+            child: Icon(
+              iconList[_selectedIndex],
+              color: Colors.white,
+              size: 26,
+            ),
+          ),
+          onPressed: () {
+            // You can add specific FAB action if needed
+            _animationController.reset();
+            _animationController.forward();
+          },
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -372,13 +393,25 @@ class _LandingPageState extends State<LandingPage>
         icons: iconList,
         activeIndex: _selectedIndex,
         gapLocation: GapLocation.center,
-        notchSmoothness: NotchSmoothness.softEdge,
+        notchSmoothness: NotchSmoothness.verySmoothEdge,
         leftCornerRadius: 32,
         rightCornerRadius: 32,
         activeColor: Colors.blueAccent,
-        inactiveColor: Colors.grey,
+        inactiveColor: Colors.grey[600],
         backgroundColor: Colors.white,
-        onTap: _onTabTap,
+        splashColor: Colors.blue[100],
+        splashSpeedInMilliseconds: 300,
+        onTap: (index) {
+          setState(() {
+            _selectedIndex = index;
+            _animationController.reset();
+            _animationController.forward();
+          });
+        },
+        // Optional: Add labels
+        iconSize: 26,
+        // borderWidth: 1,
+        // borderColor: Colors.grey[200],
       ),
     );
   }
