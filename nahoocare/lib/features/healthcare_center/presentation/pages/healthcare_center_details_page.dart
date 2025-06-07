@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:nahoocare/features/healthcare_center/presentation/bloc/healthcare_center_bloc.dart';
 import '../widgets/center_details_card.dart';
 import '../widgets/rating_form.dart';
@@ -20,6 +21,14 @@ class HealthcareCenterDetailsPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Healthcare Center Details'),
+        leading: IconButton(
+          icon: const Icon(
+            Icons.chevron_left,
+            size: 30,
+            color: Colors.blueAccent,
+          ), // Larger back icon
+          onPressed: () => Navigator.maybePop(context), // Safer pop
+        ),
         centerTitle: true,
         elevation: 0,
       ),
@@ -36,7 +45,12 @@ class HealthcareCenterDetailsPage extends StatelessWidget {
         },
         builder: (context, state) {
           if (state is HealthcareCenterLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return Center(
+              child: LoadingAnimationWidget.halfTriangleDot(
+                color: Colors.blueAccent,
+                size: 70,
+              ),
+            );
           } else if (state is HealthcareCenterError) {
             return Center(
               child: Padding(
@@ -94,7 +108,12 @@ class HealthcareCenterDetailsPage extends StatelessWidget {
                     const SizedBox(height: 12),
 
                     if (state.ratings == null)
-                      const Center(child: CircularProgressIndicator())
+                      Center(
+                        child: LoadingAnimationWidget.halfTriangleDot(
+                          color: Colors.blueAccent,
+                          size: 70,
+                        ),
+                      )
                     else
                       RatingsList(ratings: state.ratings!),
                     const SizedBox(height: 40),
@@ -103,7 +122,12 @@ class HealthcareCenterDetailsPage extends StatelessWidget {
               ),
             );
           }
-          return const Center(child: CircularProgressIndicator());
+          return Center(
+            child: LoadingAnimationWidget.halfTriangleDot(
+              color: Colors.blueAccent,
+              size: 70,
+            ),
+          );
         },
       ),
     );
