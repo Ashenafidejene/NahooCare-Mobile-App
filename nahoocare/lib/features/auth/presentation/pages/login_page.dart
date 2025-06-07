@@ -3,6 +3,7 @@ import 'package:nahoocare/core/widgets/language_switcher.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import '../../../../core/widgets/custom_button.dart';
 import '../blocs/auth_bloc.dart';
 import '../widgets/password_field.dart';
@@ -92,7 +93,16 @@ class _LoginPageState extends State<LoginPage> {
                           IntlPhoneField(
                             decoration: InputDecoration(
                               labelText: 'phone_number'.tr(),
-                              border: const OutlineInputBorder(),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: BorderSide(
+                                  color: Theme.of(context).primaryColor,
+                                  width: 2,
+                                ),
+                              ),
                             ),
                             initialCountryCode: 'ET',
                             onChanged: (phone) {
@@ -120,28 +130,67 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                           ),
                           const SizedBox(height: 16),
-                          CustomButton(
-                            text: 'login'.tr(),
-                            isLoading: state is AuthLoading,
-                            onPressed: () {
-                              if (_formKey.currentState?.validate() ?? false) {
-                                _formKey.currentState?.save();
-                                if (_completePhoneNumber != null) {
-                                  context.read<AuthBloc>().add(
-                                    LoginEvent(
-                                      phoneNumber: _completePhoneNumber!,
-                                      password: _passwordController.text,
-                                    ),
-                                  );
-                                } else {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text('please_enter_phone'.tr()),
-                                    ),
-                                  );
-                                }
-                              }
-                            },
+                          SizedBox(
+                            width: double.infinity,
+                            height: 50,
+                            child: ElevatedButton(
+                              onPressed:
+                                  (state is AuthLoading)
+                                      ? null
+                                      : () {
+                                        if (_formKey.currentState?.validate() ??
+                                            false) {
+                                          _formKey.currentState?.save();
+                                          if (_completePhoneNumber != null) {
+                                            context.read<AuthBloc>().add(
+                                              LoginEvent(
+                                                phoneNumber:
+                                                    _completePhoneNumber!,
+                                                password:
+                                                    _passwordController.text,
+                                              ),
+                                            );
+                                          } else {
+                                            ScaffoldMessenger.of(
+                                              context,
+                                            ).showSnackBar(
+                                              SnackBar(
+                                                content: Text(
+                                                  'please_enter_phone'.tr(),
+                                                ),
+                                              ),
+                                            );
+                                          }
+                                        }
+                                      },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    Colors
+                                        .blueAccent, // Set button color to blueAccent
+                                foregroundColor:
+                                    Colors.white, // Set text color to white
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                disabledBackgroundColor: Colors.blueAccent
+                                    .withOpacity(0.7), // Disabled state color
+                              ),
+                              child:
+                                  (state is AuthLoading)
+                                      ? LoadingAnimationWidget.dotsTriangle(
+                                        color: Colors.white,
+                                        size: 30,
+                                      )
+                                      : Text(
+                                        'login'.tr(),
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          color:
+                                              Colors
+                                                  .white, // Ensure text is white
+                                        ),
+                                      ),
+                            ),
                           ),
                           const SizedBox(height: 12),
                           Row(

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 import '../../../../core/widgets/custom_button.dart';
 import '../blocs/register_blocs/registration_flow_bloc.dart';
@@ -19,7 +20,6 @@ class ProfilePhotoScreen extends StatefulWidget {
 class _ProfilePhotoScreenState extends State<ProfilePhotoScreen> {
   File? _selectedImage;
   final TextEditingController _dobController = TextEditingController();
-
   String? _selectedGender;
   DateTime? _selectedDate;
 
@@ -54,7 +54,7 @@ class _ProfilePhotoScreenState extends State<ProfilePhotoScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Complete Profile')),
+      appBar: AppBar(title: const Text('Complete Profile'), centerTitle: true),
       body: BlocConsumer<RegistrationFlowBloc, RegistrationFlowState>(
         listener: (context, state) {
           if (state is RegistrationError) {
@@ -77,75 +77,143 @@ class _ProfilePhotoScreenState extends State<ProfilePhotoScreen> {
               children: [
                 const Text(
                   'Complete Your Profile',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 32),
-                Center(
-                  child: GestureDetector(
-                    onTap: _pickImage,
-                    child: CircleAvatar(
-                      radius: 60,
-                      backgroundColor: Colors.grey[200],
-                      backgroundImage:
-                          _selectedImage != null
-                              ? FileImage(_selectedImage!)
-                              : const AssetImage(
-                                    'assets/images/profile-placeholder.png',
-                                  )
-                                  as ImageProvider,
-                      child:
+                Card(
+                  elevation: 4,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      children: [
+                        GestureDetector(
+                          onTap: _pickImage,
+                          child: CircleAvatar(
+                            radius: 60,
+                            backgroundColor: Colors.grey[200],
+                            backgroundImage:
+                                _selectedImage != null
+                                    ? FileImage(_selectedImage!)
+                                    : const AssetImage(
+                                          'assets/images/profile-placeholder.png',
+                                        )
+                                        as ImageProvider,
+                            child:
+                                _selectedImage == null
+                                    ? const Icon(
+                                      Icons.camera_alt,
+                                      size: 40,
+                                      color: Colors.grey,
+                                    )
+                                    : null,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
                           _selectedImage == null
-                              ? const Icon(
-                                Icons.camera_alt,
-                                size: 40,
-                                color: Colors.grey,
-                              )
-                              : null,
+                              ? 'Tap to add profile photo'
+                              : 'Photo selected',
+                          style: TextStyle(
+                            color:
+                                _selectedImage == null
+                                    ? Colors.grey
+                                    : Colors.green,
+                          ),
+                        ),
+                        const SizedBox(height: 32),
+                        DropdownButtonFormField<String>(
+                          value: _selectedGender,
+                          decoration: InputDecoration(
+                            labelText: 'Gender',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide(
+                                color: Theme.of(context).primaryColor,
+                                width: 2,
+                              ),
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 14,
+                            ),
+                          ),
+                          items: const [
+                            DropdownMenuItem(
+                              value: 'Male',
+                              child: Text('Male'),
+                            ),
+                            DropdownMenuItem(
+                              value: 'Female',
+                              child: Text('Female'),
+                            ),
+                          ],
+                          onChanged:
+                              (value) =>
+                                  setState(() => _selectedGender = value),
+                        ),
+                        const SizedBox(height: 24),
+                        TextFormField(
+                          controller: _dobController,
+                          readOnly: true,
+                          onTap: _pickDateOfBirth,
+                          decoration: InputDecoration(
+                            labelText: 'Date of Birth',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide(
+                                color: Theme.of(context).primaryColor,
+                                width: 2,
+                              ),
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 14,
+                            ),
+                            suffixIcon: const Icon(Icons.calendar_today),
+                          ),
+                        ),
+                        const SizedBox(height: 32),
+                        SizedBox(
+                          width: double.infinity,
+                          height: 50,
+                          child: ElevatedButton(
+                            onPressed:
+                                (state is RegistrationLoading)
+                                    ? null
+                                    : _submitForm,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blueAccent,
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              disabledBackgroundColor: Colors.blueAccent
+                                  .withOpacity(0.7),
+                            ),
+                            child:
+                                (state is RegistrationLoading)
+                                    ? LoadingAnimationWidget.dotsTriangle(
+                                      color: Colors.white,
+                                      size: 30,
+                                    )
+                                    : const Text(
+                                      'Complete Registration',
+                                      style: TextStyle(fontSize: 16),
+                                    ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  _selectedImage == null
-                      ? 'Tap to add profile photo'
-                      : 'Photo selected',
-                  style: TextStyle(
-                    color: _selectedImage == null ? Colors.grey : Colors.green,
-                  ),
-                ),
-                const SizedBox(height: 32),
-                const SizedBox(height: 24),
-
-                DropdownButtonFormField<String>(
-                  value: _selectedGender,
-                  decoration: const InputDecoration(
-                    labelText: 'Gender',
-                    border: OutlineInputBorder(),
-                  ),
-                  items: const [
-                    DropdownMenuItem(value: 'Male', child: Text('Male')),
-                    DropdownMenuItem(value: 'Female', child: Text('Female')),
-                  ],
-                  onChanged: (value) => setState(() => _selectedGender = value),
-                ),
-                const SizedBox(height: 24),
-
-                TextFormField(
-                  controller: _dobController,
-                  readOnly: true,
-                  onTap: _pickDateOfBirth,
-                  decoration: const InputDecoration(
-                    labelText: 'Date of Birth',
-                    border: OutlineInputBorder(),
-                    suffixIcon: Icon(Icons.calendar_today),
-                  ),
-                ),
-                const SizedBox(height: 32),
-
-                CustomButton(
-                  text: 'Complete Registration',
-                  isLoading: state is RegistrationLoading,
-                  onPressed: _submitForm,
                 ),
               ],
             ),

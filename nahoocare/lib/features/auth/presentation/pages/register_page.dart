@@ -1,10 +1,11 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart'; // Add this import
 
 import '../../../../core/widgets/custom_button.dart';
 import '../../../../core/widgets/custom_textfield.dart';
-
 import '../blocs/register_blocs/registration_flow_bloc.dart';
 import '../widgets/password_field.dart';
 import 'ProfilePhotoScreen.dart';
@@ -38,7 +39,6 @@ class _RegisterPageState extends State<RegisterPage> {
                 context,
               ).showSnackBar(SnackBar(content: Text(state.message)));
             } else if (state is ProfilePhotoRequired) {
-              // Navigate to profile photo screen after basic info is submitted
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -59,7 +59,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   child: Icon(
                     Icons.app_registration,
                     size: 72,
-                    color: Colors.deepPurple,
+                    color: Colors.blueAccent,
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -93,9 +93,18 @@ class _RegisterPageState extends State<RegisterPage> {
                           ),
                           const SizedBox(height: 16),
                           IntlPhoneField(
-                            decoration: const InputDecoration(
-                              labelText: 'Phone Number',
-                              border: OutlineInputBorder(),
+                            decoration: InputDecoration(
+                              labelText: 'phone_number'.tr(),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: BorderSide(
+                                  color: Theme.of(context).primaryColor,
+                                  width: 2,
+                                ),
+                              ),
                             ),
                             initialCountryCode: 'ET',
                             onChanged: (phone) {
@@ -149,39 +158,73 @@ class _RegisterPageState extends State<RegisterPage> {
                             },
                           ),
                           const SizedBox(height: 24),
-                          CustomButton(
-                            text: 'Continue',
-                            isLoading: state is RegistrationLoading,
-                            onPressed: () {
-                              if (!(_formKey.currentState?.validate() ??
-                                  false)) {
-                                return;
-                              }
-
-                              _formKey.currentState?.save();
-
-                              if (_completePhoneNumber == null) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                      'Please enter a phone number',
-                                    ),
-                                  ),
-                                );
-                                return;
-                              }
-
-                              context.read<RegistrationFlowBloc>().add(
-                                SubmitBasicInfoEvent(
-                                  fullName: _nameController.text,
-                                  phoneNumber: _completePhoneNumber!,
-                                  password: _passwordController.text,
-                                  secretQuestion:
-                                      _secretQuestionController.text,
-                                  secretAnswer: _secretAnswerController.text,
+                          SizedBox(
+                            width: double.infinity,
+                            height: 50,
+                            child: ElevatedButton(
+                              onPressed:
+                                  (state is RegistrationLoading)
+                                      ? null
+                                      : () {
+                                        if (!(_formKey.currentState
+                                                ?.validate() ??
+                                            false)) {
+                                          return;
+                                        }
+                                        _formKey.currentState?.save();
+                                        if (_completePhoneNumber == null) {
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
+                                            const SnackBar(
+                                              content: Text(
+                                                'Please enter a phone number',
+                                              ),
+                                            ),
+                                          );
+                                          return;
+                                        }
+                                        context
+                                            .read<RegistrationFlowBloc>()
+                                            .add(
+                                              SubmitBasicInfoEvent(
+                                                fullName: _nameController.text,
+                                                phoneNumber:
+                                                    _completePhoneNumber!,
+                                                password:
+                                                    _passwordController.text,
+                                                secretQuestion:
+                                                    _secretQuestionController
+                                                        .text,
+                                                secretAnswer:
+                                                    _secretAnswerController
+                                                        .text,
+                                              ),
+                                            );
+                                      },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.blueAccent,
+                                foregroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
                                 ),
-                              );
-                            },
+                                disabledBackgroundColor: Colors.blueAccent
+                                    .withOpacity(0.7),
+                              ),
+                              child:
+                                  (state is RegistrationLoading)
+                                      ? LoadingAnimationWidget.dotsTriangle(
+                                        color: Colors.white,
+                                        size: 30,
+                                      )
+                                      : const Text(
+                                        'Continue',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                            ),
                           ),
                           const SizedBox(height: 16),
                           Row(

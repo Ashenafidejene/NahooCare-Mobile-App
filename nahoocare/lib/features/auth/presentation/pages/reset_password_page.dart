@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart'; // Add this import
 import 'package:nahoocare/core/widgets/custom_button.dart';
 import 'package:nahoocare/core/widgets/custom_textfield.dart';
 import 'package:nahoocare/features/auth/presentation/blocs/auth_bloc.dart';
@@ -64,7 +65,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                     child: Icon(
                       Icons.lock_reset,
                       size: 72,
-                      color: Colors.deepPurple,
+                      color: Colors.blueAccent,
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -90,8 +91,17 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                         children: [
                           IntlPhoneField(
                             decoration: InputDecoration(
-                              labelText: 'Phone Number'.tr(),
-                              border: const OutlineInputBorder(),
+                              labelText: 'phone_number'.tr(),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: BorderSide(
+                                  color: Theme.of(context).primaryColor,
+                                  width: 2,
+                                ),
+                              ),
                             ),
                             initialCountryCode: 'ET',
                             onChanged: (phone) {
@@ -103,26 +113,57 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                           ),
                           const SizedBox(height: 16),
                           if (_secretQuestion == null)
-                            CustomButton(
-                              text: 'Get Secret Question'.tr(),
-                              onPressed: () {
-                                if (_completePhoneNumber?.isNotEmpty ?? false) {
-                                  context.read<AuthBloc>().add(
-                                    GetSecretQuestionEvent(
-                                      phoneNumber: _completePhoneNumber!,
-                                    ),
-                                  );
-                                } else {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        'Please enter a valid phone number'
-                                            .tr(),
-                                      ),
-                                    ),
-                                  );
-                                }
-                              },
+                            SizedBox(
+                              width: double.infinity,
+                              height: 50,
+                              child: ElevatedButton(
+                                onPressed:
+                                    (state is AuthLoading)
+                                        ? null
+                                        : () {
+                                          if (_completePhoneNumber
+                                                  ?.isNotEmpty ??
+                                              false) {
+                                            context.read<AuthBloc>().add(
+                                              GetSecretQuestionEvent(
+                                                phoneNumber:
+                                                    _completePhoneNumber!,
+                                              ),
+                                            );
+                                          } else {
+                                            ScaffoldMessenger.of(
+                                              context,
+                                            ).showSnackBar(
+                                              SnackBar(
+                                                content: Text(
+                                                  'Please enter a valid phone number'
+                                                      .tr(),
+                                                ),
+                                              ),
+                                            );
+                                          }
+                                        },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.blueAccent,
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  disabledBackgroundColor: Colors.blueAccent
+                                      .withOpacity(0.7),
+                                ),
+                                child:
+                                    (state is AuthLoading &&
+                                            state is! SecretQuestionLoaded)
+                                        ? LoadingAnimationWidget.dotsTriangle(
+                                          color: Colors.white,
+                                          size: 30,
+                                        )
+                                        : Text(
+                                          'Get Secret Question'.tr(),
+                                          style: const TextStyle(fontSize: 16),
+                                        ),
+                              ),
                             ),
                           if (_secretQuestion != null) ...[
                             const SizedBox(height: 12),
@@ -178,35 +219,66 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                               },
                             ),
                             const SizedBox(height: 20),
-                            CustomButton(
-                              text: 'Reset Password'.tr(),
-                              isLoading: state is AuthLoading,
-                              onPressed: () {
-                                if (_formKey.currentState?.validate() ??
-                                    false) {
-                                  _formKey.currentState?.save();
+                            SizedBox(
+                              width: double.infinity,
+                              height: 50,
+                              child: ElevatedButton(
+                                onPressed:
+                                    (state is AuthLoading)
+                                        ? null
+                                        : () {
+                                          if (_formKey.currentState
+                                                  ?.validate() ??
+                                              false) {
+                                            _formKey.currentState?.save();
 
-                                  if (_completePhoneNumber == null) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text(
-                                          'Please enter your phone number'.tr(),
+                                            if (_completePhoneNumber == null) {
+                                              ScaffoldMessenger.of(
+                                                context,
+                                              ).showSnackBar(
+                                                SnackBar(
+                                                  content: Text(
+                                                    'Please enter your phone number'
+                                                        .tr(),
+                                                  ),
+                                                ),
+                                              );
+                                              return;
+                                            }
+
+                                            context.read<AuthBloc>().add(
+                                              ResetPasswordEvent(
+                                                phoneNumber:
+                                                    _completePhoneNumber!,
+                                                secretAnswer:
+                                                    _secretAnswerController
+                                                        .text,
+                                                newPassword:
+                                                    _newPasswordController.text,
+                                              ),
+                                            );
+                                          }
+                                        },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.blueAccent,
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  disabledBackgroundColor: Colors.blueAccent
+                                      .withOpacity(0.7),
+                                ),
+                                child:
+                                    (state is AuthLoading)
+                                        ? LoadingAnimationWidget.dotsTriangle(
+                                          color: Colors.white,
+                                          size: 30,
+                                        )
+                                        : Text(
+                                          'Reset Password'.tr(),
+                                          style: const TextStyle(fontSize: 16),
                                         ),
-                                      ),
-                                    );
-                                    return;
-                                  }
-
-                                  context.read<AuthBloc>().add(
-                                    ResetPasswordEvent(
-                                      phoneNumber: _completePhoneNumber!,
-                                      secretAnswer:
-                                          _secretAnswerController.text,
-                                      newPassword: _newPasswordController.text,
-                                    ),
-                                  );
-                                }
-                              },
+                              ),
                             ),
                           ],
                         ],
