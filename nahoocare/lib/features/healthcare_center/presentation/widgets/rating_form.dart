@@ -101,7 +101,7 @@ class _RatingFormState extends State<RatingForm> {
     );
   }
 
-  void _submitRating() {
+  Future<void> _submitRating() async {
     if (_formKey.currentState!.validate()) {
       context.read<HealthcareCenterBloc>().add(
         SubmitCenterRating(

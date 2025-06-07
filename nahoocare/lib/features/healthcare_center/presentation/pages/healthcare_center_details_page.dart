@@ -35,6 +35,11 @@ class HealthcareCenterDetailsPage extends StatelessWidget {
       body: BlocConsumer<HealthcareCenterBloc, HealthcareCenterState>(
         listener: (context, state) {
           if (state is RatingSubmissionSuccess) {
+            // Reload both center details and ratings
+            context.read<HealthcareCenterBloc>()
+              ..add(LoadHealthcareCenterDetails(centerId))
+              ..add(LoadCenterRatings(centerId));
+
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
                 content: Text('Rating submitted successfully!'),
