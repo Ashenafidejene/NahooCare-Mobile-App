@@ -16,6 +16,14 @@ class AccountEditPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Edit Account'),
+        leading: IconButton(
+          icon: const Icon(
+            Icons.chevron_left,
+            size: 30,
+            color: Colors.blueAccent,
+          ), // Larger back icon
+          onPressed: () => Navigator.maybePop(context), // Safer pop
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.save),

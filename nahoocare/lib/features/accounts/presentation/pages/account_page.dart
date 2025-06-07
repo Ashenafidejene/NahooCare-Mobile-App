@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 import '../blocs/account_bloc.dart';
 import '../widgets/account_info_card.dart';
@@ -18,6 +19,14 @@ class AccountPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('account.my_account'.tr()),
+        leading: IconButton(
+          icon: const Icon(
+            Icons.chevron_left,
+            size: 30,
+            color: Colors.blueAccent,
+          ), // Larger back icon
+          onPressed: () => Navigator.maybePop(context), // Safer pop
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.edit),
@@ -38,7 +47,12 @@ class AccountPage extends StatelessWidget {
         },
         builder: (context, state) {
           if (state is AccountLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return Center(
+              child: LoadingAnimationWidget.halfTriangleDot(
+                color: Colors.blueAccent,
+                size: 70,
+              ),
+            );
           }
           if (state is AccountLoaded || state is AccountUpdated) {
             final account =
@@ -63,20 +77,25 @@ class AccountPage extends StatelessWidget {
   }
 
   Widget _buildDeleteButton(BuildContext context) {
-    return ElevatedButton.icon(
-      icon: const Icon(Icons.delete, color: Colors.red),
-      label: Text(
-        'account.delete'.tr(),
-        style: const TextStyle(color: Colors.red),
-      ),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.red.withOpacity(0.1),
-      ),
-      onPressed:
-          () => showDialog(
-            context: context,
-            builder: (_) => const DeleteAccountDialog(),
+    return SizedBox(
+      width: double.infinity, // Makes button full width
+      child: ElevatedButton.icon(
+        icon: const Icon(Icons.delete_outline, size: 20),
+        label: Text('account.delete'.tr()),
+        style: ElevatedButton.styleFrom(
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          backgroundColor: Colors.redAccent,
+          foregroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
           ),
+        ),
+        onPressed:
+            () => showDialog(
+              context: context,
+              builder: (_) => const DeleteAccountDialog(),
+            ),
+      ),
     );
   }
 
