@@ -61,10 +61,14 @@ class HealthProfileRemoteDataSourceImpl
         profile.toJson(),
         requiresAuth: true,
       );
+      print("one two three");
+      print(response);
       return Right(HealthProfileModel.fromJson(response));
     } on ApiException catch (e) {
+      print("error one");
       return Left(ServerFailure(e.message, e.statusCode));
     } catch (e) {
+      print("error two");
       return Left(ServerFailure(e.toString(), 500));
     }
   }
