@@ -16,7 +16,7 @@ class EditHealthProfilePage extends StatefulWidget {
 
 class _EditHealthProfilePageState extends State<EditHealthProfilePage> {
   late HealthProfile _editedProfile;
-
+  bool _isSaving = false;
   @override
   void initState() {
     super.initState();
@@ -25,40 +25,58 @@ class _EditHealthProfilePageState extends State<EditHealthProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(
-            Icons.chevron_left,
-            size: 30,
-            color: Colors.blueAccent,
-          ), // Larger back icon
-          onPressed: () => Navigator.maybePop(context), // Safer pop
+    return BlocListener<HealthProfileBloc, HealthProfileState>(
+      listener: (context, state) {
+        if (state is HealthProfileOperationSuccess) {
+          Navigator.pop(context); // Only pop after successful update
+        } else if (state is HealthProfileError) {
+          setState(() => _isSaving = false);
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(state.message)));
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(
+              Icons.chevron_left,
+              size: 30,
+              color: Colors.blueAccent,
+            ),
+            onPressed: _isSaving ? null : () => Navigator.pop(context),
+          ),
+          title: const Text('Edit Health Profile'),
+          actions: [
+            if (_isSaving)
+              const Padding(
+                padding: EdgeInsets.all(16.0),
+                child: CircularProgressIndicator(),
+              )
+            else
+              IconButton(icon: const Icon(Icons.save), onPressed: _saveProfile),
+          ],
         ),
-        title: const Text('Edit Health Profile'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.save),
-            onPressed: () {
-              context.read<HealthProfileBloc>().add(
-                UpdateHealthProfileEvent(_editedProfile),
-              );
-              Navigator.pop(context);
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: HealthProfileForm(
+            profile: _editedProfile,
+            onProfileChanged: (profile) {
+              setState(() {
+                _editedProfile = profile;
+              });
             },
           ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: HealthProfileForm(
-          profile: _editedProfile,
-          onProfileChanged: (profile) {
-            setState(() {
-              _editedProfile = profile;
-            });
-          },
         ),
       ),
+    );
+  }
+
+  void _saveProfile() {
+    if (_isSaving) return;
+    setState(() => _isSaving = true);
+    context.read<HealthProfileBloc>().add(
+      UpdateHealthProfileEvent(_editedProfile),
     );
   }
 }

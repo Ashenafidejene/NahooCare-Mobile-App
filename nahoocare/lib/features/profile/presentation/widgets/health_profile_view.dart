@@ -11,6 +11,7 @@ class HealthProfileView extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocConsumer<HealthProfileBloc, HealthProfileState>(
       listener: (context, state) {
+        // Only show snackbars for operation success or error
         if (state is HealthProfileOperationSuccess) {
           ScaffoldMessenger.of(
             context,
@@ -22,6 +23,7 @@ class HealthProfileView extends StatelessWidget {
         }
       },
       builder: (context, state) {
+        // Handle the actual display states
         if (state is HealthProfileLoading) {
           return const Center(child: CircularProgressIndicator());
         } else if (state is HealthProfileLoaded) {

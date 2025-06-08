@@ -44,6 +44,7 @@ class _CreateHealthProfileFormState extends State<CreateHealthProfileForm> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
       child: Form(
@@ -53,9 +54,10 @@ class _CreateHealthProfileFormState extends State<CreateHealthProfileForm> {
           children: [
             Text(
               'Create Health Profile',
-              style: Theme.of(
-                context,
-              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+              style: theme.textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: Colors.blueAccent,
+              ),
             ),
             const SizedBox(height: 24),
 
@@ -132,9 +134,18 @@ class _CreateHealthProfileFormState extends State<CreateHealthProfileForm> {
                 width: double.infinity,
                 child: ElevatedButton.icon(
                   onPressed: _submitForm,
-                  icon: const Icon(Icons.check_circle_outline),
-                  label: const Text('Create Profile'),
+                  icon: const Icon(
+                    Icons.check_circle_outline,
+                    color: Colors.white,
+                  ),
+                  label: const Text(
+                    'Create Profile',
+                    style: TextStyle(color: Colors.white),
+                  ),
                   style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blueAccent,
+                    foregroundColor: Colors.white,
+                    textStyle: const TextStyle(fontSize: 16),
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
