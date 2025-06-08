@@ -28,3 +28,12 @@ class UpdateHealthProfileEvent extends HealthProfileEvent {
 }
 
 class DeleteHealthProfileEvent extends HealthProfileEvent {}
+
+class HealthProfileUpdating extends HealthProfileState {
+  final HealthProfile profile;
+
+  const HealthProfileUpdating(this.profile);
+
+  @override
+  List<Object> get props => [profile];
+}

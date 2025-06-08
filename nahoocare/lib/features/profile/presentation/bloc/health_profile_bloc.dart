@@ -65,7 +65,7 @@ class HealthProfileBloc extends Bloc<HealthProfileEvent, HealthProfileState> {
     UpdateHealthProfileEvent event,
     Emitter<HealthProfileState> emit,
   ) async {
-    emit(HealthProfileLoading());
+    emit(HealthProfileUpdating(event.profile)); // New state
     final result = await updateHealthProfile(
       UpdateHealthProfileParams(profile: event.profile),
     );
