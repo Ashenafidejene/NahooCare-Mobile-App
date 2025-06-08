@@ -11,15 +11,18 @@ class HealthProfileView extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocConsumer<HealthProfileBloc, HealthProfileState>(
       listener: (context, state) {
-        // Only show snackbars for operation success or error
         if (state is HealthProfileOperationSuccess) {
           ScaffoldMessenger.of(
             context,
           ).showSnackBar(SnackBar(content: Text(state.message)));
         } else if (state is HealthProfileError) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(state.message)));
+          // Don't show snackbar for auth errors as we're handling them in the UI
+          if (state.message !=
+              "server error : No authenticaion token availbale") {
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(state.message)));
+          }
         }
       },
       builder: (context, state) {
@@ -31,10 +34,37 @@ class HealthProfileView extends StatelessWidget {
         } else if (state is HealthProfileEmpty) {
           return const CreateHealthProfileForm();
         } else if (state is HealthProfileError) {
+          // Handle the no authentication token case
+          if (state.message ==
+              "Server error: No authentication token available") {
+            return _buildLoginPrompt(context);
+          }
           return Center(child: Text(state.message));
         }
         return const Center(child: Text('Initializing...'));
       },
+    );
+  }
+
+  Widget _buildLoginPrompt(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text(
+            'You need to login first to access your health profile',
+            style: TextStyle(fontSize: 18),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pushNamed(context, '/login');
+            },
+            child: const Text('Login'),
+          ),
+        ],
+      ),
     );
   }
 }
