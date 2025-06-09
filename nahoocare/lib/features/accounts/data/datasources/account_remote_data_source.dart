@@ -1,5 +1,5 @@
-import 'package:nahoocare/core/errors/failures.dart';
 import 'package:easy_localization/easy_localization.dart';
+import '../../../../core/errors/failures.dart';
 import '../../../../core/network/api_client.dart';
 import '../models/account_model.dart';
 
@@ -11,16 +11,21 @@ abstract class AccountRemoteDataSource {
 
 class AccountRemoteDataSourceImpl implements AccountRemoteDataSource {
   final ApiClient apiClient;
+  static const _tag = 'AccountRemoteDataSource';
+
   AccountRemoteDataSourceImpl({required this.apiClient});
+
   @override
   Future<AccountResponse> getAccount() async {
     try {
       final response = await apiClient.get('/api/account/', requiresAuth: true);
       return AccountResponse.fromJson(response);
     } on ApiException catch (e) {
-      // Handle API exception
-      print("Error fetching account: ${e.message}");
-      throw ServerFailure("server error", e.statusCode);
+      _logError('getAccount', e.message, e.statusCode);
+      throw ServerFailure('errors.account.fetch_failed'.tr(), e.statusCode);
+    } catch (e, stackTrace) {
+      _logUnexpectedError('getAccount', e, stackTrace);
+      throw ServerFailure('errors.unexpected'.tr(), 500);
     }
   }
 
@@ -33,9 +38,11 @@ class AccountRemoteDataSourceImpl implements AccountRemoteDataSource {
         requiresAuth: true,
       );
     } on ApiException catch (e) {
-      // Handle API exception
-      print("Error updating account: ${e.message}");
-      throw ServerFailure("server error", e.statusCode);
+      _logError('updateAccount', e.message, e.statusCode);
+      throw ServerFailure('errors.account.update_failed'.tr(), e.statusCode);
+    } catch (e, stackTrace) {
+      _logUnexpectedError('updateAccount', e, stackTrace);
+      throw ServerFailure('errors.unexpected'.tr(), 500);
     }
   }
 
@@ -44,9 +51,26 @@ class AccountRemoteDataSourceImpl implements AccountRemoteDataSource {
     try {
       await apiClient.delete('/api/account/', requiresAuth: true);
     } on ApiException catch (e) {
-      // Handle API exception
-      print("Error deleting account: ${e.message}");
-      throw ServerFailure('errors.server'.tr(), e.statusCode);
+      _logError('deleteAccount', e.message, e.statusCode);
+      throw ServerFailure('errors.account.delete_failed'.tr(), e.statusCode);
+    } catch (e, stackTrace) {
+      _logUnexpectedError('deleteAccount', e, stackTrace);
+      throw ServerFailure('errors.unexpected'.tr(), 500);
     }
+  }
+
+  void _logError(String method, String message, int? statusCode) {
+    print('[$_tag] $method failed with status $statusCode: $message');
+    // Consider using a proper logging package here
+  }
+
+  void _logUnexpectedError(
+    String method,
+    dynamic error,
+    StackTrace stackTrace,
+  ) {
+    print('[$_tag] Unexpected error in $method: $error');
+    print(stackTrace);
+    // Consider using a proper logging package here
   }
 }
