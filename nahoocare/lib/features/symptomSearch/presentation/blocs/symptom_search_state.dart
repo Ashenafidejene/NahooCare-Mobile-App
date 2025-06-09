@@ -48,3 +48,12 @@ class LocationError extends SymptomSearchState {
   @override
   List<Object> get props => [message];
 }
+
+class Unauthenticated extends SymptomSearchState {
+  final String message;
+
+  const Unauthenticated(this.message);
+
+  @override
+  List<Object> get props => [message];
+}

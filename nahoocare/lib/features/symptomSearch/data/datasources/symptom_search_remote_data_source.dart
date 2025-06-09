@@ -25,9 +25,9 @@ class SymptomSearchRemoteDataSourceImpl
     required double longitude,
     double maxDistanceKm = 10,
   }) async {
-    print(symptoms);
-    print(latitude);
-    print(longitude);
+    // print(symptoms);
+    // print(latitude);
+    // print(longitude);
     final response = await apiClient.post('/api/endpoint/search', {
       'symptom': symptoms,
       'latitude': latitude,

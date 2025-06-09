@@ -80,6 +80,15 @@ class _SymptomInputPageState extends State<SymptomInputPage> {
     );
   }
 
+  // Add this method to navigate to login
+  void _navigateToLogin(BuildContext context, String message) {
+    Navigator.pushReplacementNamed(
+      context,
+      '/login',
+      arguments: {'message': message, 'returnRoute': '/landing'},
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -97,6 +106,8 @@ class _SymptomInputPageState extends State<SymptomInputPage> {
               setState(() {
                 _isLocationLoading = false;
               });
+            } else if (state is Unauthenticated) {
+              _navigateToLogin(context, state.message);
             }
           },
           builder: (context, state) {
@@ -196,7 +207,33 @@ class _SymptomInputPageState extends State<SymptomInputPage> {
                                 style: const TextStyle(color: Colors.red),
                               ),
                             ),
-
+                          if (state is SearchError &&
+                              state.message.contains('401'))
+                            Column(
+                              children: [
+                                const SizedBox(height: 20),
+                                const Text(
+                                  'Please login to search for healthcare centers',
+                                  style: TextStyle(
+                                    color: Colors.blue,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.pushNamed(context, '/login');
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.blueAccent,
+                                    foregroundColor: Colors.white,
+                                  ),
+                                  child: const Text('Login Now'),
+                                ),
+                                const SizedBox(height: 20),
+                              ],
+                            ),
                           if (state is SearchLoaded) ...[
                             if (state.response.firstAid != null)
                               Padding(
