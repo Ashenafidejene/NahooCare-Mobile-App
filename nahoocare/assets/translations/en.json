@@ -125,9 +125,23 @@
     "delete_title": "Delete Account",
     "delete_message": "Are you sure you want to delete your account? This action cannot be undone.",
     "cancel": "Cancel",
-    "delete": "Delete"
+    "delete": "Delete",
+    "login":"Login",
+    "login_required_message":"if you want to access  login first  "
   },
-  
+  "search_history":{
+  "title":" Search History",
+  "clear_all":"Clear All",
+  "login_required_message":"if you want to access  login first  ",
+  "login" : "Login",
+  "login_required":"login is required",
+  "clear_all_title" : "Delete all data ",
+  "clear_all_confirmation":"clear all history you have searched",
+  "delete": "Delete",
+  "refresh":"refresh",
+  "empty_title": "No History",
+  "empty_subtitle":"No Search History is Found"
+  },
   
 
   "password_strength_weak": "Weak",
@@ -136,12 +150,6 @@
 
   "back": "Back",
   "first_aid_icon": "First Aid"
-
-
-  
-
-  
-
   }
 
 
