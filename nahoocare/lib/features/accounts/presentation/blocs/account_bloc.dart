@@ -1,8 +1,10 @@
 import 'dart:io';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/errors/failures.dart';
 import '../../../../core/usecase/usecase.dart';
 import '../../../auth/data/datasources/cloudinary_datasources.dart';
 import '../../domain/entities/account_entity.dart';
@@ -42,7 +44,7 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
     emit(AccountLoading());
     final result = await getAccountUseCase(const NoParams());
     result.fold(
-      (failure) => emit(AccountError(failure.message)),
+      (failure) => emit(AccountError(_mapFailureToMessage(failure))),
       (account) => emit(AccountLoaded(account)),
     );
   }
@@ -56,24 +58,21 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
     try {
       String photoUrl = event.account.photoUrl;
 
-      // If user selected a new photo, upload it
       if (event.photo != null) {
         photoUrl = await cloudinaryDataSource.uploadImage(event.photo!);
       }
 
-      // Create updated account with new photoUrl if changed
       final updatedAccount = event.account.copyWith(photoUrl: photoUrl);
-
       final result = await updateAccountUseCase(
         UpdateAccountParams(account: updatedAccount, password: event.password),
       );
 
       result.fold(
-        (failure) => emit(AccountError(failure.message)),
+        (failure) => emit(AccountError(_mapFailureToMessage(failure))),
         (_) => emit(AccountUpdated(updatedAccount)),
       );
     } catch (e) {
-      emit(AccountError('Image upload failed: ${e.toString()}'));
+      emit(AccountError('errors.image_upload'.tr(args: [e.toString()])));
     }
   }
 
@@ -84,8 +83,25 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
     emit(AccountLoading());
     final result = await deleteAccountUseCase(const NoParams());
     result.fold(
-      (failure) => emit(AccountError(failure.message)),
+      (failure) => emit(AccountError(_mapFailureToMessage(failure))),
       (_) => emit(AccountDeleted()),
     );
+  }
+
+  String _mapFailureToMessage(Failure failure) {
+    switch (failure.runtimeType) {
+      case ServerFailure:
+        return (failure as ServerFailure).message;
+      case NetworkFailure:
+        return 'errors.network'.tr();
+      case ValidationFailure:
+        return 'errors.validation'.tr();
+      case UnauthorizedFailure:
+        return 'errors.unauthorized'.tr();
+      case NotFoundFailure:
+        return 'errors.account.not_found'.tr();
+      default:
+        return 'errors.unexpected'.tr();
+    }
   }
 }
