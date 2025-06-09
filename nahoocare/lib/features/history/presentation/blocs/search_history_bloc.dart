@@ -72,11 +72,29 @@ class SearchHistoryBloc extends Bloc<SearchHistoryEvent, SearchHistoryState> {
   String _mapFailureToMessage(Failure failure) {
     switch (failure.runtimeType) {
       case ServerFailure:
-        return 'Server error: ${failure.message}';
+        final serverFailure = failure as ServerFailure;
+        switch (serverFailure.statusCode) {
+          case 401:
+            return 'session_expired_login_again';
+          case 403:
+            return 'forbidden_action';
+          case 404:
+            return 'history_not_found';
+          case 500:
+          case 502:
+          case 503:
+            return 'server_unavailable_try_later';
+          default:
+            return 'server_error_occurred';
+        }
+      case NetworkFailure:
+        return 'network_connection_failed';
+      case UnauthorizedFailure:
+        return 'unauthorized_access';
       case CacheFailure:
-        return 'Local storage error: ${failure.message}';
+        return 'local_storage_error';
       default:
-        return 'Unexpected error: ${failure.message}';
+        return 'unexpected_error_occurred';
     }
   }
 }
