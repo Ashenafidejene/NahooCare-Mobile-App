@@ -1,4 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+
 class AccountEntity {
   final String fullName;
   final String phoneNumber;
@@ -8,14 +9,14 @@ class AccountEntity {
   final String dateOfBirth;
   final String gender;
 
-  AccountEntity({
-    required this.fullName,
-    required this.phoneNumber,
-    required this.secretQuestion,
-    required this.secretAnswer,
-    required this.photoUrl,
-    required this.dateOfBirth,
-    required this.gender,
+  const AccountEntity({
+    this.fullName = '',
+    this.phoneNumber = '',
+    this.secretQuestion = '',
+    this.secretAnswer = '',
+    this.photoUrl = '',
+    this.dateOfBirth = '',
+    this.gender = '',
   });
 
   @override
@@ -37,7 +38,10 @@ class AccountEntity {
     return fullName.hashCode ^
         phoneNumber.hashCode ^
         secretQuestion.hashCode ^
-        secretAnswer.hashCode;
+        secretAnswer.hashCode ^
+        photoUrl.hashCode ^
+        dateOfBirth.hashCode ^
+        gender.hashCode;
   }
 
   AccountEntity copyWith({

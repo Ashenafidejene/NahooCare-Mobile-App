@@ -14,7 +14,7 @@ class AccountPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<AccountBloc>().initialize();
+      context.read<AccountBloc>().add(LoadAccountEvent());
     });
     return Scaffold(
       appBar: AppBar(

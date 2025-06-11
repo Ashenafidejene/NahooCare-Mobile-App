@@ -5,47 +5,40 @@ import '../../domain/entities/account_entity.dart';
 
 class AccountEditForm extends StatefulWidget {
   final AccountEntity initialAccount;
-  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-
-  String? fullName;
-  String? phoneNumber;
-  String? secretQuestion;
-  String? secretAnswer;
-  String? gender;
-  String? dateOfBirth;
-  String? password;
 
   AccountEditForm({super.key, required this.initialAccount});
 
-  get updatedAccount => null;
+  // These getters will be overridden using the state
+  GlobalKey<FormState> get formKey => _formKey;
+  AccountEntity get updatedAccount =>
+      _state?._getUpdatedAccount() ?? initialAccount;
+  String? get password => _state?._password;
+  File? get selectedImage => _state?._imageFile;
 
-  get selectedImage => null;
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  _AccountEditFormState? _state;
 
   @override
-  State<AccountEditForm> createState() => _AccountEditFormState();
+  State<AccountEditForm> createState() {
+    _state = _AccountEditFormState();
+    return _state!;
+  }
 }
 
 class _AccountEditFormState extends State<AccountEditForm> {
+  String? _fullName;
+  String? _phoneNumber;
+  String? _secretQuestion;
+  String? _secretAnswer;
+  String? _gender;
+  DateTime? _dateOfBirth;
+  String? _password;
   File? _imageFile;
 
-  final List<String> _genders = ['Male', 'Female'];
-  DateTime? _selectedDate;
-
-  @override
-  void initState() {
-    super.initState();
-    widget.fullName = widget.initialAccount.fullName;
-    widget.phoneNumber = widget.initialAccount.phoneNumber;
-    widget.secretQuestion = widget.initialAccount.secretQuestion;
-    widget.secretAnswer = widget.initialAccount.secretAnswer;
-    widget.gender = widget.initialAccount.gender;
-    widget.dateOfBirth = widget.initialAccount.dateOfBirth;
-  }
+  final picker = ImagePicker();
 
   Future<void> _pickImage() async {
-    final pickedFile = await ImagePicker().pickImage(
-      source: ImageSource.gallery,
-    );
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       setState(() {
         _imageFile = File(pickedFile.path);
@@ -53,185 +46,111 @@ class _AccountEditFormState extends State<AccountEditForm> {
     }
   }
 
-  Future<void> _selectDate(BuildContext context) async {
-    final now = DateTime.now();
-    final picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime(now.year - 18),
-      firstDate: DateTime(1900),
-      lastDate: DateTime(now.year - 13),
+  AccountEntity _getUpdatedAccount() {
+    return widget.initialAccount.copyWith(
+      fullName: _fullName,
+      phoneNumber: _phoneNumber,
+      secretQuestion: _secretQuestion,
+      secretAnswer: _secretAnswer,
+      gender: _gender,
+      dateOfBirth: _dateOfBirth?.toIso8601String(),
+      photoUrl: widget.initialAccount.photoUrl,
     );
-    if (picked != null) {
-      setState(() {
-        _selectedDate = picked;
-        widget.dateOfBirth = picked.toIso8601String();
-      });
-    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Form(
-      key: widget.formKey,
+      key: widget._formKey,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const SizedBox(height: 24),
           GestureDetector(
             onTap: _pickImage,
             child: CircleAvatar(
               radius: 50,
-              backgroundColor: Colors.grey[200],
               backgroundImage:
                   _imageFile != null
                       ? FileImage(_imageFile!)
-                      : widget.initialAccount.photoUrl.isNotEmpty
-                      ? NetworkImage(widget.initialAccount.photoUrl)
-                      : const AssetImage(
-                            'assets/images/profile-placeholder.png',
-                          )
-                          as ImageProvider,
+                      : widget.initialAccount.photoUrl != null
+                      ? NetworkImage(widget.initialAccount.photoUrl!)
+                          as ImageProvider
+                      : null,
               child:
-                  _imageFile == null && widget.initialAccount.photoUrl.isEmpty
-                      ? const Icon(
-                        Icons.camera_alt,
-                        color: Colors.grey,
-                        size: 32,
-                      )
+                  _imageFile == null && widget.initialAccount.photoUrl == null
+                      ? const Icon(Icons.person, size: 50)
                       : null,
             ),
           ),
-          const SizedBox(height: 12),
-          Text(
-            'Tap to change photo',
-            style: TextStyle(color: Colors.grey[600]),
-          ),
-          const SizedBox(height: 32),
-
-          _buildTextField(
-            label: 'Full Name',
+          const SizedBox(height: 20),
+          TextFormField(
             initialValue: widget.initialAccount.fullName,
-            onSaved: (val) => widget.fullName = val,
-            validatorMsg: 'Please enter your name',
-          ),
-          const SizedBox(height: 16),
-
-          _buildTextField(
-            label: 'Phone Number',
-            initialValue: widget.initialAccount.phoneNumber,
-            keyboardType: TextInputType.phone,
-            onSaved: (val) => widget.phoneNumber = val,
-            validatorMsg: 'Please enter phone number',
-          ),
-          const SizedBox(height: 16),
-
-          DropdownButtonFormField<String>(
-            value: widget.gender,
-            items:
-                _genders
-                    .map(
-                      (gender) =>
-                          DropdownMenuItem(value: gender, child: Text(gender)),
-                    )
-                    .toList(),
-            onChanged: (value) => setState(() => widget.gender = value),
-            onSaved: (value) => widget.gender = value,
-            decoration: InputDecoration(
-              labelText: 'Gender',
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 14,
-              ),
-            ),
+            decoration: const InputDecoration(labelText: 'Full Name'),
+            onSaved: (value) => _fullName = value,
             validator:
-                (value) => value == null ? 'Please select your gender' : null,
+                (value) => value == null || value.isEmpty ? 'Required' : null,
           ),
-          const SizedBox(height: 16),
-
-          GestureDetector(
-            onTap: () => _selectDate(context),
-            child: AbsorbPointer(
-              child: TextFormField(
-                decoration: InputDecoration(
-                  labelText: 'Date of Birth',
-                  hintText: 'Select your date of birth',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 14,
-                  ),
-                ),
-                controller: TextEditingController(
-                  text:
-                      _selectedDate == null
-                          ? ''
-                          : '${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}',
-                ),
-                validator:
-                    (value) =>
-                        value == null || value.isEmpty
-                            ? 'Please select your date of birth'
-                            : null,
-              ),
-            ),
+          TextFormField(
+            initialValue: widget.initialAccount.phoneNumber,
+            decoration: const InputDecoration(labelText: 'Phone Number'),
+            onSaved: (value) => _phoneNumber = value,
+            validator:
+                (value) => value == null || value.isEmpty ? 'Required' : null,
           ),
-          const SizedBox(height: 16),
-
-          _buildTextField(
-            label: 'Security Question',
-            initialValue: widget.initialAccount.secretQuestion,
-            onSaved: (val) => widget.secretQuestion = val,
-            validatorMsg: 'Please enter security question',
-          ),
-          const SizedBox(height: 16),
-
-          _buildTextField(
-            label: 'Security Answer',
-            initialValue: widget.initialAccount.secretAnswer,
-            onSaved: (val) => widget.secretAnswer = val,
-            validatorMsg: 'Please enter security answer',
-          ),
-          const SizedBox(height: 16),
-
-          _buildTextField(
-            label: 'Current Password',
+          TextFormField(
+            decoration: const InputDecoration(labelText: 'Password'),
             obscureText: true,
-            onSaved: (val) => widget.password = val,
-            validatorMsg: 'Please enter your password',
+            onSaved: (value) => _password = value,
+            validator:
+                (value) => value == null || value.isEmpty ? 'Required' : null,
+          ),
+          TextFormField(
+            initialValue: widget.initialAccount.secretQuestion,
+            decoration: const InputDecoration(labelText: 'Secret Question'),
+            onSaved: (value) => _secretQuestion = value,
+          ),
+          TextFormField(
+            initialValue: widget.initialAccount.secretAnswer,
+            decoration: const InputDecoration(labelText: 'Secret Answer'),
+            onSaved: (value) => _secretAnswer = value,
+          ),
+          DropdownButtonFormField<String>(
+            value: widget.initialAccount.gender,
+            decoration: const InputDecoration(labelText: 'Gender'),
+            items: const [
+              DropdownMenuItem(value: 'Male', child: Text('Male')),
+              DropdownMenuItem(value: 'Female', child: Text('Female')),
+              DropdownMenuItem(value: 'Other', child: Text('Other')),
+            ],
+            onChanged: (value) => _gender = value,
+            onSaved: (value) => _gender = value,
+          ),
+          const SizedBox(height: 10),
+          ElevatedButton(
+            onPressed: () async {
+              final pickedDate = await showDatePicker(
+                context: context,
+                initialDate:
+                    widget.initialAccount.dateOfBirth != null
+                        ? DateTime.parse(widget.initialAccount.dateOfBirth!)
+                        : DateTime.now(),
+                firstDate: DateTime(1900),
+                lastDate: DateTime.now(),
+              );
+
+              if (pickedDate != null) {
+                setState(() {
+                  _dateOfBirth = pickedDate;
+                });
+              }
+            },
+            child: Text(
+              _dateOfBirth != null
+                  ? 'DOB: ${_dateOfBirth!.toLocal()}'.split(' ')[0]
+                  : 'Select Date of Birth',
+            ),
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildTextField({
-    required String label,
-    String? initialValue,
-    bool obscureText = false,
-    TextInputType keyboardType = TextInputType.text,
-    required void Function(String?) onSaved,
-    required String validatorMsg,
-  }) {
-    return TextFormField(
-      initialValue: initialValue,
-      obscureText: obscureText,
-      keyboardType: keyboardType,
-      decoration: InputDecoration(
-        labelText: label,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 14,
-        ),
-      ),
-      validator:
-          (value) => (value == null || value.isEmpty) ? validatorMsg : null,
-      onSaved: onSaved,
     );
   }
 }

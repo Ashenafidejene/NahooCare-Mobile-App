@@ -5,9 +5,9 @@ import '../blocs/account_bloc.dart';
 import '../widgets/account_edit_form.dart';
 
 class AccountEditPage extends StatelessWidget {
-  final AccountEntity initialAccount;
-
   const AccountEditPage({super.key, required this.initialAccount});
+
+  final AccountEntity initialAccount;
 
   @override
   Widget build(BuildContext context) {
@@ -21,13 +21,39 @@ class AccountEditPage extends StatelessWidget {
             Icons.chevron_left,
             size: 30,
             color: Colors.blueAccent,
-          ), // Larger back icon
-          onPressed: () => Navigator.maybePop(context), // Safer pop
+          ),
+          onPressed: () => Navigator.maybePop(context),
         ),
         actions: [
           IconButton(
             icon: const Icon(Icons.save),
-            onPressed: () => _saveChanges(context, formWidget),
+            onPressed: () {
+              final formKey = formWidget.formKey;
+              if (formKey.currentState!.validate()) {
+                formKey.currentState!.save();
+
+                final updatedAccount = formWidget.updatedAccount;
+                final password = formWidget.password;
+                final photo = formWidget.selectedImage;
+
+                if (password == null || password.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Password is required')),
+                  );
+                  return;
+                }
+
+                context.read<AccountBloc>().add(
+                  UpdateAccountEvent(
+                    account: updatedAccount,
+                    password: password,
+                    photo: photo,
+                  ),
+                );
+
+                Navigator.pop(context);
+              }
+            },
           ),
         ],
       ),
@@ -36,33 +62,5 @@ class AccountEditPage extends StatelessWidget {
         child: formWidget,
       ),
     );
-  }
-
-  void _saveChanges(BuildContext context, AccountEditForm formWidget) {
-    final formKey = formWidget.formKey;
-    if (formKey.currentState!.validate()) {
-      formKey.currentState!.save();
-
-      final updatedAccount = formWidget.updatedAccount;
-      final password = formWidget.password;
-      final photo = formWidget.selectedImage;
-
-      if (password == null || password.isEmpty) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('Password is required')));
-        return;
-      }
-
-      context.read<AccountBloc>().add(
-        UpdateAccountEvent(
-          account: updatedAccount,
-          password: password,
-          photo: photo,
-        ),
-      );
-
-      Navigator.pop(context);
-    }
   }
 }
