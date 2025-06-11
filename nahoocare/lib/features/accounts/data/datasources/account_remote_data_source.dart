@@ -1,4 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart';
 import '../../../../core/errors/failures.dart';
 import '../../../../core/network/api_client.dart';
 import '../models/account_model.dart';
@@ -32,16 +33,35 @@ class AccountRemoteDataSourceImpl implements AccountRemoteDataSource {
   @override
   Future<void> updateAccount(UpdateAccountRequest request) async {
     try {
-      await apiClient.put(
-        '/api/account/',
-        request.toJson(),
-        requiresAuth: true,
-      );
+      // final x = request.toJson();
+      // print('UpdateAccountRequest: $x');
+      final x = {
+        "full_name": request.fullName,
+        "phone_number": request.phoneNumber,
+        "secret_question": request.secretQuestion,
+        "secret_answer": request.secretAnswer,
+        "date_of_birth": request.dataOfBirth,
+        "photo_url": request.photoUrl,
+        "gender": request.gender,
+        "password": request.password,
+      };
+      debugPrint('UpdateAccountRequest: $x');
+      // Sending the request to update account details
+      await apiClient.put('/api/account/update/', {
+        "full_name": request.fullName,
+        "phone_number": request.phoneNumber,
+        "secret_question": request.secretQuestion,
+        "secret_answer": request.secretAnswer,
+        "date_of_birth": request.dataOfBirth,
+        "photo_url": request.photoUrl,
+        "gender": request.gender,
+        "password": request.password,
+      }, requiresAuth: true);
     } on ApiException catch (e) {
-      _logError('updateAccount', e.message, e.statusCode);
-      throw ServerFailure('errors.account.update_failed'.tr(), e.statusCode);
+      _logError('updateAccount one', e.message, e.statusCode);
+      throw ServerFailure('error ${e.message}', e.statusCode);
     } catch (e, stackTrace) {
-      _logUnexpectedError('updateAccount', e, stackTrace);
+      _logUnexpectedError('updateAccount two', e, stackTrace);
       throw ServerFailure('errors.unexpected'.tr(), 500);
     }
   }
