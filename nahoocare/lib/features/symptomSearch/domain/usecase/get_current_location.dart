@@ -16,7 +16,9 @@ class GetCurrentLocation implements UseCase<LatLng, NoParams> {
       final location = await repository.getCurrentLocation();
       return Right(location);
     } catch (e) {
-     return Left(ServerFailure('Failed to get location: ${e.toString()}',500));
+      return Left(
+        ServerFailure('Failed to get location: ${e.toString()}', 500),
+      );
     }
   }
 }

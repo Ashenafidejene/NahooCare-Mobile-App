@@ -197,7 +197,7 @@ class _LandingPageState extends State<LandingPage>
                   icon: Icons.logout,
                   label: 'Logout',
                   onTap: () {
-                    Navigator.pop(context);
+                    // Navigator.pop(context);
                     _showLogoutDialog(context);
                   },
                   iconColor: Colors.red,
@@ -333,7 +333,15 @@ class _LandingPageState extends State<LandingPage>
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
                 onPressed: () {
                   Navigator.pop(context);
-                  Navigator.pushReplacementNamed(context, '/login');
+                  _localStorageService.clearValue('auth_token');
+                  _localStorageService.clearValue('photoUrl');
+                  _localStorageService.clearValue('full_name');
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    '/login',
+                    (Route<dynamic> route) =>
+                        false, // Remove all previous routes
+                  );
                 },
                 child: const Text('Logout'),
               ),

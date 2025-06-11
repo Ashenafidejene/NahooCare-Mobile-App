@@ -37,7 +37,11 @@ class SymptomSearchBloc extends Bloc<SymptomSearchEvent, SymptomSearchState> {
 
     result.fold(
       (failure) {
-        emit(SearchError(failure.message));
+        if (failure.message.contains('401')) {
+          emit(Unauthenticated('Please login to search for centers'));
+        } else {
+          emit(SearchError(failure.message));
+        }
       },
       (response) {
         emit(SearchLoaded(response));

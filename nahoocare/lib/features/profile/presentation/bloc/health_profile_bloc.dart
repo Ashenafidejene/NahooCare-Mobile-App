@@ -34,7 +34,7 @@ class HealthProfileBloc extends Bloc<HealthProfileEvent, HealthProfileState> {
     Emitter<HealthProfileState> emit,
   ) async {
     emit(HealthProfileLoading());
-    final result = await getHealthProfile(NoParams());
+    final result = await getHealthProfile(const NoParams());
     result.fold((failure) {
       if (failure is NotFoundFailure) {
         emit(HealthProfileEmpty()); // This will trigger showing the create form
