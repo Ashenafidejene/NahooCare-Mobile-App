@@ -146,7 +146,10 @@ Future<void> init() async {
     () => SymptomSearchRemoteDataSourceImpl(apiClient: sl()),
   );
   sl.registerLazySingleton<AccountRemoteDataSource>(
-    () => AccountRemoteDataSourceImpl(apiClient: sl<ApiClient>()),
+    () => AccountRemoteDataSourceImpl(
+      apiClient: sl<ApiClient>(),
+      localStorageService: sl<LocalStorageService>(),
+    ),
   );
   // Repository
   sl.registerLazySingleton<HealthcareRepository>(
