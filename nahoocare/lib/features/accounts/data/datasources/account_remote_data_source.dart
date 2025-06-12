@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
+import 'package:nahoocare/core/service/local_storage_service.dart';
 import '../../../../core/errors/failures.dart';
 import '../../../../core/network/api_client.dart';
 import '../models/account_model.dart';
@@ -12,14 +13,19 @@ abstract class AccountRemoteDataSource {
 
 class AccountRemoteDataSourceImpl implements AccountRemoteDataSource {
   final ApiClient apiClient;
+  final LocalStorageService localStorageService;
   static const _tag = 'AccountRemoteDataSource';
 
-  AccountRemoteDataSourceImpl({required this.apiClient});
+  AccountRemoteDataSourceImpl({
+    required this.apiClient,
+    required this.localStorageService,
+  });
 
   @override
   Future<AccountResponse> getAccount() async {
     try {
       final response = await apiClient.get('/api/account/', requiresAuth: true);
+      print(response);
       return AccountResponse.fromJson(response);
     } on ApiException catch (e) {
       _logError('getAccount', e.message, e.statusCode);
@@ -35,6 +41,7 @@ class AccountRemoteDataSourceImpl implements AccountRemoteDataSource {
     try {
       // final x = request.toJson();
       // print('UpdateAccountRequest: $x');
+
       final x = {
         "full_name": request.fullName,
         "phone_number": request.phoneNumber,
@@ -56,7 +63,9 @@ class AccountRemoteDataSourceImpl implements AccountRemoteDataSource {
         "photo_url": request.photoUrl,
         "gender": request.gender,
         "password": request.password,
-      }, requiresAuth: true);
+      }, requiresAuth: true); // Replace with the concrete implementation
+      await localStorageService.saveFullName(request.fullName);
+      await localStorageService.profileSave(request.photoUrl);
     } on ApiException catch (e) {
       _logError('updateAccount one', e.message, e.statusCode);
       throw ServerFailure('error ${e.message}', e.statusCode);

@@ -33,15 +33,59 @@ class _AccountEditFormState extends State<AccountEditForm> {
   String? _gender;
   DateTime? _dateOfBirth;
   String? _password;
+  String? _confirmPassword;
   File? _imageFile;
 
+  // For password visibility
+  bool _obscurePassword = true;
+  bool _obscureConfirmPassword = true;
+
+  // Controller for Date of Birth field
+  final TextEditingController _dobController = TextEditingController();
+
   final picker = ImagePicker();
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize DOB controller with initial value if it exists
+    if (widget.initialAccount.dateOfBirth != null) {
+      _dateOfBirth = DateTime.parse(widget.initialAccount.dateOfBirth!);
+      _dobController.text = _formatDate(_dateOfBirth!);
+    }
+  }
+
+  @override
+  void dispose() {
+    _dobController.dispose();
+    super.dispose();
+  }
+
+  String _formatDate(DateTime date) {
+    return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+  }
 
   Future<void> _pickImage() async {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       setState(() {
         _imageFile = File(pickedFile.path);
+      });
+    }
+  }
+
+  Future<void> _pickDateOfBirth() async {
+    final pickedDate = await showDatePicker(
+      context: context,
+      initialDate: _dateOfBirth ?? DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+    );
+
+    if (pickedDate != null) {
+      setState(() {
+        _dateOfBirth = pickedDate;
+        _dobController.text = _formatDate(pickedDate);
       });
     }
   }
@@ -56,6 +100,23 @@ class _AccountEditFormState extends State<AccountEditForm> {
       dateOfBirth: _dateOfBirth?.toIso8601String(),
       photoUrl: widget.initialAccount.photoUrl,
     );
+  }
+
+  String? _validatePassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter a password';
+    }
+    if (value.length < 8) {
+      return 'Password must be at least 8 characters';
+    }
+    return null;
+  }
+
+  String? _validateConfirmPassword(String? value) {
+    if (value != _password) {
+      return 'Passwords do not match';
+    }
+    return null;
   }
 
   @override
@@ -84,69 +145,189 @@ class _AccountEditFormState extends State<AccountEditForm> {
           const SizedBox(height: 20),
           TextFormField(
             initialValue: widget.initialAccount.fullName,
-            decoration: const InputDecoration(labelText: 'Full Name'),
+            decoration: InputDecoration(
+              labelText: 'Full Name',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(
+                  color: Theme.of(context).primaryColor,
+                  width: 2,
+                ),
+              ),
+            ),
             onSaved: (value) => _fullName = value,
             validator:
-                (value) => value == null || value.isEmpty ? 'Required' : null,
+                (value) =>
+                    value == null || value.isEmpty
+                        ? 'Please enter your full name'
+                        : null,
           ),
+          const SizedBox(height: 16),
           TextFormField(
             initialValue: widget.initialAccount.phoneNumber,
-            decoration: const InputDecoration(labelText: 'Phone Number'),
+            decoration: InputDecoration(
+              labelText: 'Phone Number',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(
+                  color: Theme.of(context).primaryColor,
+                  width: 2,
+                ),
+              ),
+            ),
             onSaved: (value) => _phoneNumber = value,
             validator:
                 (value) => value == null || value.isEmpty ? 'Required' : null,
           ),
+          const SizedBox(height: 16),
           TextFormField(
-            decoration: const InputDecoration(labelText: 'Password'),
-            obscureText: true,
+            decoration: InputDecoration(
+              labelText: 'Password',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(
+                  color: Theme.of(context).primaryColor,
+                  width: 2,
+                ),
+              ),
+              suffixIcon: IconButton(
+                icon: Icon(
+                  _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                  color: Colors.grey,
+                ),
+                onPressed: () {
+                  setState(() {
+                    _obscurePassword = !_obscurePassword;
+                  });
+                },
+              ),
+            ),
+            obscureText: _obscurePassword,
             onSaved: (value) => _password = value,
-            validator:
-                (value) => value == null || value.isEmpty ? 'Required' : null,
+            validator: _validatePassword,
           ),
+          const SizedBox(height: 16),
+          TextFormField(
+            decoration: InputDecoration(
+              labelText: 'Confirm Password',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(
+                  color: Theme.of(context).primaryColor,
+                  width: 2,
+                ),
+              ),
+              suffixIcon: IconButton(
+                icon: Icon(
+                  _obscureConfirmPassword
+                      ? Icons.visibility_off
+                      : Icons.visibility,
+                  color: Colors.grey,
+                ),
+                onPressed: () {
+                  setState(() {
+                    _obscureConfirmPassword = !_obscureConfirmPassword;
+                  });
+                },
+              ),
+            ),
+            obscureText: _obscureConfirmPassword,
+            onSaved: (value) => _confirmPassword = value,
+            validator: _validateConfirmPassword,
+          ),
+          const SizedBox(height: 16),
           TextFormField(
             initialValue: widget.initialAccount.secretQuestion,
-            decoration: const InputDecoration(labelText: 'Secret Question'),
+            decoration: InputDecoration(
+              labelText: 'Secret Question',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(
+                  color: Theme.of(context).primaryColor,
+                  width: 2,
+                ),
+              ),
+            ),
             onSaved: (value) => _secretQuestion = value,
           ),
+          const SizedBox(height: 16),
           TextFormField(
             initialValue: widget.initialAccount.secretAnswer,
-            decoration: const InputDecoration(labelText: 'Secret Answer'),
+            decoration: InputDecoration(
+              labelText: 'Secret Answer',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(
+                  color: Theme.of(context).primaryColor,
+                  width: 2,
+                ),
+              ),
+            ),
             onSaved: (value) => _secretAnswer = value,
           ),
+          const SizedBox(height: 16),
           DropdownButtonFormField<String>(
             value: widget.initialAccount.gender,
-            decoration: const InputDecoration(labelText: 'Gender'),
+            decoration: InputDecoration(
+              labelText: 'Gender',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(
+                  color: Theme.of(context).primaryColor,
+                  width: 2,
+                ),
+              ),
+            ),
             items: const [
               DropdownMenuItem(value: 'Male', child: Text('Male')),
               DropdownMenuItem(value: 'Female', child: Text('Female')),
-              DropdownMenuItem(value: 'Other', child: Text('Other')),
             ],
             onChanged: (value) => _gender = value,
             onSaved: (value) => _gender = value,
           ),
-          const SizedBox(height: 10),
-          ElevatedButton(
-            onPressed: () async {
-              final pickedDate = await showDatePicker(
-                context: context,
-                initialDate:
-                    widget.initialAccount.dateOfBirth != null
-                        ? DateTime.parse(widget.initialAccount.dateOfBirth!)
-                        : DateTime.now(),
-                firstDate: DateTime(1900),
-                lastDate: DateTime.now(),
-              );
-
-              if (pickedDate != null) {
-                setState(() {
-                  _dateOfBirth = pickedDate;
-                });
-              }
-            },
-            child: Text(
-              _dateOfBirth != null
-                  ? 'DOB: ${_dateOfBirth!.toLocal()}'.split(' ')[0]
-                  : 'Select Date of Birth',
+          const SizedBox(height: 16),
+          TextFormField(
+            controller: _dobController,
+            readOnly: true,
+            onTap: _pickDateOfBirth,
+            decoration: InputDecoration(
+              labelText: 'Date of Birth',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(
+                  color: Theme.of(context).primaryColor,
+                  width: 2,
+                ),
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 14,
+              ),
+              suffixIcon: const Icon(Icons.calendar_today),
             ),
           ),
         ],
