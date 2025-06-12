@@ -106,6 +106,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           IntlPhoneField(
                             decoration: InputDecoration(
                               labelText: 'phone_number'.tr(),
+
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),

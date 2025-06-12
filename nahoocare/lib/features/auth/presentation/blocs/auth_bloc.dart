@@ -46,10 +46,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final result = await loginUseCase(
       LoginEntity(phoneNumber: event.phoneNumber, password: event.password),
     );
-    result.fold(
-      (failure) => emit(AuthError(failure.message)),
-      (authEntity) => emit(LoginSuccess(authEntity.token)),
-    );
+    result.fold((failure) {
+      if (failure.message.contains('phone number')) {
+        emit(AuthError('Incorrect phone number')); // Show in phone field
+      } else if (failure.message.contains('password')) {
+        emit(AuthError('Incorrect password')); // Show in password field
+      } else {
+        emit(AuthError(failure.message)); // Generic error
+      }
+    }, (authEntity) => emit(LoginSuccess(authEntity.token)));
   }
 
   Future<void> _onRegister(RegisterEvent event, Emitter<AuthState> emit) async {

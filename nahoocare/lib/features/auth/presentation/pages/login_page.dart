@@ -19,6 +19,8 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   String? _completePhoneNumber;
   final _passwordController = TextEditingController();
+  String? _phoneError; // Track phone-specific errors
+  String? _passwordError;
 
   @override
   Widget build(BuildContext context) {
@@ -53,9 +55,23 @@ class _LoginPageState extends State<LoginPage> {
         child: BlocConsumer<AuthBloc, AuthState>(
           listener: (context, state) {
             if (state is AuthError) {
-              ScaffoldMessenger.of(
-                context,
-              ).showSnackBar(SnackBar(content: Text(state.message)));
+              // Handle specific error types
+              if (state.message.toLowerCase().contains('phone number')) {
+                setState(() {
+                  _phoneError = state.message;
+                  _passwordError = null;
+                });
+              } else if (state.message.toLowerCase().contains('password')) {
+                setState(() {
+                  _passwordError = state.message;
+                  _phoneError = null;
+                });
+              } else {
+                // For all other errors, show snackbar as before
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(SnackBar(content: Text(state.message)));
+              }
             } else if (state is LoginSuccess) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
@@ -63,7 +79,7 @@ class _LoginPageState extends State<LoginPage> {
                   behavior: SnackBarBehavior.floating,
                 ),
               );
-              Future.delayed(const Duration(seconds: 3), () {
+              Future.delayed(const Duration(seconds: 2), () {
                 Navigator.pushNamed(context, '/landing');
               });
             }
@@ -101,6 +117,7 @@ class _LoginPageState extends State<LoginPage> {
                           IntlPhoneField(
                             decoration: InputDecoration(
                               labelText: 'phone_number'.tr(),
+                              errorText: _phoneError,
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
@@ -114,6 +131,7 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                             initialCountryCode: 'ET',
                             onChanged: (phone) {
+                              setState(() => _phoneError = null);
                               _completePhoneNumber = phone.completeNumber;
                             },
                             onSaved: (phone) {
@@ -123,6 +141,7 @@ class _LoginPageState extends State<LoginPage> {
                           const SizedBox(height: 16),
                           PasswordField(
                             controller: _passwordController,
+                            errorText: _passwordError,
                             labelText: 'password'.tr(),
                           ),
                           const SizedBox(height: 16),

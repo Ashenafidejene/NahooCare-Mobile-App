@@ -67,22 +67,25 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     String password,
   ) async {
     try {
-      print(phoneNumber);
       final response = await apiClient.post('/api/account/login', {
         'phone_number': phoneNumber,
         'password': password,
       }, requiresAuth: false);
-      await localStorageService.saveFullName(response['full_name']);
-      await localStorageService.saveToken(response['access_token']);
-      await localStorageService.profileSave(response['image_url']);
-      final value = await localStorageService.getToken();
-      debugPrint("Login successful sharedPreferences , token: $value");
-      debugPrint("$value");
+
+      // Save user data to local storage
+      await Future.wait([
+        localStorageService.saveFullName(response['full_name']),
+        localStorageService.saveToken(response['access_token']),
+        localStorageService.profileSave(response['image_url']),
+      ]);
+
+      debugPrint("Login successful. Token: ${response['access_token']}");
       return response;
     } on ApiException catch (e) {
+      // Map backend messages directly
       throw ServerException(e.message, e.statusCode);
     } catch (e) {
-      throw ServerException('Failed to login: ${e.toString()}', 500);
+      throw ServerException('Connection failed', 503);
     }
   }
 

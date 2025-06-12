@@ -9,6 +9,7 @@ class PasswordField extends StatefulWidget {
   final String labelText;
   final bool showStrengthIndicator;
   final String? Function(String?)? validator;
+  final String? errorText; // Add errorText parameter
 
   const PasswordField({
     super.key,
@@ -16,6 +17,7 @@ class PasswordField extends StatefulWidget {
     this.labelText = '',
     this.showStrengthIndicator = false,
     this.validator,
+    this.errorText, // Add to constructor
   });
 
   @override
@@ -37,6 +39,7 @@ class _PasswordFieldState extends State<PasswordField> {
           labelText: label,
           obscureText: _obscureText,
           validator: widget.validator ?? InputValidation.validatePassword,
+          errorText: widget.errorText, // Pass errorText to CustomTextField
           suffixIcon: IconButton(
             icon: Icon(_obscureText ? Icons.visibility : Icons.visibility_off),
             onPressed: () {
@@ -68,6 +71,7 @@ class _PasswordFieldState extends State<PasswordField> {
     );
   }
 
+  // Keep all existing helper methods unchanged
   double _calculatePasswordStrength(String password) {
     double strength = 0;
     if (password.length >= 8) strength += 0.3;
