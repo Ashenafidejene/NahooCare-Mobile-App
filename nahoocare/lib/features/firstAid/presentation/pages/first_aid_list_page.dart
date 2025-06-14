@@ -2,19 +2,44 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:easy_localization/easy_localization.dart';
+
 import '../../domain/entities/first_aid_entity.dart';
 import '../blocs/first_aid_bloc.dart';
 import '../widgets/first_aid_card.dart';
 import '../widgets/search_filter_bar.dart';
 import 'first_aid_detail_page.dart';
 
-class FirstAidListPage extends StatelessWidget {
+class FirstAidListPage extends StatefulWidget {
   const FirstAidListPage({Key? key}) : super(key: key);
 
   @override
+  State<FirstAidListPage> createState() => _FirstAidListPageState();
+}
+
+class _FirstAidListPageState extends State<FirstAidListPage> {
+  Locale? _previousLocale;
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<FirstAidBloc>().add(LoadFirstAidGuides(context));
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    final currentLocale = context.locale;
+    if (_previousLocale != currentLocale) {
+      _previousLocale = currentLocale;
+      context.read<FirstAidBloc>().add(LoadFirstAidGuides(context));
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    context.read<FirstAidBloc>().add(LoadFirstAidGuides());
     final theme = Theme.of(context);
+
     return Scaffold(
       body: SafeArea(
         child: BlocBuilder<FirstAidBloc, FirstAidState>(
@@ -44,7 +69,7 @@ class FirstAidListPage extends StatelessWidget {
                     categories: _getUniqueCategories(state.allGuides),
                     onSearch:
                         (query) => context.read<FirstAidBloc>().add(
-                          SearchFirstAid(query),
+                          SearchFirstAid(query.trim()),
                         ),
                     onFilter:
                         (category) => context.read<FirstAidBloc>().add(
@@ -70,6 +95,10 @@ class FirstAidListPage extends StatelessWidget {
     }
 
     if (state is FirstAidLoaded) {
+      if (state.displayedGuides.isEmpty) {
+        return Center(child: Text('No guides found'.tr()));
+      }
+
       return ListView.builder(
         padding: const EdgeInsets.only(bottom: 16),
         itemCount: state.displayedGuides.length,
@@ -92,7 +121,7 @@ class FirstAidListPage extends StatelessWidget {
       highlightColor: Colors.grey[100]!,
       child: ListView.builder(
         padding: const EdgeInsets.only(bottom: 16),
-        itemCount: 6, // Number of shimmer placeholders
+        itemCount: 6,
         itemBuilder: (context, index) {
           return Container(
             margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -128,7 +157,7 @@ class FirstAidListPage extends StatelessWidget {
   }
 
   List<String> _getUniqueCategories(List<FirstAidEntity> guides) {
-    return ['All', ...guides.map((e) => e.category).toSet().toList()];
+    return ['All'.tr(), ...guides.map((e) => e.category).toSet().toList()];
   }
 
   void _navigateToDetail(BuildContext context, FirstAidEntity guide) {

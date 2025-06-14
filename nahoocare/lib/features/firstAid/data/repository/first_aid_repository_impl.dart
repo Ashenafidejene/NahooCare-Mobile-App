@@ -1,5 +1,7 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dartz/dartz.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
 
 import '../../../../core/errors/failures.dart';
 import '../../domain/entities/first_aid_entity.dart';
@@ -10,21 +12,23 @@ import '../models/local_first_aid_model.dart';
 import '../models/remote_first_aid_model.dart';
 
 class FirstAidRepositoryImpl implements FirstAidRepository {
-  final LocalFirstAidDataSource localDataSource;
   final RemoteFirstAidDataSource remoteDataSource;
   final Connectivity connectivity;
 
   FirstAidRepositoryImpl({
-    required this.localDataSource,
     required this.remoteDataSource,
     required this.connectivity,
   });
 
   @override
-  Future<Either<Failure, List<FirstAidEntity>>> getFirstAidGuides() async {
+  Future<Either<Failure, List<FirstAidEntity>>> getFirstAidGuides(
+    BuildContext context,
+  ) async {
     try {
       final isConnected =
           await connectivity.checkConnectivity() != ConnectivityResult.none;
+
+      final localDataSource = LocalFirstAidDataSource(locale: context.locale);
       final localResult = await localDataSource.getLocalFirstAid();
 
       return localResult.fold((failure) => Left(failure), (localGuides) async {
