@@ -27,9 +27,12 @@ class LocalFirstAidDataSource {
       final jsonString = await rootBundle.loadString(filePath);
       final jsonList = json.decode(jsonString) as List;
 
-      final guides = jsonList
-          .map((e) => LocalFirstAidModel.fromJson(e as Map<String, dynamic>))
-          .toList();
+      final guides =
+          jsonList
+              .map(
+                (e) => LocalFirstAidModel.fromJson(e as Map<String, dynamic>),
+              )
+              .toList();
 
       return Right(guides);
     } catch (e, stackTrace) {
