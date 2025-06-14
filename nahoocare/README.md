@@ -1,56 +1,93 @@
-# NahooCare — Symptom-Based Nearest Healthcare Center Recommendation System with First-Aid Guidance
+# NahooCare
 
-A Flutter application designed to improve healthcare access and empower communities by offering symptom-based healthcare center recommendations alongside first aid guidance.
+## Symptom-Based Nearest Healthcare Center Recommendation & First-Aid Guidance Mobile Application
 
-## Getting Started
+NahooCare is a cross-platform mobile application built with Flutter, designed to enhance healthcare accessibility and empower users through technology. The app recommends the nearest healthcare centers based on user-reported symptoms and provides offline first-aid instructions to assist in emergencies or remote areas.
 
-This project is a starting point for developing a Flutter application.
+## Overview
 
-### Features:
+This project aims to address challenges in healthcare navigation and emergency response — especially in urban settings like Addis Ababa, Ethiopia. NahooCare helps users:
 
-* User Authentication and Profile Management
-* Symptom-Based Healthcare Center Recommendation
-* First-Aid Guidance (Offline)
-* Healthcare Center Rating
-* Search History
-* Create and Manage Health Profiles
+* Identify appropriate nearby healthcare centers based on symptoms.
+* Access offline first-aid instructions during emergencies.
+* Create personalized health profiles for better tracking.
+* Rate and review healthcare services for community insight.
 
-### Tech Stack:
+## Core Features
 
-* Framework: Flutter (Dart)
-* API: FastAPI (Python)
-* Database: MongoDB and SQLite
-* Other Packages: flutter\_bloc, geolocator, flutter\_map, fluttertoast, loading\_animation\_widget, cloudinary\_sdk, flutter\_rating\_bar, flutter\_map\_marker\_popup, flutter\_dotenv
+* User Authentication: Secure login/signup with hashed passwords and secret questions.
+* Symptom-Based Suggestions: Users input symptoms, and the app recommends suitable nearby healthcare centers using location data.
+* Offline First-Aid Guide: Preloaded, categorized instructions to handle common medical emergencies offline.
+* Health Profile Management: Users can add medical history, allergies, and conditions to personalize recommendations.
+* Center Rating & Reviews: Users can rate and review visited centers, improving decision-making for others.
+* Search History Tracking: Tracks previously searched symptoms and centers for faster future use.
 
-### Installation:
+## Technology Stack
 
-```bash
+* Frontend: Flutter (Dart)
+* Backend/API: FastAPI (Python)
+* Database: MongoDB (cloud) & SQLite (local storage)
+* State Management: flutter\_bloc
+* Location & Maps: geolocator, flutter\_map, flutter\_map\_marker\_popup
+* Other Packages: flutter\_rating\_bar, cloudinary\_sdk, flutter\_dotenv, fluttertoast, loading\_animation\_widget
+
+## Architecture & Methodology
+
+* Development Approach: Waterfall for initial planning, Agile for iterative development.
+* Design Methodology: Microservices for modular backend design and maintainability.
+* Collaboration Tools: Git (version control), GitHub (code hosting, issue tracking), Trello (task management), and Google Docs (documentation).
+
+## Current Limitations
+
+* Limited to Addis Ababa: The app currently operates only within Addis Ababa and requires scaling for other regions.
+* No real-time integration with hospitals, ambulance services, or emergency hotlines.
+* Some features depend on location access and internet, except offline first-aid.
+
+## Security Practices
+
+* Passwords stored using secure hashing algorithms.
+* Sensitive user data protected through role-based access control.
+* Dotenv and secure storage used to manage API keys and environment variables.
+
+## Installation & Setup
+
+Clone the repository and run the app locally:
+
+```
 git clone https://github.com/Ashenafidejene/NahooCare-Mobile-App.git
 cd NahooCare-Mobile-App
 flutter pub get
 flutter run
 ```
 
-### Architectural Approach:
+Ensure that:
 
-* Software Development Model: Waterfall + Agile
-* Design Method: Micro-services
-* Collaborative Tools: Git, GitHub
+* Flutter SDK is installed and set up properly.
+* Location permissions are enabled on your device/emulator.
 
-### System Limitations:
+## Future Improvements
 
-* Currently focuses **only on the city of Addis Ababa**.
-* Currently there’s **no real-time hospital capacity or communication with health care centers or ambulances** — the app is for information and guidance only.
+* Integration with real-time hospital bed availability and live ambulance status.
+* Expand coverage to regions beyond Addis Ababa.
+* Add chatbot-based symptom input and health advice.
+* Push notifications for health tips and emergencies.
+* Integrate AI for symptom triaging and health trend analytics.
 
-### Security Measures:
+## Contribution Guidelines
 
-* User authentication with password hashing
-* Access controls to prohibit unauthorized access to sensitive information
+We welcome contributions from developers, designers, healthcare experts, and researchers.
 
-### Contribution:
+1. Fork the repository.
+2. Create a feature branch (`git checkout -b feature/your-feature-name`).
+3. Commit your changes and push to your fork.
+4. Submit a pull request with a clear explanation of your changes.
 
-Contributions are welcome! Please create a new branch and submit a pull request with your improvements.
+## Contact
 
-### Contact:
+For support, partnership, or feedback:
 
-For more information or inquiries, please reach out to the NahooCare team.
+* GitHub: [https://github.com/Ashenafidejene/NahooCare-Mobile-App](https://github.com/Ashenafidejene/NahooCare-Mobile-App)
+
+## License
+
+This project is open source and available under the MIT License.
