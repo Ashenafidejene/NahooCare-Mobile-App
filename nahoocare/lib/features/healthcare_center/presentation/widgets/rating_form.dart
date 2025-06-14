@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-
+import 'package:easy_localization/easy_localization.dart';
 import '../bloc/healthcare_center_bloc.dart';
 
 class RatingForm extends StatefulWidget {
@@ -38,7 +38,7 @@ class _RatingFormState extends State<RatingForm> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Rate this center',
+              'Rate this center'.tr(),
               style: Theme.of(
                 context,
               ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
@@ -62,7 +62,7 @@ class _RatingFormState extends State<RatingForm> {
             TextFormField(
               controller: _commentController,
               decoration: InputDecoration(
-                hintText: 'Leave a comment (optional)',
+                hintText: 'Leave a comment (optional)'.tr(),
                 filled: true,
                 fillColor: Colors.grey.shade100,
                 contentPadding: const EdgeInsets.symmetric(
@@ -75,7 +75,8 @@ class _RatingFormState extends State<RatingForm> {
                 ),
               ),
               maxLines: 3,
-              validator: (_) => _rating == 0 ? 'Please select a rating' : null,
+              validator:
+                  (_) => _rating == 0 ? 'Please select a rating'.tr() : null,
             ),
 
             const SizedBox(height: 12),
@@ -92,7 +93,7 @@ class _RatingFormState extends State<RatingForm> {
                 ),
                 onPressed: _submitRating,
                 icon: const Icon(Icons.send, size: 20),
-                label: const Text('Submit'),
+                label: Text('Submit'.tr()),
               ),
             ),
           ],
@@ -112,9 +113,9 @@ class _RatingFormState extends State<RatingForm> {
         ),
       );
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Thanks for your feedback!')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Thanks for your feedback!'.tr())));
 
       _commentController.clear();
       setState(() => _rating = 0);

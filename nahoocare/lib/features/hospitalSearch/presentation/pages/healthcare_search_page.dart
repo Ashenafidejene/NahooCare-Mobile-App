@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart'; // Add this import
-
+import 'package:easy_localization/easy_localization.dart';
 import '../blocs/healthcare_search_bloc.dart';
 import '../widgets/healthcare_card.dart';
 import '../widgets/search_app_bar.dart';
@@ -43,7 +43,7 @@ class HealthcareCentersPage extends StatelessWidget {
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      'HealthCare Center Search',
+                      'HealthCare Center Search'.tr(),
                       style: theme.textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: Colors.blueAccent,
@@ -81,7 +81,7 @@ class HealthcareCentersPage extends StatelessWidget {
                             ),
                           );
                         },
-                        tooltip: 'Sort by distance',
+                        tooltip: 'Sort by distance'.tr(),
                       ),
                       const SizedBox(width: 4),
                       Badge(
@@ -91,18 +91,18 @@ class HealthcareCentersPage extends StatelessWidget {
                           color: Theme.of(context).colorScheme.primary,
                           onPressed:
                               () => _showFilterBottomSheet(context, state),
-                          tooltip: 'Filter options',
+                          tooltip: 'Filter options'.tr(),
                         ),
                       ),
                     ],
                   ),
                 ),
                 if (state.filteredCenters.isEmpty)
-                  const Expanded(
+                  Expanded(
                     child: Center(
                       child: Text(
-                        'No centers found matching your criteria',
-                        style: TextStyle(fontSize: 16),
+                        'No centers found matching your criteria'.tr(),
+                        style: const TextStyle(fontSize: 16),
                       ),
                     ),
                   )
@@ -131,7 +131,7 @@ class HealthcareCentersPage extends StatelessWidget {
                 context.read<HealthcareBloc>().add(ResetHealthcareFilters());
               },
               icon: const Icon(Icons.refresh),
-              label: const Text('Reset'),
+              label: Text('Reset'.tr()),
               backgroundColor: Theme.of(context).colorScheme.primary,
             );
           }
@@ -172,7 +172,7 @@ class HealthcareCentersPage extends StatelessWidget {
                 Container(
                   width: 48,
                   height: 48,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: Colors.white,
                     shape: BoxShape.circle,
                   ),
@@ -181,7 +181,7 @@ class HealthcareCentersPage extends StatelessWidget {
                 Container(
                   width: 48,
                   height: 48,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: Colors.white,
                     shape: BoxShape.circle,
                   ),

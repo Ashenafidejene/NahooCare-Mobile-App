@@ -6,8 +6,11 @@ class CustomTextField extends StatelessWidget {
   final bool obscureText;
   final TextInputType? keyboardType;
   final String? Function(String?)? validator;
+  final String? initialValue;
   final Widget? suffixIcon;
   final int? maxLines;
+  final String? errorText; // New parameter for external error messages
+  final void Function(String)? onChanged; // New parameter for change handling
 
   const CustomTextField({
     super.key,
@@ -18,16 +21,21 @@ class CustomTextField extends StatelessWidget {
     this.validator,
     this.suffixIcon,
     this.maxLines = 1,
+    this.errorText, // Added to constructor
+    this.onChanged,
+    this.initialValue, // Added to constructor
   });
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      initialValue: initialValue,
       controller: controller,
       obscureText: obscureText,
       keyboardType: keyboardType,
       validator: validator,
       maxLines: maxLines,
+      onChanged: onChanged, // Pass through onChanged callback
       decoration: InputDecoration(
         labelText: labelText,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
@@ -38,6 +46,8 @@ class CustomTextField extends StatelessWidget {
             width: 2,
           ),
         ),
+        errorText: errorText, // Display external error messages
+        errorMaxLines: 2, // Allow error text to wrap
         suffixIcon: suffixIcon,
       ),
     );

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
+import 'package:easy_localization/easy_localization.dart';
 import '../../domain/entities/health_profile.dart';
 import '../bloc/health_profile_bloc.dart';
 import '../widgets/health_profile_form.dart';
@@ -17,6 +17,7 @@ class EditHealthProfilePage extends StatefulWidget {
 class _EditHealthProfilePageState extends State<EditHealthProfilePage> {
   late HealthProfile _editedProfile;
   bool _isSaving = false;
+
   @override
   void initState() {
     super.initState();
@@ -33,7 +34,7 @@ class _EditHealthProfilePageState extends State<EditHealthProfilePage> {
           setState(() => _isSaving = false);
           ScaffoldMessenger.of(
             context,
-          ).showSnackBar(SnackBar(content: Text(state.message)));
+          ).showSnackBar(SnackBar(content: Text(state.message.tr())));
         }
       },
       child: Scaffold(
@@ -46,7 +47,7 @@ class _EditHealthProfilePageState extends State<EditHealthProfilePage> {
             ),
             onPressed: _isSaving ? null : () => Navigator.pop(context),
           ),
-          title: const Text('Edit Health Profile'),
+          title: Text('edit_health_profile'.tr()),
           actions: [
             if (_isSaving)
               const Padding(
@@ -54,7 +55,11 @@ class _EditHealthProfilePageState extends State<EditHealthProfilePage> {
                 child: CircularProgressIndicator(),
               )
             else
-              IconButton(icon: const Icon(Icons.save), onPressed: _saveProfile),
+              IconButton(
+                icon: const Icon(Icons.save),
+                onPressed: _saveProfile,
+                tooltip: 'save'.tr(),
+              ),
           ],
         ),
         body: SingleChildScrollView(

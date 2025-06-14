@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
-
+import 'package:easy_localization/easy_localization.dart';
 import '../../../../core/errors/failures.dart';
 import '../../../../core/usecase/usecase.dart';
 import '../entities/health_profile.dart';
@@ -30,7 +30,8 @@ class CreateHealthProfile
       if (params.profile.bloodType.isEmpty) {
         return Left(
           ValidationFailure({
-            'bloodType': ['Blood type is required'],
+            'bloodType': ['blood_type_required'.tr()],
+
           }),
         );
       }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-
+import 'package:easy_localization/easy_localization.dart';
 import '../../domain/entities/healthcare_center.dart';
 
 class CenterDetailsCard extends StatelessWidget {
@@ -72,7 +72,7 @@ class CenterDetailsCard extends StatelessWidget {
             // Specialties
             if (center.specialists.isNotEmpty) ...[
               Text(
-                'Specialties',
+                'Specialties'.tr(),
                 style: textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -100,7 +100,7 @@ class CenterDetailsCard extends StatelessWidget {
             if (center.contactInfo != null &&
                 center.contactInfo!.isNotEmpty) ...[
               Text(
-                'Contact Info',
+                'Contact Info'.tr(),
                 style: textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -136,7 +136,7 @@ class CenterDetailsCard extends StatelessWidget {
             // Operating Hours
             if (center.availableTime.isNotEmpty) ...[
               Text(
-                'Operating Hours',
+                'Operating Hours'.tr(),
                 style: textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),

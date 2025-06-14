@@ -174,12 +174,12 @@ class SearchHistoryPage extends StatelessWidget {
   }
 
   void _navigateToLogin(BuildContext context) {
-    Navigator.of(context).pushReplacementNamed('/login');
+    Navigator.of(context).pushReplacementNamed('/login'.tr());
   }
 
   bool _isUnauthorizedError(String message) {
     return message.contains('401') ||
-        message.toLowerCase().contains('unauthorized') ||
-        message.contains('session_expired');
+        message.toLowerCase().contains('unauthorized'.tr()) ||
+        message.contains('session_expired'.tr());
   }
 }

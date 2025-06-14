@@ -1,8 +1,8 @@
-import 'package:dartz/dartz.dart';
 import '../../../../core/errors/exceptions.dart';
 import '../../../../core/errors/failures.dart';
 import '../../../../core/network/api_client.dart';
 import '../models/healthcare_search_model.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 abstract class HealthcareCenterRemoteDataSources {
   Future<List<HealthcareModel>> getAllHealthcareCenters();
@@ -10,7 +10,7 @@ abstract class HealthcareCenterRemoteDataSources {
 
 class HealthcareCenterRemoteDataSourcesImpl
     implements HealthcareCenterRemoteDataSources {
-  final ApiClient apiClient; // Your HTTP client (Dio, http, etc.)
+  final ApiClient apiClient;
 
   HealthcareCenterRemoteDataSourcesImpl({required this.apiClient});
 
@@ -22,33 +22,28 @@ class HealthcareCenterRemoteDataSourcesImpl
         requiresAuth: true,
       );
 
-      // Add type checking for the response
       if (response is! List) {
-        throw const FormatException('Expected a list from the API');
+        // 👇 Cannot use `.tr()` inside const constructor, so move it outside
+        throw FormatException('Expected a list from the API'.tr());
       }
 
-      // Explicitly cast each item to Map<String, dynamic>
-      final List<HealthcareModel> centers =
-          response
-              .where(
-                (item) => item is Map<String, dynamic>,
-              ) // Filter valid items
-              .map<HealthcareModel>(
-                (item) =>
-                    HealthcareModel.fromJson(item as Map<String, dynamic>),
-              )
-              .toList();
+      final List<HealthcareModel> centers = response
+          .where((item) => item is Map<String, dynamic>)
+          .map<HealthcareModel>(
+            (item) => HealthcareModel.fromJson(item as Map<String, dynamic>),
+          )
+          .toList();
 
-      print('Successfully parsed ${centers.length} healthcare centers');
+      print('Successfully parsed ${centers.length} healthcare centers'.tr());
       return centers;
     } on FormatException catch (e) {
-      print('Format error: ${e.message}');
-      throw ServerFailure('Invalid data format from server', 500);
+      print('Format error: ${e.message}'.tr());
+      throw ServerFailure('Invalid data format from server'.tr(), 500);
     } on ServerException catch (e) {
       throw ServerFailure(e.message, e.statusCode);
     } catch (e) {
-      print("Unexpected error: ${e.toString()}");
-      throw ServerFailure('An unexpected error occurred', 500);
+      print("Unexpected error: ${e.toString()}".tr());
+      throw ServerFailure('An unexpected error occurred'.tr(), 500);
     }
   }
 }

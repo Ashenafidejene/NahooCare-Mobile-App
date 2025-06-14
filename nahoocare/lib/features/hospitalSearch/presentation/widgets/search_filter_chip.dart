@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class FilterBottomSheet extends StatefulWidget {
   final List<String> allSpecialties;
@@ -36,7 +37,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Filter by Specialty',
+                'Filter by Specialty'.tr(),
                 style: Theme.of(context).textTheme.titleLarge,
               ),
               TextButton(
@@ -45,7 +46,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                     _selectedSpecialties.clear();
                   });
                 },
-                child: const Text('Clear All'),
+                child:  Text('Clear All'.tr()),
               ),
             ],
           ),
@@ -86,7 +87,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
               onPressed: () {
                 widget.onApply(_selectedSpecialties);
               },
-              child: const Text('Apply Filters'),
+              child:  Text('Apply Filters'.tr()),
             ),
           ),
           SizedBox(height: MediaQuery.of(context).viewInsets.bottom),

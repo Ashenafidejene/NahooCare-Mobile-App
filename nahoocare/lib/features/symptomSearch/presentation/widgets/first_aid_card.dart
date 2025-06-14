@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../domain/entities/first_aid.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class FirstAidCard extends StatelessWidget {
   final FirstAid firstAid;
@@ -50,7 +51,7 @@ class FirstAidCard extends StatelessWidget {
 
             // Conditions section
             Text(
-              'Potential Conditions:',
+              'potential_conditions'.tr(),
               style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.w600,
                 color: Colors.blueGrey[800],
@@ -62,18 +63,17 @@ class FirstAidCard extends StatelessWidget {
             Wrap(
               spacing: 8,
               runSpacing: 8,
-              children:
-                  firstAid.potentialConditions.map((condition) {
-                    return Chip(
-                      label: Text(condition),
-                      backgroundColor: Colors.blue[50],
-                      labelStyle: const TextStyle(color: Colors.blueAccent),
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    );
-                  }).toList(),
+              children: firstAid.potentialConditions.map((condition) {
+                return Chip(
+                  label: Text(condition),
+                  backgroundColor: Colors.blue[50],
+                  labelStyle: const TextStyle(color: Colors.blueAccent),
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                );
+              }).toList(),
             ),
           ],
         ),

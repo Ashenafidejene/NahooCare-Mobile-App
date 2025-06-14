@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../domain/entities/account_entity.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class AccountEditForm extends StatefulWidget {
   final AccountEntity initialAccount;
@@ -104,17 +105,17 @@ class _AccountEditFormState extends State<AccountEditForm> {
 
   String? _validatePassword(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Please enter a password';
+      return 'Please enter a password'.tr();
     }
     if (value.length < 8) {
-      return 'Password must be at least 8 characters';
+      return 'Password must be at least 8 characters'.tr();
     }
     return null;
   }
 
   String? _validateConfirmPassword(String? value) {
     if (value != _password) {
-      return 'Passwords do not match';
+      return 'Passwords do not match'.tr();
     }
     return null;
   }
@@ -146,7 +147,7 @@ class _AccountEditFormState extends State<AccountEditForm> {
           TextFormField(
             initialValue: widget.initialAccount.fullName,
             decoration: InputDecoration(
-              labelText: 'Full Name',
+              labelText: 'Full Name'.tr(),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -162,14 +163,14 @@ class _AccountEditFormState extends State<AccountEditForm> {
             validator:
                 (value) =>
                     value == null || value.isEmpty
-                        ? 'Please enter your full name'
+                        ? 'Please enter your full name'.tr()
                         : null,
           ),
           const SizedBox(height: 16),
           TextFormField(
             initialValue: widget.initialAccount.phoneNumber,
             decoration: InputDecoration(
-              labelText: 'Phone Number',
+              labelText: 'Phone Number'.tr(),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -188,7 +189,7 @@ class _AccountEditFormState extends State<AccountEditForm> {
           const SizedBox(height: 16),
           TextFormField(
             decoration: InputDecoration(
-              labelText: 'Password',
+              labelText: 'Password'.tr(),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -218,7 +219,7 @@ class _AccountEditFormState extends State<AccountEditForm> {
           const SizedBox(height: 16),
           TextFormField(
             decoration: InputDecoration(
-              labelText: 'Confirm Password',
+              labelText: 'Confirm Password'.tr(),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -251,7 +252,7 @@ class _AccountEditFormState extends State<AccountEditForm> {
           TextFormField(
             initialValue: widget.initialAccount.secretQuestion,
             decoration: InputDecoration(
-              labelText: 'Secret Question',
+              labelText: 'Secret Question'.tr(),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -269,7 +270,7 @@ class _AccountEditFormState extends State<AccountEditForm> {
           TextFormField(
             initialValue: widget.initialAccount.secretAnswer,
             decoration: InputDecoration(
-              labelText: 'Secret Answer',
+              labelText: 'Secret Answer'.tr(),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -287,7 +288,7 @@ class _AccountEditFormState extends State<AccountEditForm> {
           DropdownButtonFormField<String>(
             value: widget.initialAccount.gender,
             decoration: InputDecoration(
-              labelText: 'Gender',
+              labelText: 'Gender'.tr(),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -312,7 +313,7 @@ class _AccountEditFormState extends State<AccountEditForm> {
             readOnly: true,
             onTap: _pickDateOfBirth,
             decoration: InputDecoration(
-              labelText: 'Date of Birth',
+              labelText: 'Date of Birth'.tr(),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
               ),

@@ -4,7 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import '../../../../core/widgets/custom_button.dart';
+
 import '../blocs/auth_bloc.dart';
 import '../widgets/password_field.dart';
 

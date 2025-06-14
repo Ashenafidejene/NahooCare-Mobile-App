@@ -1,5 +1,6 @@
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 abstract class LocationDataSource {
   Future<LatLng> getCurrentLocation();
@@ -8,29 +9,24 @@ abstract class LocationDataSource {
 class LocationDataSourceImpl implements LocationDataSource {
   @override
   Future<LatLng> getCurrentLocation() async {
-    // Check if location services are enabled
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      throw Exception("Location services are disabled.");
+      throw Exception('location_services_disabled'.tr());
     }
 
-    // Check location permission status
     LocationPermission permission = await Geolocator.checkPermission();
 
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
-        throw Exception("Location permission denied.");
+        throw Exception('location_permission_denied'.tr());
       }
     }
 
     if (permission == LocationPermission.deniedForever) {
-      throw Exception(
-        "Location permission permanently denied. Please enable it in app settings.",
-      );
+      throw Exception('location_permission_denied_permanently'.tr());
     }
 
-    // If permission is granted, get current position
     final position = await Geolocator.getCurrentPosition(
       desiredAccuracy: LocationAccuracy.high,
     );

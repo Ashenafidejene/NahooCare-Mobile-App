@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class SearchFilterBar extends StatefulWidget {
   final List<String> categories;
@@ -36,7 +37,7 @@ class _SearchFilterBarState extends State<SearchFilterBar> {
                 child: TextField(
                   controller: _searchController,
                   decoration: InputDecoration(
-                    hintText: 'Search first aid guides...',
+                    hintText: 'Search first aid guides...'.tr(),
                     prefixIcon: Icon(
                       Icons.search,
                       color: theme.iconTheme.color,
@@ -59,7 +60,7 @@ class _SearchFilterBarState extends State<SearchFilterBar> {
               IconButton(
                 icon: Icon(Icons.filter_alt, color: theme.colorScheme.primary),
                 onPressed: () => setState(() => showFilters = !showFilters),
-                tooltip: 'Filter options',
+                tooltip: 'Filter options'.tr(),
               ),
             ],
           ),

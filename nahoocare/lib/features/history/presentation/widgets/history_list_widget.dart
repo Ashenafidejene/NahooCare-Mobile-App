@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
+import 'package:easy_localization/easy_localization.dart';
 import '../../domain/entities/search_history_entity.dart';
 import '../blocs/search_history_bloc.dart';
 import 'history_item_widget.dart';
@@ -39,10 +39,10 @@ class HistoryListWidget extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 12),
       child: Row(
         children: [
-          Icon(Icons.history, color: Colors.blueAccent),
+          const Icon(Icons.history, color: Colors.blueAccent),
           const SizedBox(width: 8),
           Text(
-            '${history.length} ${history.length == 1 ? 'item' : 'items'}',
+            '${history.length} ${history.length == 1 ? 'item' : 'items'}.'.tr(),
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
               color: Colors.grey[700],
               fontWeight: FontWeight.w500,

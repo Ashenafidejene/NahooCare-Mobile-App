@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/entities/account_entity.dart';
 import '../blocs/account_bloc.dart';
 import '../widgets/account_edit_form.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class AccountEditPage extends StatelessWidget {
   const AccountEditPage({super.key, required this.initialAccount});
@@ -15,7 +16,7 @@ class AccountEditPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit Account'),
+        title: Text('Edit Account'.tr()),
         leading: IconButton(
           icon: const Icon(
             Icons.chevron_left,
@@ -38,7 +39,7 @@ class AccountEditPage extends StatelessWidget {
 
                 if (password == null || password.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Password is required')),
+                    SnackBar(content: Text('Password is required'.tr())),
                   );
                   return;
                 }

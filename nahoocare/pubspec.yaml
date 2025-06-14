@@ -55,4 +55,5 @@ flutter:
     - .env
     - assets/images/
     - assets/local_first_aid.json
+    - assets/amharic_first_aid.json
     - assets/translations/

@@ -5,6 +5,7 @@ import 'package:nahoocare/features/healthcare_center/presentation/bloc/healthcar
 import '../widgets/center_details_card.dart';
 import '../widgets/rating_form.dart';
 import '../widgets/ratings_list.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class HealthcareCenterDetailsPage extends StatelessWidget {
   final String centerId;
@@ -20,7 +21,7 @@ class HealthcareCenterDetailsPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Healthcare Center Details'),
+        title: Text('Healthcare Center Details'.tr()),
         leading: IconButton(
           icon: const Icon(
             Icons.chevron_left,
@@ -41,9 +42,9 @@ class HealthcareCenterDetailsPage extends StatelessWidget {
               ..add(LoadCenterRatings(centerId));
 
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Rating submitted successfully!'),
-                duration: Duration(seconds: 2),
+              SnackBar(
+                content: Text('Rating submitted successfully!'.tr()),
+                duration: const Duration(seconds: 2),
               ),
             );
           }
@@ -86,7 +87,7 @@ class HealthcareCenterDetailsPage extends StatelessWidget {
 
                     const SizedBox(height: 24),
                     Text(
-                      'Rate this Center',
+                      'Rate this Center'.tr(),
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
@@ -105,7 +106,7 @@ class HealthcareCenterDetailsPage extends StatelessWidget {
 
                     const SizedBox(height: 28),
                     Text(
-                      'Patient Reviews',
+                      'Patient Reviews'.tr(),
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),

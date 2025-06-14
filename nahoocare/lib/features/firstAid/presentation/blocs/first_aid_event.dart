@@ -2,11 +2,19 @@
 part of 'first_aid_bloc.dart';
 
 sealed class FirstAidEvent extends Equatable {
+  const FirstAidEvent();
   @override
   List<Object> get props => [];
 }
 
-class LoadFirstAidGuides extends FirstAidEvent {}
+class LoadFirstAidGuides extends FirstAidEvent {
+  final BuildContext context;
+
+  const LoadFirstAidGuides(this.context);
+
+  @override
+  List<Object> get props => [context];
+}
 
 class SearchFirstAid extends FirstAidEvent {
   final String query;

@@ -1,5 +1,6 @@
 // registration_flow_bloc.dart
 import 'dart:io';
+import 'package:easy_localization/easy_localization.dart';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
@@ -51,7 +52,7 @@ class RegistrationFlowBloc
     Emitter<RegistrationFlowState> emit,
   ) async {
     if (_pendingRegistration == null) {
-      emit(RegistrationError('Registration data not found'));
+      emit(RegistrationError('Registration data not found'.tr()));
       return;
     }
 
@@ -81,7 +82,7 @@ class RegistrationFlowBloc
         (message) => emit(RegistrationSuccess(message)),
       );
     } catch (e) {
-      emit(RegistrationError('Failed to complete registration: $e'));
+      emit(RegistrationError('${'Failed to complete registration'.tr()}: $e'));
     }
   }
 }

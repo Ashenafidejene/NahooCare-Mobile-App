@@ -1,5 +1,6 @@
 // search_app_bar.dart
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class SearchBarWidget extends StatefulWidget {
   final String initialQuery;
@@ -35,7 +36,7 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
     return TextField(
       controller: _controller,
       decoration: InputDecoration(
-        hintText: 'Search healthcare centers...',
+        hintText: 'Search healthcare centers...'.tr(),
         prefixIcon: const Icon(Icons.search),
         suffixIcon:
             _controller.text.isNotEmpty

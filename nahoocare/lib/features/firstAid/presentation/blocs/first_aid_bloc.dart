@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/errors/failures.dart';
@@ -24,8 +25,7 @@ class FirstAidBloc extends Bloc<FirstAidEvent, FirstAidState> {
   ) async {
     emit(const FirstAidLoading());
 
-    final Either<Failure, List<FirstAidEntity>> result =
-        await getFirstAidGuides();
+    final result = await getFirstAidGuides(event.context);
 
     result.fold(
       (failure) => emit(FirstAidError(_mapFailureToMessage(failure))),

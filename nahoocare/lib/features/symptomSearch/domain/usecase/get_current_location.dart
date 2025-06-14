@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import '../../../../core/errors/failures.dart';
 import '../../../../core/usecase/usecase.dart';
@@ -17,7 +18,7 @@ class GetCurrentLocation implements UseCase<LatLng, NoParams> {
       return Right(location);
     } catch (e) {
       return Left(
-        ServerFailure('Failed to get location: ${e.toString()}', 500),
+        ServerFailure('failed_get_location'.tr(args: [e.toString()]), 500),
       );
     }
   }

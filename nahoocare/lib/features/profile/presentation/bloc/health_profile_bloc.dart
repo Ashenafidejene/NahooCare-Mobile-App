@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../../../core/errors/failures.dart';
 import '../../../../core/usecase/usecase.dart';
 import '../../domain/entities/health_profile.dart';
@@ -34,7 +35,7 @@ class HealthProfileBloc extends Bloc<HealthProfileEvent, HealthProfileState> {
     Emitter<HealthProfileState> emit,
   ) async {
     emit(HealthProfileLoading());
-    final result = await getHealthProfile(const NoParams());
+    final result = await getHealthProfile(NoParams());
     result.fold((failure) {
       if (failure is NotFoundFailure) {
         emit(HealthProfileEmpty()); // This will trigger showing the create form
@@ -55,7 +56,7 @@ class HealthProfileBloc extends Bloc<HealthProfileEvent, HealthProfileState> {
     result.fold(
       (failure) => emit(HealthProfileError(_mapFailureToMessage(failure))),
       (profile) {
-        emit(HealthProfileOperationSuccess('Profile created successfully'));
+        emit(HealthProfileOperationSuccess('profile_created'.tr()));
         emit(HealthProfileLoaded(profile));
       },
     );
@@ -65,14 +66,14 @@ class HealthProfileBloc extends Bloc<HealthProfileEvent, HealthProfileState> {
     UpdateHealthProfileEvent event,
     Emitter<HealthProfileState> emit,
   ) async {
-    emit(HealthProfileUpdating(event.profile)); // New state
+    emit(HealthProfileUpdating(event.profile));
     final result = await updateHealthProfile(
       UpdateHealthProfileParams(profile: event.profile),
     );
     result.fold(
       (failure) => emit(HealthProfileError(_mapFailureToMessage(failure))),
       (profile) {
-        emit(HealthProfileOperationSuccess('Profile updated successfully'));
+        emit(HealthProfileOperationSuccess('profile_updated'.tr()));
         emit(HealthProfileLoaded(profile));
       },
     );
@@ -87,26 +88,27 @@ class HealthProfileBloc extends Bloc<HealthProfileEvent, HealthProfileState> {
     result.fold(
       (failure) => emit(HealthProfileError(_mapFailureToMessage(failure))),
       (_) {
-        emit(HealthProfileOperationSuccess('Profile deleted successfully'));
+        emit(HealthProfileOperationSuccess('profile_deleted'.tr()));
         emit(HealthProfileEmpty());
       },
     );
   }
 
   String _mapFailureToMessage(Failure failure) {
+    final message = (failure as dynamic).message ?? '';
     switch (failure.runtimeType) {
       case ServerFailure:
-        return 'Server error: ${failure.message}';
+        return 'server_error'.tr(args: [message]);
       case NetworkFailure:
-        return 'Network error: ${failure.message}';
+        return 'network_error'.tr(args: [message]);
       case ValidationFailure:
-        return 'Validation error: ${failure.message}';
+        return 'validation_error'.tr(args: [message]);
       case NotFoundFailure:
-        return 'Profile not found';
+        return 'profile_not_found'.tr();
       case UnauthorizedFailure:
-        return 'Unauthorized: Please login again';
+        return 'unauthorized'.tr();
       default:
-        return 'Unexpected error: ${failure.message}';
+        return 'unexpected_error'.tr(args: [message]);
     }
   }
 }

@@ -7,6 +7,7 @@ import '../datasources/symptom_search_remote_data_source.dart';
 import '../datasources/location_data_source.dart';
 import '../models/search_response_model.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class SymptomSearchRepositoryImpl implements SymptomSearchRepository {
   final SymptomSearchRemoteDataSource remoteDataSource;
@@ -34,49 +35,43 @@ class SymptomSearchRepositoryImpl implements SymptomSearchRepository {
 
       // Validate the response structure
       if (response is! List || response.isEmpty) {
-        throw FormatException(
-          'Invalid response format - expected non-empty List',
-        );
+        throw FormatException('invalid_response_format'.tr());
       }
 
       final responseModel = SearchResponseModel.fromJson(response);
       final userLocation = LatLng(latitude, longitude);
 
       return SearchResponse(
-        firstAid:
-            responseModel.firstAid != null
-                ? FirstAid(
-                  title: responseModel.firstAid!.title,
-                  description: responseModel.firstAid!.description,
-                  potentialConditions:
-                      responseModel.firstAid!.potentialConditions,
-                )
-                : FirstAid(
-                  title: 'Medical Advice',
-                  description:
-                      'Consult a healthcare professional for your symptoms',
-                  potentialConditions: [],
-                ),
-        centers:
-            responseModel.centers.map((center) {
-              return HealthCenter(
-                centerId: center.centerId,
-                name: center.name,
-                latitude: center.latitude,
-                longitude: center.longitude,
-              );
-            }).toList(),
+        firstAid: responseModel.firstAid != null
+            ? FirstAid(
+                title: responseModel.firstAid!.title,
+                description: responseModel.firstAid!.description,
+                potentialConditions: responseModel.firstAid!.potentialConditions,
+              )
+            : FirstAid(
+                title: 'default_first_aid_title'.tr(),
+                description: 'default_first_aid_description'.tr(),
+                potentialConditions: [],
+              ),
+        centers: responseModel.centers.map((center) {
+          return HealthCenter(
+            centerId: center.centerId,
+            name: center.name,
+            latitude: center.latitude,
+            longitude: center.longitude,
+          );
+        }).toList(),
         userLocation: userLocation,
       );
     } on FormatException catch (e) {
       throw ApiException(
-        statusCode: 200, // Success code but invalid format
-        message: 'Failed to process response: ${e.message}',
+        statusCode: 200,
+        message: '${'failed_process_response'.tr()}: ${e.message}',
       );
     } catch (e) {
       throw ApiException(
         statusCode: 500,
-        message: 'Failed to search nearby centers: ${e.toString()}',
+        message: '${'failed_search_centers'.tr()}: ${e.toString()}',
       );
     }
   }
@@ -88,7 +83,7 @@ class SymptomSearchRepositoryImpl implements SymptomSearchRepository {
     } catch (e) {
       throw ApiException(
         statusCode: 500,
-        message: 'Failed to get current location: ${e.toString()}',
+        message: '${'failed_get_location'.tr()}: ${e.toString()}',
       );
     }
   }
@@ -101,7 +96,7 @@ class SymptomSearchRepositoryImpl implements SymptomSearchRepository {
     } catch (e) {
       throw ApiException(
         statusCode: 500,
-        message: 'Failed to calculate distance: ${e.toString()}',
+        message: '${'failed_calculate_distance'.tr()}: ${e.toString()}',
       );
     }
   }

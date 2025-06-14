@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart'; // Add this import
-
+import 'package:easy_localization/easy_localization.dart';
 import '../../domain/entities/search_response.dart';
 import '../blocs/symptom_search_bloc.dart';
 import '../widgets/first_aid_card.dart';
@@ -59,8 +59,8 @@ class _SymptomInputPageState extends State<SymptomInputPage> {
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Fetching your location. Please try again.'),
+        SnackBar(
+          content: Text('Fetching your location. Please try again.'.tr()),
         ),
       );
       _fetchUserLocation();
@@ -121,7 +121,7 @@ class _SymptomInputPageState extends State<SymptomInputPage> {
                         delegate: SliverChildListDelegate.fixed([
                           const SizedBox(height: 10),
                           Text(
-                            '🩺 Symptom Checker',
+                            '🩺 Symptom Checker'.tr(),
                             style: theme.textTheme.headlineSmall?.copyWith(
                               fontWeight: FontWeight.bold,
                               color: Colors.blueAccent,
@@ -129,7 +129,8 @@ class _SymptomInputPageState extends State<SymptomInputPage> {
                           ),
                           const SizedBox(height: 6),
                           Text(
-                            'Describe how you feel and we\'ll guide you to care.',
+                            'Describe how you feel and we\'ll guide you to care.'
+                                .tr(),
                             style: theme.textTheme.bodyMedium?.copyWith(
                               color: Colors.grey[600],
                             ),
@@ -140,8 +141,8 @@ class _SymptomInputPageState extends State<SymptomInputPage> {
                             controller: _symptomsController,
                             maxLines: 2,
                             decoration: InputDecoration(
-                              labelText: 'Your symptoms',
-                              hintText: 'e.g. headache, sore throat...',
+                              labelText: 'Your symptoms'.tr(),
+                              hintText: 'e.g. headache, sore throat...'.tr(),
                               filled: true,
                               fillColor: Colors.white,
                               contentPadding: const EdgeInsets.symmetric(
@@ -176,8 +177,8 @@ class _SymptomInputPageState extends State<SymptomInputPage> {
                                       : const Icon(Icons.search),
                               label:
                                   _isLocationLoading
-                                      ? const Text('Getting Location...')
-                                      : const Text('Search for Help'),
+                                      ? Text('Getting Location...'.tr())
+                                      : Text('Search for Help'.tr()),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.blueAccent,
                                 foregroundColor: Colors.white,
@@ -212,9 +213,10 @@ class _SymptomInputPageState extends State<SymptomInputPage> {
                             Column(
                               children: [
                                 const SizedBox(height: 20),
-                                const Text(
-                                  'Please login to search for healthcare centers',
-                                  style: TextStyle(
+                                Text(
+                                  'Please login to search for healthcare centers'
+                                      .tr(),
+                                  style: const TextStyle(
                                     color: Colors.blue,
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
@@ -229,7 +231,7 @@ class _SymptomInputPageState extends State<SymptomInputPage> {
                                     backgroundColor: Colors.blueAccent,
                                     foregroundColor: Colors.white,
                                   ),
-                                  child: const Text('Login Now'),
+                                  child: Text('Login Now'.tr()),
                                 ),
                                 const SizedBox(height: 20),
                               ],
@@ -254,7 +256,7 @@ class _SymptomInputPageState extends State<SymptomInputPage> {
                               width: double.infinity,
                               child: ElevatedButton.icon(
                                 icon: const Icon(Icons.map_outlined),
-                                label: const Text('View Centers on Map'),
+                                label: Text('View Centers on Map'.tr()),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.blueAccent,
                                   foregroundColor: Colors.white,

@@ -2,7 +2,7 @@ import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.da
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:nahoocare/core/service/local_storage_service.dart';
-
+import 'package:easy_localization/easy_localization.dart';
 import '../../../accounts/presentation/pages/account_page.dart';
 import '../../../firstaid/presentation/pages/first_aid_list_page.dart';
 import '../../../history/presentation/pages/search_history_page.dart';
@@ -67,18 +67,18 @@ class _LandingPageState extends State<LandingPage>
   }
 
   Future<String> getGreeting() async {
-    if (!_isInitialized) return 'Hello, Sir/Madam';
+    if (!_isInitialized) return tr('helloSirMadam');
 
     final hour = DateTime.now().hour;
     final fullName = await _localStorageService.getFullName();
     final nameToUse =
         (fullName != null && fullName.trim().isNotEmpty)
             ? fullName
-            : 'Sir/Madam';
+            : tr('sirMadam');
 
-    if (hour < 12) return 'Good Morning, $nameToUse';
-    if (hour < 17) return 'Good Afternoon, $nameToUse';
-    return 'Good Evening, $nameToUse';
+    if (hour < 12) return tr('goodMorning', args: [nameToUse]);
+    if (hour < 17) return tr('goodAfternoon', args: [nameToUse]);
+    return tr('goodEvening', args: [nameToUse]);
   }
 
   @override
@@ -134,11 +134,11 @@ class _LandingPageState extends State<LandingPage>
                       "assets/images/profile-placeholder.png",
                     ),
                   ),
-                  title: const Text(
-                    "Welcome to Nahoocare",
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                  title: Text(
+                    "Welcome to Nahoocare".tr(),
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  subtitle: const Text("Manage your account settings"),
+                  subtitle: Text("Manage your account settings".tr()),
                   trailing: IconButton(
                     icon: const Icon(Icons.settings, color: Colors.blueAccent),
                     onPressed: () {
@@ -154,7 +154,7 @@ class _LandingPageState extends State<LandingPage>
                 const Divider(),
                 _buildOptionTile(
                   icon: Icons.history,
-                  label: 'History',
+                  label: 'History'.tr(),
                   onTap: () {
                     Navigator.pop(context);
                     Navigator.push(
@@ -167,7 +167,7 @@ class _LandingPageState extends State<LandingPage>
                 ),
                 _buildOptionTile(
                   icon: Icons.language,
-                  label: 'Language',
+                  label: 'Language'.tr(),
                   onTap: () {
                     Navigator.pop(context);
                     _showLanguageDialog(context);
@@ -175,7 +175,7 @@ class _LandingPageState extends State<LandingPage>
                 ),
                 _buildOptionTile(
                   icon: Icons.info_outline,
-                  label: 'About Us',
+                  label: 'About Us'.tr(),
                   onTap: () {
                     Navigator.pop(context);
                     _showAboutDialog(context);
@@ -183,7 +183,7 @@ class _LandingPageState extends State<LandingPage>
                 ),
                 _buildOptionTile(
                   icon: Icons.feedback_outlined,
-                  label: 'Give Feedback',
+                  label: 'Give Feedback'.tr(),
                   onTap: () {
                     Navigator.pop(context);
                     _showFeedbackDialog(context);
@@ -195,7 +195,7 @@ class _LandingPageState extends State<LandingPage>
                 // Logout
                 _buildOptionTile(
                   icon: Icons.logout,
-                  label: 'Logout',
+                  label: 'Logout'.tr(),
                   onTap: () {
                     // Navigator.pop(context);
                     _showLogoutDialog(context);
@@ -237,7 +237,7 @@ class _LandingPageState extends State<LandingPage>
       context: context,
       builder:
           (context) => AlertDialog(
-            title: const Text('Select Language'),
+            title: Text('Select Language'.tr()),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -245,15 +245,15 @@ class _LandingPageState extends State<LandingPage>
                   title: const Text('English'),
                   leading: const Icon(Icons.language),
                   onTap: () {
-                    // Handle language change
+                    context.setLocale(const Locale('en'));
                     Navigator.pop(context);
                   },
                 ),
                 ListTile(
-                  title: const Text('Amharic'),
+                  title: const Text('አማርኛ'),
                   leading: const Icon(Icons.language),
                   onTap: () {
-                    // Handle language change
+                    context.setLocale(const Locale('am'));
                     Navigator.pop(context);
                   },
                 ),
@@ -268,14 +268,15 @@ class _LandingPageState extends State<LandingPage>
       context: context,
       builder:
           (context) => AlertDialog(
-            title: const Text('About Nahoocare'),
-            content: const Text(
-              'Nahoocare is a healthcare application designed to help users find medical assistance quickly and efficiently.',
+            title: Text('About Nahoocare'.tr()),
+            content: Text(
+              'Nahoocare is a healthcare application designed to help users find medical assistance quickly and efficiently.'
+                  .tr(),
             ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text('OK'),
+                child: Text('OK'.tr()),
               ),
             ],
           ),
@@ -287,30 +288,30 @@ class _LandingPageState extends State<LandingPage>
       context: context,
       builder:
           (context) => AlertDialog(
-            title: const Text('Give Feedback'),
-            content: const TextField(
+            title: Text('Give Feedback'.tr()),
+            content: TextField(
               maxLines: 5,
               decoration: InputDecoration(
-                hintText: 'Enter your feedback here...',
-                border: OutlineInputBorder(),
+                hintText: 'Enter your feedback here...'.tr(),
+                border: const OutlineInputBorder(),
               ),
             ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text('Cancel'),
+                child: Text('Cancel'.tr()),
               ),
               ElevatedButton(
                 onPressed: () {
                   // Submit feedback
                   Navigator.pop(context);
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Thank you for your feedback!'),
+                    SnackBar(
+                      content: Text('Thank you for your feedback!'.tr()),
                     ),
                   );
                 },
-                child: const Text('Submit'),
+                child: Text('Submit'.tr()),
               ),
             ],
           ),
@@ -322,12 +323,12 @@ class _LandingPageState extends State<LandingPage>
       context: context,
       builder:
           (_) => AlertDialog(
-            title: const Text('Confirm Logout'),
-            content: const Text('Are you sure you want to logout?'),
+            title: Text('Confirm Logout'.tr()),
+            content: Text('Are you sure you want to logout?'.tr()),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text('Cancel'),
+                child: Text('Cancel'.tr()),
               ),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
@@ -343,7 +344,7 @@ class _LandingPageState extends State<LandingPage>
                         false, // Remove all previous routes
                   );
                 },
-                child: const Text('Logout'),
+                child: Text('Logout'.tr()),
               ),
             ],
           ),
