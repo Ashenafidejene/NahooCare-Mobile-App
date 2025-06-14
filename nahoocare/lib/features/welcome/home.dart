@@ -72,7 +72,7 @@ class _HomeState extends State<Home> {
                 description: tr('firstaid_description'),
               ),
               OnboardingPage(
-                imagePath: 'assets/images/Health-profile.png',
+                imagePath: 'assets/images/health-profile.png',
                 title: tr('profile_title'),
                 description: tr('profile_description'),
               ),

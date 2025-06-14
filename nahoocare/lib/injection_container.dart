@@ -163,9 +163,9 @@ Future<void> init({required Locale locale}) async {
   );
 
   // ✅ Fixed this line:
-  sl.registerLazySingleton<LocalFirstAidDataSource>(
-    () => LocalFirstAidDataSource(locale: locale),
-  );
+  // sl.registerLazySingleton<LocalFirstAidDataSource>(
+  //   () => LocalFirstAidDataSource(locale: locale),
+  // );
 
   sl.registerLazySingleton<RemoteFirstAidDataSource>(
     () => RemoteFirstAidDataSource(client: sl()),
@@ -184,11 +184,7 @@ Future<void> init({required Locale locale}) async {
     ),
   );
   sl.registerLazySingleton<FirstAidRepository>(
-    () => FirstAidRepositoryImpl(
-      localDataSource: sl(),
-      remoteDataSource: sl(),
-      connectivity: sl(),
-    ),
+    () => FirstAidRepositoryImpl(remoteDataSource: sl(), connectivity: sl()),
   );
   sl.registerLazySingleton<AccountRepository>(
     () =>
