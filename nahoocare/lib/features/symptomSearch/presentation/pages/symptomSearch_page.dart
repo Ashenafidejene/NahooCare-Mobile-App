@@ -7,7 +7,7 @@ class SymptomSearch extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: const Center(
+      child: Center(
         child: Text('Symptom Search Page'.tr(), style: TextStyle(fontSize: 24)),
       ),
     );
