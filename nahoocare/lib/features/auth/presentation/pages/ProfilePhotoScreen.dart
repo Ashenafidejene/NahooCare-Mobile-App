@@ -4,8 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-
-import '../../../../core/widgets/custom_button.dart';
+import 'package:easy_localization/easy_localization.dart';
+//import '../../../../core/widgets/custom_button.dart';
 import '../blocs/register_blocs/registration_flow_bloc.dart';
 
 class ProfilePhotoScreen extends StatefulWidget {
@@ -63,7 +63,7 @@ class _ProfilePhotoScreenState extends State<ProfilePhotoScreen> {
           ), // Larger back icon
           onPressed: () => Navigator.maybePop(context), // Safer pop
         ),
-        title: const Text('Complete Profile'),
+        title: Text('Complete Profile'.tr()),
         centerTitle: true,
       ),
       body: BlocConsumer<RegistrationFlowBloc, RegistrationFlowState>(
@@ -86,9 +86,12 @@ class _ProfilePhotoScreenState extends State<ProfilePhotoScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const Text(
-                  'Complete Your Profile',
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                Text(
+                  'Complete Your Profile'.tr(),
+                  style: const TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const SizedBox(height: 32),
                 Card(
@@ -125,8 +128,8 @@ class _ProfilePhotoScreenState extends State<ProfilePhotoScreen> {
                         const SizedBox(height: 16),
                         Text(
                           _selectedImage == null
-                              ? 'Tap to add profile photo'
-                              : 'Photo selected',
+                              ? 'Tap to add profile photo'.tr()
+                              : 'Photo selected'.tr(),
                           style: TextStyle(
                             color:
                                 _selectedImage == null
@@ -138,7 +141,7 @@ class _ProfilePhotoScreenState extends State<ProfilePhotoScreen> {
                         DropdownButtonFormField<String>(
                           value: _selectedGender,
                           decoration: InputDecoration(
-                            labelText: 'Gender',
+                            labelText: 'Gender'.tr(),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
@@ -154,14 +157,14 @@ class _ProfilePhotoScreenState extends State<ProfilePhotoScreen> {
                               vertical: 14,
                             ),
                           ),
-                          items: const [
+                          items: [
                             DropdownMenuItem(
-                              value: 'Male',
-                              child: Text('Male'),
+                              value: 'Male'.tr(),
+                              child: Text('Male'.tr()),
                             ),
                             DropdownMenuItem(
-                              value: 'Female',
-                              child: Text('Female'),
+                              value: 'Female'.tr(),
+                              child: Text('Female'.tr()),
                             ),
                           ],
                           onChanged:
@@ -174,7 +177,7 @@ class _ProfilePhotoScreenState extends State<ProfilePhotoScreen> {
                           readOnly: true,
                           onTap: _pickDateOfBirth,
                           decoration: InputDecoration(
-                            labelText: 'Date of Birth',
+                            labelText: 'Date of Birth'.tr(),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
@@ -216,9 +219,9 @@ class _ProfilePhotoScreenState extends State<ProfilePhotoScreen> {
                                       color: Colors.white,
                                       size: 30,
                                     )
-                                    : const Text(
-                                      'Complete Registration',
-                                      style: TextStyle(fontSize: 16),
+                                    : Text(
+                                      'Complete Registration'.tr(),
+                                      style: const TextStyle(fontSize: 16),
                                     ),
                           ),
                         ),
@@ -236,17 +239,17 @@ class _ProfilePhotoScreenState extends State<ProfilePhotoScreen> {
 
   void _submitForm() {
     if (_selectedImage == null) {
-      _showMessage('Please select a profile photo');
+      _showMessage('Please select a profile photo'.tr());
       return;
     }
 
     if (_selectedGender == null) {
-      _showMessage('Please select your gender');
+      _showMessage('Please select your gender'.tr());
       return;
     }
 
     if (_selectedDate == null || _calculateAge(_selectedDate!) < 13) {
-      _showMessage('You must be at least 13 years old');
+      _showMessage('You must be at least 13 years old'.tr());
       return;
     }
 

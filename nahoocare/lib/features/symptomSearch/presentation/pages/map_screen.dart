@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_marker_popup/flutter_map_marker_popup.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import '../../../healthcare_center/presentation/pages/healthcare_center_details_page.dart';
 import '../../domain/entities/health_center.dart';
@@ -13,7 +14,7 @@ class MapScreen extends StatefulWidget {
   final LatLng userLocation;
 
   const MapScreen({Key? key, required this.centers, required this.userLocation})
-    : super(key: key);
+      : super(key: key);
 
   @override
   State<MapScreen> createState() => _MapScreenState();
@@ -30,16 +31,15 @@ class _MapScreenState extends State<MapScreen> {
   void initState() {
     super.initState();
 
-    _centerMarkers =
-        widget.centers.map((center) {
-          return Marker(
-            width: 60,
-            height: 60,
-            point: center.toLatLng(),
-            child: CustomMarker(imagePath: 'assets/images/logo (2).png'),
-            key: ValueKey(center.centerId),
-          );
-        }).toList();
+    _centerMarkers = widget.centers.map((center) {
+      return Marker(
+        width: 60,
+        height: 60,
+        point: center.toLatLng(),
+        child: CustomMarker(imagePath: 'assets/images/logo (2).png'),
+        key: ValueKey(center.centerId),
+      );
+    }).toList();
   }
 
   @override
@@ -54,7 +54,7 @@ class _MapScreenState extends State<MapScreen> {
           ), // Larger back icon
           onPressed: () => Navigator.maybePop(context), // Safer pop
         ),
-        title: const Text('Nearby Health Centers'),
+        title: Text('nearby_health_centers'.tr()),
       ),
       body: Stack(
         children: [
@@ -67,8 +67,7 @@ class _MapScreenState extends State<MapScreen> {
             ),
             children: [
               TileLayer(
-                urlTemplate:
-                    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
                 subdomains: ['a', 'b', 'c'],
               ),
               MarkerLayer(
@@ -125,10 +124,11 @@ class _MapScreenState extends State<MapScreen> {
                                 ),
                               ),
                               const SizedBox(height: 6),
-                              Text('Distance: $distanceInKm km'),
+                              Text('distance_label'.tr(args: [distanceInKm])),
                               const SizedBox(height: 6),
                               Text(
-                                'Lat: ${center.latitude}, Long: ${center.longitude}',
+                                'lat_long_label'
+                                    .tr(args: [center.latitude.toString(), center.longitude.toString()]),
                                 style: const TextStyle(fontSize: 12),
                               ),
                               const SizedBox(height: 8),
@@ -137,15 +137,12 @@ class _MapScreenState extends State<MapScreen> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder:
-                                          (context) =>
-                                              HealthcareCenterDetailsPage(
-                                                centerId: center.centerId,
-                                              ),
+                                      builder: (context) =>
+                                          HealthcareCenterDetailsPage(centerId: center.centerId),
                                     ),
                                   );
                                 },
-                                child: const Text('View Details'),
+                                child: Text('view_details'.tr()),
                               ),
                             ],
                           ),

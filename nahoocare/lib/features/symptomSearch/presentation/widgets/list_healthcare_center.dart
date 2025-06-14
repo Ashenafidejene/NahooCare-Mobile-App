@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
-
+import 'package:easy_localization/easy_localization.dart';
 import '../../../healthcare_center/presentation/pages/healthcare_center_details_page.dart';
 import '../../domain/entities/health_center.dart';
 
@@ -24,6 +24,7 @@ class HealthCenterList extends StatelessWidget {
     );
   }
 
+  @override
   Widget build(BuildContext context) {
     return ListView.builder(
       itemCount: centers.length,
@@ -72,7 +73,7 @@ class HealthCenterList extends StatelessWidget {
                   const Icon(Icons.location_on, size: 16, color: Colors.grey),
                   const SizedBox(width: 4),
                   Text(
-                    '$distanceKm km away',
+                    tr('distance_away', args: [distanceKm]),
                     style: const TextStyle(color: Colors.grey),
                   ),
                 ],
@@ -87,10 +88,9 @@ class HealthCenterList extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder:
-                      (context) => HealthcareCenterDetailsPage(
-                        centerId: center.centerId,
-                      ),
+                  builder: (context) => HealthcareCenterDetailsPage(
+                    centerId: center.centerId,
+                  ),
                 ),
               );
             },

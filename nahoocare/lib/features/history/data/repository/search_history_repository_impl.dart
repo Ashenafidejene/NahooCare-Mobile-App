@@ -1,12 +1,10 @@
 import 'package:dartz/dartz.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../core/errors/failures.dart';
 import '../../domain/entities/search_history_entity.dart';
 import '../../domain/repositories/search_history_repository.dart';
 
 import '../datasource/remote_search_history_datasource.dart';
-import '../models/search_history_model.dart';
 
 class SearchHistoryRepositoryImpl implements SearchHistoryRepository {
   final RemoteSearchHistoryDataSource remoteDataSource;

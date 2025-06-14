@@ -1,8 +1,5 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:latlong2/latlong.dart';
-
-import '../../../../core/errors/failures.dart';
 
 import '../../../symptomSearch/data/datasources/location_data_source.dart';
 import '../../domain/entities/healthcare_entity.dart';

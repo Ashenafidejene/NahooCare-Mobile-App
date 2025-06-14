@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/health_profile_bloc.dart';
 import 'create_health_profile_form.dart';
 import 'health_profile_details.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class HealthProfileView extends StatelessWidget {
   const HealthProfileView({super.key});
@@ -18,7 +19,7 @@ class HealthProfileView extends StatelessWidget {
         } else if (state is HealthProfileError) {
           // Don't show snackbar for auth errors as we're handling them in the UI
           if (state.message !=
-              "server error : No authenticaion token availbale") {
+              "server error : No authenticaion token availbale".tr()) {
             ScaffoldMessenger.of(
               context,
             ).showSnackBar(SnackBar(content: Text(state.message)));
@@ -36,12 +37,12 @@ class HealthProfileView extends StatelessWidget {
         } else if (state is HealthProfileError) {
           // Handle the no authentication token case
           if (state.message ==
-              "Server error: No authentication token available") {
+              "Server error: No authentication token available".tr()) {
             return _buildLoginPrompt(context);
           }
           return Center(child: Text(state.message));
         }
-        return const Center(child: Text('Initializing...'));
+        return Center(child: Text('Initializing...'.tr()));
       },
     );
   }
@@ -51,8 +52,8 @@ class HealthProfileView extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Text(
-            'You need to login first to access your health profile',
+          Text(
+            'You need to login first to access your health profile'.tr(),
             style: TextStyle(fontSize: 18),
             textAlign: TextAlign.center,
           ),
@@ -61,7 +62,7 @@ class HealthProfileView extends StatelessWidget {
             onPressed: () {
               Navigator.pushNamed(context, '/login');
             },
-            child: const Text('Login'),
+            child: Text('Login'.tr()),
           ),
         ],
       ),

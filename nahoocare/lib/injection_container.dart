@@ -4,6 +4,8 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'dart:ui';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -78,11 +80,9 @@ import 'features/symptomSearch/presentation/blocs/symptom_search_bloc.dart';
 
 final sl = GetIt.instance;
 
-Future<void> init() async {
-  // Initialize environment variables
+Future<void> init({required Locale locale}) async {
   await dotenv.load();
 
-  // External packages
   sl.registerSingleton<Connectivity>(Connectivity());
   sl.registerLazySingleton(() => ImagePicker());
   sl.registerLazySingleton<Cloudinary>(
@@ -93,11 +93,9 @@ Future<void> init() async {
     ),
   );
 
-  // Shared Preferences
   final sharedPreferences = await SharedPreferences.getInstance();
   sl.registerSingleton<SharedPreferences>(sharedPreferences);
 
-  // Core
   sl.registerSingleton<LocalStorageService>(
     LocalStorageServiceImpl(sl<SharedPreferences>()),
   );
@@ -111,11 +109,8 @@ Future<void> init() async {
     ),
   );
   sl.registerSingleton<NetworkInfo>(NetworkInfoImpl(sl<Connectivity>()));
-
-  // NEW: Register http.Client instead of Dio
   sl.registerSingleton<http.Client>(http.Client());
 
-  // Update ApiClient to use http and not Dio
   sl.registerSingleton<ApiClient>(
     ApiClient(
       localStorage: sl<LocalStorageService>(),
@@ -123,7 +118,6 @@ Future<void> init() async {
     ),
   );
 
-  // Data sources
   sl.registerLazySingleton<RemoteSearchHistoryDataSource>(
     () => RemoteSearchHistoryDataSourceImpl(apiClient: sl<ApiClient>()),
   );
@@ -151,7 +145,7 @@ Future<void> init() async {
       localStorageService: sl<LocalStorageService>(),
     ),
   );
-  // Repository
+
   sl.registerLazySingleton<HealthcareRepository>(
     () => HealthcareRepositoryImpl(remoteDataSource: sl()),
   );
@@ -167,9 +161,12 @@ Future<void> init() async {
       locationDataSource: sl(),
     ),
   );
+
+  // ✅ Fixed this line:
   sl.registerLazySingleton<LocalFirstAidDataSource>(
-    () => LocalFirstAidDataSource(),
+    () => LocalFirstAidDataSource(locale: locale),
   );
+
   sl.registerLazySingleton<RemoteFirstAidDataSource>(
     () => RemoteFirstAidDataSource(client: sl()),
   );

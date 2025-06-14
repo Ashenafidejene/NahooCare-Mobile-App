@@ -1,5 +1,5 @@
 import 'package:dartz/dartz.dart';
-
+import 'package:easy_localization/easy_localization.dart';
 import '../../../../core/errors/failures.dart';
 import '../../../../core/network/api_client.dart';
 import '../models/remote_first_aid_model.dart';

@@ -88,7 +88,7 @@ class _HealthProfileFormState extends State<HealthProfileForm> {
           const SizedBox(height: 20),
           _buildListInput(
             controller: _allergyController,
-            labelKey: 'health_profile.allergies',
+            labelKey: 'health_profile.allergies'.tr(),
             list: _allergies,
             onAdd: () {
               if (_allergyController.text.isNotEmpty) {
@@ -108,7 +108,7 @@ class _HealthProfileFormState extends State<HealthProfileForm> {
           const SizedBox(height: 20),
           _buildListInput(
             controller: _conditionController,
-            labelKey: 'health_profile.chronic_conditions',
+            labelKey: 'health_profile.chronic_conditions'.tr(),
             list: _chronicConditions,
             onAdd: () {
               if (_conditionController.text.isNotEmpty) {
@@ -134,7 +134,7 @@ class _HealthProfileFormState extends State<HealthProfileForm> {
           const SizedBox(height: 20),
           _buildListInput(
             controller: _historyController,
-            labelKey: 'health_profile.medical_history',
+            labelKey: 'health_profile.medical_history'.tr(),
             list: _medicalHistory,
             onAdd: () {
               if (_historyController.text.isNotEmpty) {

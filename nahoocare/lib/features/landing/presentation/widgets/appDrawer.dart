@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
@@ -9,26 +10,26 @@ class AppDrawer extends StatelessWidget {
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
-          const DrawerHeader(
-            decoration: BoxDecoration(color: Colors.teal),
+          DrawerHeader(
+            decoration: const BoxDecoration(color: Colors.teal),
             child: Text(
-              'Nahoocare Menu',
-              style: TextStyle(color: Colors.white, fontSize: 24),
+              'Nahoocare Menu'.tr(),
+              style: const TextStyle(color: Colors.white, fontSize: 24),
             ),
           ),
           ListTile(
             leading: const Icon(Icons.history),
-            title: const Text('History'),
+            title: Text('History'.tr()),
             onTap: () {}, // Add functionality
           ),
           ListTile(
             leading: const Icon(Icons.account_circle),
-            title: const Text('Account'),
+            title: Text('Account'.tr()),
             onTap: () {}, // Add functionality
           ),
           ListTile(
             leading: const Icon(Icons.logout),
-            title: const Text('Logout'),
+            title: Text('Logout'.tr()),
             onTap: () {}, // Add functionality
           ),
         ],

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
+import 'package:easy_localization/easy_localization.dart';
 import '../../domain/entities/search_history_entity.dart';
 
 class HistoryItemWidget extends StatelessWidget {
@@ -64,7 +64,7 @@ class HistoryItemWidget extends StatelessWidget {
                       item.potentialConditions
                           .map(
                             (condition) => Chip(
-                              label: Text(condition),
+                              label: Text(condition).tr(),
                               visualDensity: VisualDensity.compact,
                             ),
                           )
@@ -115,24 +115,30 @@ class HistoryItemWidget extends StatelessWidget {
               ),
             ),
           ),
-          Text('Search Details', style: Theme.of(context).textTheme.titleLarge),
+          Text(
+            'Search Details'.tr(),
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
           const SizedBox(height: 16),
-          _buildDetailRow('Search Term', item.searchParameters),
+          _buildDetailRow('Search Term'.tr(), item.searchParameters),
           _buildDetailRow(
-            'Date',
+            'Date'.tr(),
             DateFormat.yMMMd().add_jm().format(item.createdAt),
           ),
           if (item.firstAid.isNotEmpty) ...[
             const SizedBox(height: 12),
-            Text('First Aid', style: Theme.of(context).textTheme.titleSmall),
-            Text(item.firstAid['description'] ?? ''),
+            Text(
+              'First Aid'.tr(),
+              style: Theme.of(context).textTheme.titleSmall,
+            ),
+            Text(item.firstAid['description'.tr()] ?? ''),
           ],
           const SizedBox(height: 24),
           SizedBox(
             width: double.infinity,
             child: FilledButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Close'),
+              child: Text('Close'.tr()),
             ),
           ),
         ],

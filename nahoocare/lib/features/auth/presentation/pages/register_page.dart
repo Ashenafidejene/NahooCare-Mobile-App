@@ -2,9 +2,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart'; // Add this import
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
-import '../../../../core/widgets/custom_button.dart';
 import '../../../../core/widgets/custom_textfield.dart';
 import '../blocs/register_blocs/registration_flow_bloc.dart';
 import '../widgets/password_field.dart';
@@ -35,10 +34,10 @@ class _RegisterPageState extends State<RegisterPage> {
             Icons.chevron_left,
             size: 30,
             color: Colors.blueAccent,
-          ), // Larger back icon
-          onPressed: () => Navigator.maybePop(context), // Safer pop
+          ),
+          onPressed: () => Navigator.maybePop(context),
         ),
-        title: const Text('Register'),
+        title: Text('register'.tr()),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -74,10 +73,13 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                 ),
                 const SizedBox(height: 12),
-                const Center(
+                Center(
                   child: Text(
-                    'Create your account',
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                    'create_account'.tr(),
+                    style: const TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -94,10 +96,10 @@ class _RegisterPageState extends State<RegisterPage> {
                         children: [
                           CustomTextField(
                             controller: _nameController,
-                            labelText: 'Full Name',
+                            labelText: 'full_name'.tr(),
                             validator: (value) {
                               if (value == null || value.trim().isEmpty) {
-                                return 'Please enter your full name';
+                                return 'enter_full_name'.tr();
                               }
                               return null;
                             },
@@ -125,7 +127,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             validator: (phone) {
                               if (phone == null ||
                                   phone.completeNumber.isEmpty) {
-                                return 'Please enter a phone number';
+                                return 'enter_phone_number'.tr();
                               }
                               return null;
                             },
@@ -138,10 +140,10 @@ class _RegisterPageState extends State<RegisterPage> {
                           const SizedBox(height: 16),
                           PasswordField(
                             controller: _confirmPasswordController,
-                            labelText: 'Confirm Password',
+                            labelText: 'confirm_password'.tr(),
                             validator: (value) {
                               if (value != _passwordController.text) {
-                                return 'Passwords do not match';
+                                return 'password_mismatch'.tr();
                               }
                               return null;
                             },
@@ -149,11 +151,11 @@ class _RegisterPageState extends State<RegisterPage> {
                           const SizedBox(height: 16),
                           CustomTextField(
                             controller: _secretQuestionController,
-                            labelText: 'Secret Question',
+                            labelText: 'secret_question'.tr(),
                             maxLines: 2,
                             validator: (value) {
                               if (value == null || value.trim().isEmpty) {
-                                return 'Please enter a secret question';
+                                return 'enter_secret_question'.tr();
                               }
                               return null;
                             },
@@ -161,10 +163,10 @@ class _RegisterPageState extends State<RegisterPage> {
                           const SizedBox(height: 16),
                           CustomTextField(
                             controller: _secretAnswerController,
-                            labelText: 'Secret Answer',
+                            labelText: 'secret_answer'.tr(),
                             validator: (value) {
                               if (value == null || value.trim().isEmpty) {
-                                return 'Please enter a secret answer';
+                                return 'enter_secret_answer'.tr();
                               }
                               return null;
                             },
@@ -180,17 +182,16 @@ class _RegisterPageState extends State<RegisterPage> {
                                       : () {
                                         if (!(_formKey.currentState
                                                 ?.validate() ??
-                                            false)) {
+                                            false))
                                           return;
-                                        }
                                         _formKey.currentState?.save();
                                         if (_completePhoneNumber == null) {
                                           ScaffoldMessenger.of(
                                             context,
                                           ).showSnackBar(
-                                            const SnackBar(
+                                            SnackBar(
                                               content: Text(
-                                                'Please enter a phone number',
+                                                'enter_phone_number'.tr(),
                                               ),
                                             ),
                                           );
@@ -229,9 +230,9 @@ class _RegisterPageState extends State<RegisterPage> {
                                         color: Colors.white,
                                         size: 30,
                                       )
-                                      : const Text(
-                                        'Continue',
-                                        style: TextStyle(
+                                      : Text(
+                                        'continue'.tr(),
+                                        style: const TextStyle(
                                           fontSize: 16,
                                           color: Colors.white,
                                         ),
@@ -242,10 +243,10 @@ class _RegisterPageState extends State<RegisterPage> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Text('Already have an account?'),
+                              Text('already_have_account'.tr()),
                               TextButton(
                                 onPressed: () => Navigator.pop(context),
-                                child: const Text('Login'),
+                                child: Text('login'.tr()),
                               ),
                             ],
                           ),

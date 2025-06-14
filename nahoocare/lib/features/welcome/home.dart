@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -16,6 +17,30 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        automaticallyImplyLeading: false,
+        actions: [
+          PopupMenuButton<Locale>(
+            onSelected: (locale) {
+              context.setLocale(locale);
+            },
+            icon: const Icon(Icons.language, color: Colors.black),
+            itemBuilder:
+                (context) => [
+                  PopupMenuItem(
+                    value: Locale('en'.tr()),
+                    child: Text('English'.tr()),
+                  ),
+                  PopupMenuItem(
+                    value: Locale('am'.tr()),
+                    child: Text('አማርኛ'.tr()),
+                  ),
+                ],
+          ),
+        ],
+      ),
       body: Stack(
         children: [
           PageView(
@@ -25,31 +50,31 @@ class _HomeState extends State<Home> {
                 onLastPage = index == 4;
               });
             },
-            children: const [
+            children: [
               OnboardingPage(
                 imagePath: 'assets/images/logo with title .png',
-                title: 'Welcome to Nahoocare!',
-                description: 'Your offline emergency health companion.',
+                title: tr('welcome_title'),
+                description: tr('welcome_description'),
               ),
               OnboardingPage(
                 imagePath: 'assets/images/chat bot image.png',
-                title: 'Symptom Analysis',
-                description: 'Understand conditions based on symptoms.',
+                title: tr('symptom_title'),
+                description: tr('symptom_description'),
               ),
               OnboardingPage(
                 imagePath: 'assets/images/medical-center (1).png',
-                title: 'Healthcare Centers',
-                description: 'Get nearby hospital recommendations.',
+                title: tr('healthcare_title'),
+                description: tr('healthcare_description'),
               ),
               OnboardingPage(
                 imagePath: 'assets/images/first-aid.png',
-                title: 'Offline First Aid',
-                description: 'Instant help even without the internet.',
+                title: tr('firstaid_title'),
+                description: tr('firstaid_description'),
               ),
               OnboardingPage(
-                imagePath: 'assets/images/health-profile.png',
-                title: 'Health - Profile',
-                description: 'Store health profile  history.',
+                imagePath: 'assets/images/Health-profile.png',
+                title: tr('profile_title'),
+                description: tr('profile_description'),
               ),
             ],
           ),
@@ -75,7 +100,7 @@ class _HomeState extends State<Home> {
             child: GestureDetector(
               onTap: () {
                 if (onLastPage) {
-                  Navigator.pushNamed(context, '/login');
+                  Navigator.pushReplacementNamed(context, '/login');
                 } else {
                   _controller.nextPage(
                     duration: const Duration(milliseconds: 500),
@@ -86,7 +111,7 @@ class _HomeState extends State<Home> {
               child: Container(
                 width: 60,
                 height: 60,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: Colors.black,
                   shape: BoxShape.circle,
                 ),

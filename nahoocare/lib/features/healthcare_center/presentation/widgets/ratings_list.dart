@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:intl/intl.dart';
 import '../../domain/entities/rating.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class RatingsList extends StatelessWidget {
   final List<Rating> ratings;
@@ -15,12 +16,12 @@ class RatingsList extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         elevation: 4,
         color: Theme.of(context).colorScheme.surfaceVariant,
-        child: const Padding(
-          padding: EdgeInsets.all(20.0),
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
           child: Center(
             child: Text(
-              'No reviews yet.\nBe the first to review!',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+              'No reviews yet.\nBe the first to review!'.tr(),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
               textAlign: TextAlign.center,
             ),
           ),
@@ -35,7 +36,7 @@ class RatingsList extends StatelessWidget {
       separatorBuilder: (_, __) => const SizedBox(height: 12),
       itemBuilder: (context, index) {
         final rating = ratings[index];
-        final initials = _getInitials("someBody ");
+        final initials = _getInitials("someBody ".tr());
 
         return Container(
           decoration: BoxDecoration(

@@ -1,6 +1,7 @@
-// lib/features/healthcare_center/presentation/bloc/healthcare_center_bloc.dart
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:easy_localization/easy_localization.dart';
+
 import '../../../../core/errors/failures.dart';
 import '../../domain/entities/healthcare_center.dart';
 import '../../domain/entities/rating.dart';
@@ -11,8 +12,7 @@ import '../../domain/usecases/submit_rating.dart';
 part 'healthcare_center_event.dart';
 part 'healthcare_center_state.dart';
 
-class HealthcareCenterBloc
-    extends Bloc<HealthcareCenterEvent, HealthcareCenterState> {
+class HealthcareCenterBloc extends Bloc<HealthcareCenterEvent, HealthcareCenterState> {
   final GetHealthcareCenterDetails getHealthcareCenterDetails;
   final GetCenterRatings getCenterRatings;
   final SubmitRating submitRating;
@@ -36,12 +36,10 @@ class HealthcareCenterBloc
     final result = await getHealthcareCenterDetails.execute(event.centerId);
 
     await result.fold(
-      (failure) async =>
-          emit(HealthcareCenterError(_mapFailureToMessage(failure))),
+      (failure) async => emit(HealthcareCenterError(_mapFailureToMessage(failure))),
       (center) async {
         final ratingsResult = await getCenterRatings.execute(event.centerId);
         final ratings = ratingsResult.getOrElse(() => []);
-
         emit(HealthcareCenterLoaded(center: center, ratings: ratings));
       },
     );
@@ -51,18 +49,15 @@ class HealthcareCenterBloc
     LoadCenterRatings event,
     Emitter<HealthcareCenterState> emit,
   ) async {
-    // 👇 Do not emit loading, keep previous state
     final result = await getCenterRatings.execute(event.centerId);
 
     result.fold(
       (failure) {
-        if (failure is NotFoundFailure &&
-            failure.message.contains('No ratings found')) {
+        if (failure is NotFoundFailure && failure.message.contains('No ratings found')) {
           if (state is HealthcareCenterLoaded) {
             final currentState = state as HealthcareCenterLoaded;
             emit(currentState.copyWith(ratings: []));
           } else {
-            // This shouldn't happen unless LoadRatings is called too early
             emit(
               HealthcareCenterLoaded(
                 center: HealthcareCenter.empty(),
@@ -79,7 +74,7 @@ class HealthcareCenterBloc
           final currentState = state as HealthcareCenterLoaded;
           emit(currentState.copyWith(ratings: ratings));
         } else {
-          emit(const HealthcareCenterError('it is loading...'));
+          emit(HealthcareCenterError('loading_state_error'.tr()));
         }
       },
     );
@@ -110,13 +105,13 @@ class HealthcareCenterBloc
   String _mapFailureToMessage(Failure failure) {
     switch (failure.runtimeType) {
       case ServerFailure:
-        return 'Server error: ${failure.message}';
+        return 'server_error'.tr(args: [failure.message]);
       case NotFoundFailure:
-        return 'Not found: ${failure.message}';
+        return 'not_found'.tr(args: [failure.message]);
       case ValidationFailure:
-        return 'Validation error: ${failure.message}';
+        return 'validation_error'.tr(args: [failure.message]);
       default:
-        return 'Unexpected error: ${failure.message}';
+        return 'unexpected_error'.tr(args: [failure.message]);
     }
   }
 }

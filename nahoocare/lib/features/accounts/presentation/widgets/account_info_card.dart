@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../domain/entities/account_entity.dart';
-import 'package:intl/intl.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class AccountInfoCard extends StatelessWidget {
   final AccountEntity account;
@@ -45,20 +45,20 @@ class AccountInfoCard extends StatelessWidget {
           _buildInfoRow(
             context,
             Icons.phone,
-            'Phone Number',
+            'Phone Number'.tr(),
             account.phoneNumber,
           ),
           _buildInfoRow(
             context,
             Icons.calendar_month,
-            'Date of Birth',
+            'Date of Birth'.tr(),
             account.dateOfBirth,
           ),
           _buildInfoRow(context, Icons.person, 'Gender', account.gender),
           _buildInfoRow(
             context,
             Icons.lock,
-            'Secret Question',
+            'Secret Question'.tr(),
             account.secretQuestion,
           ),
         ],

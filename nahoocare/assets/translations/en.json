@@ -1,4 +1,6 @@
 {
+  "NahooCare": "NahooCare",
+  "nahoocare":"NahooCare",
   "welcome_title": "Welcome to Nahoocare!",
   "welcome_description": "Your offline emergency health companion.",
   "symptom_title": "Symptom Analysis",
@@ -10,7 +12,8 @@
   "profile_title": "Health - Profile",
   "profile_description": "Store health profile history.",
  
-  "login": "Login",
+  "Login": "Login",
+  "login": "login",
   "skip": "Skip",
   "welcome": "Welcome to Nahoocare!",
   "phone_number": "Phone Number",
@@ -53,39 +56,102 @@
   "enter_secret_question": "Please enter a secret question",
   "enter_secret_answer": "Please enter a secret answer",
   "Don't have an account":"Don't have an account ?",
+  "continue":"continue",
+  "helloSirMadam": "Hello Sir/Madam",
+  "sirMadam": "Sir/Madam",
+  "goodMorning": "Good morning, {}",
+  "goodAfternoon": "Good afternoon, {}",
+  "goodEvening": "Good evening, {}",
+  "Nahoocare":"Nahoocare",
+  "Welcome to Nahoocare": "Welcome to Nahoocare",
+  "Manage your account settings": "Manage your account settings",
+  "History": "History",
+  "Language": "Language",
+  "About Us": "About Us",
+  "Give Feedback": "Give Feedback",
+  "Logout": "Logout",
+  "Select Language": "Select Language",
+  "English": "English",
+  "Amharic": "Amharic",
+  "About Nahoocare": "About Nahoocare",
+  "Nahoocare is a healthcare application designed to help users find medical assistance quickly and efficiently.": "Nahoocare is a healthcare application designed to help users find medical assistance quickly and efficiently.",
+  "OK": "OK",
+  "Enter your feedback here...": "Enter your feedback here...",
+  "Cancel": "Cancel",
+  "Submit": "Submit",
+  "Thank you for your feedback!": "Thank you for your feedback!",
+  "Confirm Logout": "Confirm Logout",
+  "Are you sure you want to logout?": "Are you sure you want to logout?",
 
   
-  "greeting_morning": "Good Morning",
-  "greeting_afternoon": "Good Afternoon",
-  "greeting_evening": "Good Evening",
-  "drawer_user": "Nahoocare User",
-  "drawer_account": "Account",
-  "drawer_history": "History",
-  "drawer_logout": "Logout",
-  "logout_confirm_title": "Confirm Logout",
-  "logout_confirm_message": "Are you sure you want to logout?",
-  "cancel": "Cancel",
-  "logout": "Logout",
-
-  
-  "symptomCheckerTitle": "🩺 Symptom Checker",
-  "symptomCheckerSubtitle": "Describe how you feel and we’ll guide you to care.",
-  "symptomsLabel": "Your symptoms",
-  "symptomsHint": "e.g. headache, sore throat...",
-  "searchButton": "Search for Help",
-  "viewCentersOnMap": "View Centers on Map",
-  "fetchingLocationMessage": "Fetching your location. Please try again.",
+   "🩺 Symptom Checker": "🩺 Symptom Checker",
+  "Describe how you feel and we'll guide you to care.": "Describe how you feel and we'll guide you to care.",
+  "Your symptoms": "Your symptoms",
+  "e.g. headache, sore throat...": "e.g. headache, sore throat...",
+  "Getting Location...": "Getting Location...",
+  "Search for Help": "Search for Help",
+  "Fetching your location. Please try again.": "Fetching your location. Please try again.",
+  "Please login to search for healthcare centers": "Please login to search for healthcare centers",
+  "Login Now": "Login Now",
+  "View Centers on Map": "View Centers on Map",
 
   "sort_by_distance": "Sort by distance",
   "no_centers_found": "No centers found matching your criteria",
   "reset": "Reset",
+   
+   "Nearby Health Centers": "Nearby Health Centers",
+  "Distance:": "Distance:",
+  "Lat:": "Lat:",
+  "Long:": "Long:",
+  "View Details": "View Details",
 
+  "Healthcare Center Details": "Healthcare Center Details",
+  "Rating submitted successfully!": "Rating submitted successfully!",
+  "Rate this Center": "Rate this Center",
+  "Patient Reviews": "Patient Reviews",
+
+  "Specialties": "Specialties",
+  "Contact Info": "Contact Info",
+  "Operating Hours": "Operating Hours",
+
+  "Rate this center": "Rate this center",
+  "Leave a comment (optional)": "Leave a comment (optional)",
+  "Please select a rating": "Please select a rating",
+  "Thanks for your feedback!": "Thanks for your feedback!",
+
+  "No reviews yet.\nBe the first to review!": "No reviews yet.\nBe the first to review!",
+  "someBody ": "Somebody",
+
+  "HealthCare Center Search": "HealthCare Center Search",
+  "Sort by distance": "Sort by distance",
+  "Filter options": "Filter options",
+  "No centers found matching your criteria": "No centers found matching your criteria",
+  "Reset": "Reset",
+
+  "Search healthcare centers...": "Search healthcare centers...",
+
+  "Search first aid guides...": "Search first aid guides...",
+  
+   "First Aid Page": "First Aid Page",
+   " First Aid Guides":" First Aid Guides",
+
+   "Search Details": "Search Details",
+  "Search Term": "Search Term",
+  "Date": "Date",
+  "First Aid": "First Aid",
+  "Close": "Close",
+  "description": "description",
+
+  "HistoryPage":"History Page",
 
   "health_profile": {
     "blood_type": "Blood Type",
     "allergies": "Allergies",
+    "add allergies": "Add Allergies",
     "chronic_conditions": "Chronic Conditions",
+    "add chronic_conditions": "Add Chronic Conditions",
     "medical_history": "Medical History",
+    "add medical_history": "Add Medical History",
     "add": "Add"
   },
     
@@ -139,9 +205,15 @@
   "clear_all_confirmation":"clear all history you have searched",
   "delete": "Delete",
   "refresh":"refresh",
-  "empty_title": "No History",
-  "empty_subtitle":"No Search History is Found"
+  "empty_title": "No Search History",
+  "empty_subtitle": "You have not performed any searches yet.",
+  "Cancel": "Cancel"
   },
+
+  
+  "session_expired": "Session expired",
+  "unauthorized": "Unauthorized",
+
   
 
   "password_strength_weak": "Weak",
@@ -149,7 +221,232 @@
   "password_strength_strong": "Strong",
 
   "back": "Back",
-  "first_aid_icon": "First Aid"
+  "first_aid_icon": "First Aid",
+
+
+  "server error : No authenticaion token availbale": "Server error: No authentication token available",
+  "Initializing...": "Initializing...",
+  "You need to login first to access your health profile": "You need to login first to access your health profile",
+  "Login": "Login",
+
+  "Health Profile": "Health Profile",
+  "Blood Type": "Blood Type",
+  "Allergies": "Allergies",
+  "Chronic Conditions": "Chronic Conditions",
+  "Medical History": "Medical History",
+  "Edit Profile": "Edit Profile",
+  "Delete": "Delete",
+  "None": "None",
+  "Delete Profile": "Delete Profile",
+  "Are you sure you want to delete your health profile?": "Are you sure you want to delete your health profile?",
+
+  "Create Health Profile": "Create Health Profile",
+  "Please select your blood type": "Please select your blood type",
+  "Add Allergies": "Add Allergies",
+  "Add Chronic Conditions": "Add Chronic Conditions",
+  "Add Medical History": "Add Medical History",
+  "Create Profile": "Create Profile",
+  "Health profile created": "Health profile created",
+
+  "ProfilePage":"Profile Page",
+
+  "edit_health_profile": "Edit Health Profile",
+  "save": "Save",
+
+  
+  "password_min_length": "Password must be at least 8 characters",
+  "name_min_length": "Name must be at least 3 characters",
+
+  "secret_answer_min_length": "Answer must be at least 3 characters",
+  "secret_question_min_length": "Question must be at least 10 characters",
+
+  "phone_required": "Phone number is required",
+  "phone_invalid": "Enter a valid phone number",
+  "password_required": "Password is required",
+  "password_short": "Password must be at least 8 characters",
+  "name_required": "Name is required",
+  "name_short": "Name must be at least 3 characters",
+  "secret_answer_required": "Secret answer is required",
+  "secret_answer_short": "Answer must be at least 3 characters",
+  "secret_question_required": "Secret question is required",
+  "secret_question_short": "Question must be at least 10 characters",
+
+  "location_services_disabled": "Location services are disabled.",
+  "location_permission_denied": "Location permissions are denied",
+  "location_permission_permanently_denied": "Location permissions are permanently denied, we cannot request permissions.",
+  "location_error": "Error getting location",
+
+  "Complete Your Profile": "Complete Your Profile",
+  "Tap to add profile photo": "Tap to add profile photo",
+  "Photo selected": "Photo selected",
+  "Gender": "Gender",
+  "Male": "Male",
+  "Female": "Female",
+  "Date of Birth": "Date of Birth",
+  "Complete Registration": "Complete Registration",
+  "Please select a profile photo": "Please select a profile photo",
+  "Please select your gender": "Please select your gender",
+  "You must be at least 13 years old": "You must be at least 13 years old",
+
+  "🩺 First Aid Guides": "🩺 First Aid Guides",
+ 
+   "Complete Profile":"Complete Profile",
+
+   "Edit Account": "Edit Account",
+  "Password is required": "Password is required",
+
+  "Tap to change photo": "Tap to change photo",
+  "Full Name": "Full Name",
+  "Please enter your name": "Please enter your name",
+  "Select your date of birth": "Select your date of birth",
+  "Please select your date of birth": "Please select your date of birth",
+  "Security Question": "Security Question",
+  "Please enter security question": "Please enter security question",
+  "Security Answer": "Security Answer",
+  "Please enter security answer": "Please enter security answer",
+  "Current Password": "Current Password",
+  "Please enter your password": "Please enter your password",
+
+  
+  "phone_number_changed": "Phone number changed: @number",
+  "country_changed": "Country changed to: @country",
+
+  "Invalid response format": "Invalid response format",
+  "Invalid data format: ": "Invalid data format: ",
+  "Healthcare center not found": "Healthcare center not found",
+  "Failed to load center details": "Failed to load center details",
+  "Unexpected error occurred": "Unexpected error occurred",
+  "No ratings found for this healthcare center": "No ratings found for this healthcare center",
+  "Expected array but got ": "Expected array but got ",
+  "Failed to parse rating: ": "Failed to parse rating: ",
+  "Failed to load ratings": "Failed to load ratings",
+  "Invalid rating data": "Invalid rating data",
+  "Failed to submit rating": "Failed to submit rating",
+
+  "No ratings found for this healthcare center": "No ratings found for this healthcare center",
+  "it is loading...": "It is loading...",
+  "Server error: ": "Server error: ",
+  "Not found: ": "Not found: ",
+  "Validation error: ": "Validation error: ",
+  "Unexpected error: ": "Unexpected error: ",
+
+  "server error": "Server error",
+  "successfully deleted": "Successfully deleted",
+  "Error deleting account: ": "Error deleting account: ",
+  "Error deleting History: ": "Error deleting History: ",
+  "Error deleting history: ": "Error deleting history: ",
+
+  "History deleted successfully": "History deleted successfully",
+  "session_expired_login_again": "Session expired. Please log in again.",
+  "forbidden_action": "You are not allowed to perform this action.",
+  "history_not_found": "Search history not found.",
+  "server_unavailable_try_later": "Server is unavailable. Please try again later.",
+  "server_error_occurred": "A server error occurred.",
+  "network_connection_failed": "Failed to connect. Check your network.",
+  "unauthorized_access": "Unauthorized access. Please check your credentials.",
+  "local_storage_error": "Error accessing local storage.",
+  "unexpected_error_occurred": "An unexpected error occurred.",
+  
+  "km_away": "{distance} km away",
+
+  "expected_list_error": "Expected a list from the API",
+  "parsed_centers": "Successfully parsed {count} healthcare centers",
+  "format_error_prefix": "Format error: {message}",
+  "invalid_data_format": "Invalid data format from server",
+  "unexpected_error_prefix": "Unexpected error: {error}",
+  "unexpected_error": "An unexpected error occurred",
+  
+  "fetched_healthcare_centers": "Fetched {count} healthcare centers",
+  "no_healthcare_centers": "No healthcare centers found",
+  "converted_to_entities": "Converted to entities: {count} centers",
+
+  "filter_by_specialty": "Filter by Specialty",
+  "clear_all": "Clear All",
+  "apply_filters": "Apply Filters",
+
+  "blood_type_required": "Blood type is required",
+
+  "profile_created_successfully": "Profile created successfully",
+  "profile_updated_successfully": "Profile updated successfully",
+  "profile_deleted_successfully": "Profile deleted successfully",
+  "server_error": "Server error: {}",
+  "network_error": "Network error: {}",
+  "validation_error": "Validation error: {}",
+  "profile_not_found": "Profile not found",
+  "unauthorized": "Unauthorized: Please login again",
+  "unexpected_error": "Unexpected error: {}",
+
+  "add_label": "Add {}",
+
+  "location_services_disabled": "Location services are disabled.",
+  "location_permission_denied": "Location permission denied.",
+  "location_permission_denied_permanently": "Location permission permanently denied. Please enable it in app settings.",
+
+  "invalid_response_format": "Invalid response format - expected non-empty List",
+  "default_first_aid_title": "Medical Advice",
+  "default_first_aid_description": "Consult a healthcare professional for your symptoms",
+  "failed_process_response": "Failed to process response",
+  "failed_search_centers": "Failed to search nearby centers",
+  "failed_get_location": "Failed to get current location",
+  "failed_calculate_distance": "Failed to calculate distance",
+
+  "failed_get_location": "Failed to get location: {}",
+
+  "failed_get_nearby_centers": "Failed to get nearby centers: {}",
+
+  "nearby_health_centers": "Nearby Health Centers",
+  "distance_label": "Distance: {} km",
+  "lat_long_label": "Lat: {}, Long: {}",
+  "view_details": "View Details",
+
+  "potential_conditions": "Potential Conditions:",
+
+   "distance_away": "{} km away",
+
+   "local_first_aid_load_error": "Failed to load local first aid data",
+
+   "profile_created": "Profile created successfully",
+   "profile_updated": "Profile updated successfully",
+   "profile_deleted": "Profile deleted successfully",
+   "allergies": "Allergies",
+
+  "Please enter a password": "Please enter a password",
+  "Password must be at least 8 characters": "Password must be at least 8 characters",
+ "Please enter your full name": "Please enter your full name",
+  "Required": "Required",
+  "Password": "Password",
+  "Confirm Password": "Confirm Password",
+  "Secret Question": "Secret Question",
+
+  "AccountEditPage": {
+    "Edit Account": "Edit Account",
+    "Password is required": "Password is required",
+    "Please enter a password": "Please enter a password",
+    "Password must be at least 8 characters": "Password must be at least 8 characters",
+    "Passwords do not match": "Passwords do not match",
+    "Please enter your full name": "Please enter your full name",
+    "Required": "Required"
+  },
+  "AccountEditForm": {
+    "Full Name": "Full Name",
+    "Phone Number": "Phone Number",
+    "Password": "Password",
+    "Confirm Password": "Confirm Password",
+    "Secret Question": "Secret Question",
+    "Secret Answer": "Secret Answer",
+    "Gender": "Gender",
+    "Date of Birth": "Date of Birth",
+    "Male": "Male",
+    "Female": "Female"
+  },
+  "AccountInfoCard": {
+    "Phone Number": "Phone Number",
+    "Date of Birth": "Date of Birth",
+    "Gender": "Gender",
+    "Secret Question": "Secret Question"
+  }
+  
+
   }
 
 

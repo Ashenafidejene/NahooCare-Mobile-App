@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class SymptomSearch extends StatelessWidget {
   const SymptomSearch({super.key});
@@ -7,7 +8,7 @@ class SymptomSearch extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       child: const Center(
-        child: Text('Symptom Search Page', style: TextStyle(fontSize: 24)),
+        child: Text('Symptom Search Page'.tr(), style: TextStyle(fontSize: 24)),
       ),
     );
   }

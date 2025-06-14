@@ -1,10 +1,9 @@
 import 'package:latlong2/latlong.dart';
-
+import 'package:easy_localization/easy_localization.dart';
 import '../../../symptomSearch/data/datasources/location_data_source.dart';
 import '../../domain/entities/healthcare_entity.dart';
 import '../../domain/repository/healthcare_repository.dart';
 import '../datasources/healthcare_remote_data_source.dart';
-import '../models/healthcare_search_model.dart';
 
 class HealthcareRepositoriesImpl implements HealthcareRepositories {
   final HealthcareCenterRemoteDataSources remoteDataSource;
@@ -18,12 +17,12 @@ class HealthcareRepositoriesImpl implements HealthcareRepositories {
   @override
   Future<List<HealthcareEntity>> getAllHealthcareCenters() async {
     final models = await remoteDataSource.getAllHealthcareCenters();
-    print('Fetched ${models.length} healthcare centers');
+    print('Fetched ${models.length} healthcare centers'.tr());
     if (models.isEmpty) {
-      throw Exception('No healthcare centers found');
+      throw Exception('No healthcare centers found'..tr());
     }
     final x = models.map((model) => model.toEntity()).toList();
-    print('Converted to entities: ${x.length} centers');
+    print('Converted to entities: ${x.length} centers'.tr());
     return x;
   }
 

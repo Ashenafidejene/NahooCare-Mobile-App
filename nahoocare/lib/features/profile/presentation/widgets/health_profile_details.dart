@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
+import 'package:easy_localization/easy_localization.dart';
 import '../../domain/entities/health_profile.dart';
 import '../bloc/health_profile_bloc.dart';
 import '../pages/edit_health_profile_page.dart';
@@ -21,7 +21,7 @@ class HealthProfileDetails extends StatelessWidget {
         children: [
           // Header title like healthcareSearch
           Text(
-            'Health Profile',
+            'Health Profile'.tr(),
             style: theme.textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.bold,
               color: Colors.blueAccent,
@@ -46,28 +46,31 @@ class HealthProfileDetails extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildProfileSection(context, Icons.water_drop, 'Blood Type', [
-                  profile.bloodType,
-                ]),
+                _buildProfileSection(
+                  context,
+                  Icons.water_drop,
+                  'Blood Type'.tr(),
+                  [profile.bloodType],
+                ),
                 const Divider(height: 32),
                 _buildProfileSection(
                   context,
                   Icons.warning_amber,
-                  'Allergies',
+                  'Allergies'.tr(),
                   profile.allergies,
                 ),
                 const Divider(height: 32),
                 _buildProfileSection(
                   context,
                   Icons.favorite,
-                  'Chronic Conditions',
+                  'Chronic Conditions'.tr(),
                   profile.chronicConditions,
                 ),
                 const Divider(height: 32),
                 _buildProfileSection(
                   context,
                   Icons.history,
-                  'Medical History',
+                  'Medical History'.tr(),
                   profile.medicalHistory,
                 ),
                 const SizedBox(height: 30),
@@ -81,8 +84,8 @@ class HealthProfileDetails extends StatelessWidget {
                           size: 20,
                           color: Colors.white,
                         ),
-                        label: const Text(
-                          'Edit Profile',
+                        label: Text(
+                          'Edit Profile'.tr(),
                           style: TextStyle(color: Colors.white),
                         ),
                         style: ElevatedButton.styleFrom(
@@ -99,7 +102,7 @@ class HealthProfileDetails extends StatelessWidget {
                       child: ElevatedButton.icon(
                         onPressed: () => _confirmDeleteProfile(context),
                         icon: const Icon(Icons.delete_outline, size: 20),
-                        label: const Text('Delete'),
+                        label: Text('Delete'.tr()),
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           backgroundColor: Colors.redAccent,
@@ -148,7 +151,10 @@ class HealthProfileDetails extends StatelessWidget {
         if (items.isEmpty || (items.length == 1 && items.first.isEmpty))
           Padding(
             padding: const EdgeInsets.only(left: 44),
-            child: Text('None', style: Theme.of(context).textTheme.bodyMedium),
+            child: Text(
+              'None'.tr(),
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
           )
         else
           Padding(
@@ -190,14 +196,14 @@ class HealthProfileDetails extends StatelessWidget {
       context: context,
       builder:
           (context) => AlertDialog(
-            title: const Text('Delete Profile'),
-            content: const Text(
-              'Are you sure you want to delete your health profile?',
+            title: Text('Delete Profile'.tr()),
+            content: Text(
+              'Are you sure you want to delete your health profile?'.tr(),
             ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text('Cancel'),
+                child: Text('Cancel'.tr()),
               ),
               TextButton(
                 onPressed: () {
@@ -206,10 +212,7 @@ class HealthProfileDetails extends StatelessWidget {
                     DeleteHealthProfileEvent(),
                   );
                 },
-                child: const Text(
-                  'Delete',
-                  style: TextStyle(color: Colors.red),
-                ),
+                child: Text('Delete'.tr(), style: TextStyle(color: Colors.red)),
               ),
             ],
           ),

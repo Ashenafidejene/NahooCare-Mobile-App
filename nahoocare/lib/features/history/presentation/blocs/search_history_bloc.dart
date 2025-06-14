@@ -1,7 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
+import 'package:easy_localization/easy_localization.dart';
 import '../../../../core/errors/failures.dart';
 import '../../../../core/usecase/usecase.dart';
 import '../../domain/entities/search_history_entity.dart';
@@ -51,7 +51,7 @@ class SearchHistoryBloc extends Bloc<SearchHistoryEvent, SearchHistoryState> {
     result.fold(
       (failure) => emit(SearchHistoryError(_mapFailureToMessage(failure))),
       (_) {
-        emit(SearchHistoryDeleted('History deleted successfully'));
+        emit(SearchHistoryDeleted('History deleted successfully'.tr()));
         add(LoadSearchHistory()); // Refresh the list
       },
     );
@@ -75,26 +75,26 @@ class SearchHistoryBloc extends Bloc<SearchHistoryEvent, SearchHistoryState> {
         final serverFailure = failure as ServerFailure;
         switch (serverFailure.statusCode) {
           case 401:
-            return 'session_expired_login_again';
+            return 'session_expired_login_again'..tr();
           case 403:
-            return 'forbidden_action';
+            return 'forbidden_action'.tr();
           case 404:
-            return 'history_not_found';
+            return 'history_not_found'.tr();
           case 500:
           case 502:
           case 503:
-            return 'server_unavailable_try_later';
+            return 'server_unavailable_try_later'.tr();
           default:
-            return 'server_error_occurred';
+            return 'server_error_occurred'.tr();
         }
       case NetworkFailure:
-        return 'network_connection_failed';
+        return 'network_connection_failed'.tr();
       case UnauthorizedFailure:
-        return 'unauthorized_access';
+        return 'unauthorized_access'.tr();
       case CacheFailure:
-        return 'local_storage_error';
+        return 'local_storage_error'.tr();
       default:
-        return 'unexpected_error_occurred';
+        return 'unexpected_error_occurred'.tr();
     }
   }
 }

@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:nahoocare/features/accounts/presentation/pages/account_page.dart';
 import 'package:nahoocare/features/firstaid/presentation/pages/first_aid_list_page.dart';
+import 'dart:ui' as ui;
 
 import 'package:nahoocare/features/healthcare_center/presentation/bloc/healthcare_center_bloc.dart';
 import 'package:nahoocare/features/history/presentation/blocs/search_history_bloc.dart';
@@ -33,7 +34,8 @@ void main() async {
 
   await EasyLocalization.ensureInitialized();
   // Initialize dependency injection
-  await di.init();
+  await di.init(locale: ui.window.locale);
+
 
   // Load environment variables
   await dotenv.load(fileName: ".env");
@@ -93,7 +95,7 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
-        title: 'NahooCare',
+        title: 'NahooCare'.tr(),
         locale: context.locale,
         supportedLocales: context.supportedLocales,
         localizationsDelegates: context.localizationDelegates,
@@ -143,8 +145,8 @@ class MyApp extends StatelessWidget {
                 case '/test':
                   return FirstAidListPage();
                 default:
-                  return const Scaffold(
-                    body: Center(child: Text('Page not found')),
+                  return Scaffold(
+                    body: Center(child: Text('Page not found'.tr())),
                   );
               }
             },
@@ -163,7 +165,7 @@ class AuthWrapper extends StatelessWidget {
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
         if (state is Authenticated) {
-          return const Scaffold(body: Center(child: Text('Authenticated!')));
+          return Scaffold(body: Center(child: Text('Authenticated!'.tr())));
         } else if (state is NotAuthenticated) {
           return const LoginPage();
         }

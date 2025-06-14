@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import '../../../../core/errors/failures.dart'
     show Failure, ServerFailure, ValidationFailure;
@@ -31,7 +32,7 @@ class UpdateHealthProfile
       if (params.profile.bloodType.isEmpty) {
         return Left(
           ValidationFailure({
-            'bloodType': ['Blood type is required'],
+            'bloodType': ['blood type is required'.tr()],
           }),
         );
       }

@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../../../core/errors/failures.dart';
 import '../../../../core/network/api_client.dart';
 import '../models/search_history_model.dart';
@@ -37,11 +38,9 @@ class RemoteSearchHistoryDataSourceImpl
         return Left(ServerFailure('Failed to load search history', 422));
       }
     } on ApiException catch (e) {
-      _logError('getRemoteHistory', e.message, e.statusCode);
-      return Left(_handleApiException(e));
-    } catch (e, stackTrace) {
-      _logError('getRemoteHistory', 'Unexpected error: $e', stackTrace);
-      return Left(ServerFailure('Failed to load search history', 500));
+      // Handle API exception
+      print("Error deleting account: ${e.message}");
+      return Left(ServerFailure("server error", e.statusCode));
     }
   }
 
@@ -52,13 +51,11 @@ class RemoteSearchHistoryDataSourceImpl
         '/api/saved-searches/delete-all-history',
         requiresAuth: true,
       );
-      return const Right(null);
+      return Right("succes fully deleted");
     } on ApiException catch (e) {
-      _logError('deleteAllSearchHistory', e.message, e.statusCode);
-      return Left(_handleApiException(e));
-    } catch (e, stackTrace) {
-      _logError('deleteAllSearchHistory', 'Unexpected error: $e', stackTrace);
-      return Left(ServerFailure('Failed to delete search history', 500));
+      // Handle API exception
+      print("Error deleting History: ${e.message}");
+      return Left(ServerFailure("server error", e.statusCode));
     }
   }
 
@@ -69,31 +66,11 @@ class RemoteSearchHistoryDataSourceImpl
         '/api/saved-searches/delete-history/$searchId',
         requiresAuth: true,
       );
-      return const Right(null);
+      return Right("succes fully deleted");
     } on ApiException catch (e) {
-      _logError('deleteSearchHistory', e.message, e.statusCode);
-      return Left(_handleApiException(e));
-    } catch (e, stackTrace) {
-      _logError('deleteSearchHistory', 'Unexpected error: $e', stackTrace);
-      return Left(ServerFailure('Failed to delete search item', 500));
-    }
-  }
-
-  Failure _handleApiException(ApiException e) {
-    switch (e.statusCode) {
-      case 401:
-        return UnauthorizedFailure('Please login to access search history');
-      case 404:
-        return NotFoundFailure('Search history not found');
-      case 500:
-      case 502:
-      case 503:
-        return ServerFailure(
-          'Server error, please try again later',
-          e.statusCode,
-        );
-      default:
-        return ServerFailure('Failed to complete request', e.statusCode);
+      // Handle API exception
+      print("Error deleting history: ${e.message}");
+      return Left(ServerFailure("server error", e.statusCode));
     }
   }
 

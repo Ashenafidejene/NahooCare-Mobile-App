@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/entities/health_profile.dart';
 import '../bloc/health_profile_bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class CreateHealthProfileForm extends StatefulWidget {
   const CreateHealthProfileForm({super.key});
@@ -53,7 +54,7 @@ class _CreateHealthProfileFormState extends State<CreateHealthProfileForm> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Create Health Profile',
+              'Create Health Profile'.tr(),
               style: theme.textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: Colors.blueAccent,
@@ -62,7 +63,7 @@ class _CreateHealthProfileFormState extends State<CreateHealthProfileForm> {
             const SizedBox(height: 24),
 
             DropdownButtonFormField<String>(
-              decoration: _inputDecoration('Blood Type'),
+              decoration: _inputDecoration('Blood Type'.tr()),
               items:
                   bloodTypes.map((type) {
                     return DropdownMenuItem(value: type, child: Text(type));
@@ -71,7 +72,7 @@ class _CreateHealthProfileFormState extends State<CreateHealthProfileForm> {
               validator:
                   (value) =>
                       (value == null || value.isEmpty)
-                          ? 'Please select your blood type'
+                          ? 'Please select your blood type.tr()'
                           : null,
             ),
 
@@ -79,7 +80,7 @@ class _CreateHealthProfileFormState extends State<CreateHealthProfileForm> {
             _buildListInput(
               context,
               controller: _allergyController,
-              label: 'Allergies',
+              label: 'Allergies'.tr(),
               list: _allergies,
               onAdd: () {
                 if (_allergyController.text.isNotEmpty) {
@@ -96,7 +97,7 @@ class _CreateHealthProfileFormState extends State<CreateHealthProfileForm> {
             _buildListInput(
               context,
               controller: _conditionController,
-              label: 'Chronic Conditions',
+              label: 'Chronic Conditions'.tr(),
               list: _chronicConditions,
               onAdd: () {
                 if (_conditionController.text.isNotEmpty) {
@@ -114,7 +115,7 @@ class _CreateHealthProfileFormState extends State<CreateHealthProfileForm> {
             _buildListInput(
               context,
               controller: _historyController,
-              label: 'Medical History',
+              label: 'Medical History'.tr(),
               list: _medicalHistory,
               onAdd: () {
                 if (_historyController.text.isNotEmpty) {
@@ -138,8 +139,8 @@ class _CreateHealthProfileFormState extends State<CreateHealthProfileForm> {
                     Icons.check_circle_outline,
                     color: Colors.white,
                   ),
-                  label: const Text(
-                    'Create Profile',
+                  label: Text(
+                    'Create Profile'.tr(),
                     style: TextStyle(color: Colors.white),
                   ),
                   style: ElevatedButton.styleFrom(
@@ -183,7 +184,8 @@ class _CreateHealthProfileFormState extends State<CreateHealthProfileForm> {
             Expanded(
               child: TextFormField(
                 controller: controller,
-                decoration: _inputDecoration('Add $label'),
+                decoration: _inputDecoration('add_label'.tr(args: [label])),
+
               ),
             ),
             const SizedBox(width: 8),
@@ -239,7 +241,7 @@ class _CreateHealthProfileFormState extends State<CreateHealthProfileForm> {
       context.read<HealthProfileBloc>().add(CreateHealthProfileEvent(profile));
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text("Health profile created")));
+      ).showSnackBar(SnackBar(content: Text("Health profile created".tr())));
     }
   }
 }
