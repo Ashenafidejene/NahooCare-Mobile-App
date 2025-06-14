@@ -54,7 +54,7 @@ class AccountInfoCard extends StatelessWidget {
             'Date of Birth'.tr(),
             account.dateOfBirth,
           ),
-          _buildInfoRow(context, Icons.person, 'Gender', account.gender),
+          _buildInfoRow(context, Icons.person, 'Gender'.tr(), account.gender),
           _buildInfoRow(
             context,
             Icons.lock,

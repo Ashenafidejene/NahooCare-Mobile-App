@@ -10,34 +10,6 @@ class AccountEditPage extends StatelessWidget {
 
   final AccountEntity initialAccount;
 
-  void _saveChanges(BuildContext context, AccountEditForm formWidget) {
-    final formKey = formWidget.formKey;
-    if (formKey.currentState!.validate()) {
-      formKey.currentState!.save();
-
-      final updatedAccount = formWidget.updatedAccount;
-      final password = formWidget.password;
-      final photo = formWidget.selectedImage;
-
-      if (password == null || password.isEmpty) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Password is required'.tr())));
-        return;
-      }
-
-      context.read<AccountBloc>().add(
-        UpdateAccountEvent(
-          account: updatedAccount,
-          password: password,
-          photo: photo,
-        ),
-      );
-
-      Navigator.pop(context);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final formWidget = AccountEditForm(initialAccount: initialAccount);
@@ -56,7 +28,33 @@ class AccountEditPage extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.save),
-            onPressed: () => _saveChanges(context, formWidget),
+            onPressed: () {
+              final formKey = formWidget.formKey;
+              if (formKey.currentState!.validate()) {
+                formKey.currentState!.save();
+
+                final updatedAccount = formWidget.updatedAccount;
+                final password = formWidget.password;
+                final photo = formWidget.selectedImage;
+
+                if (password == null || password.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Password is required'.tr())),
+                  );
+                  return;
+                }
+
+                context.read<AccountBloc>().add(
+                  UpdateAccountEvent(
+                    account: updatedAccount,
+                    password: password,
+                    photo: photo,
+                  ),
+                );
+
+                Navigator.pop(context);
+              }
+            },
           ),
         ],
       ),
